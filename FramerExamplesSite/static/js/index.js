@@ -1,14 +1,17 @@
 (function() {
+  var loadExample;
+
+  loadExample = function(loadExampleName) {
+    if (typeof ga !== "undefined" && ga !== null) {
+      ga("send", "pageview", "/examples/" + loadExampleName);
+    }
+    $("#code").attr("src", "code.html?name=" + loadExampleName);
+    $("#example").attr("src", "example.html?name=" + loadExampleName);
+    return $("a.download").attr("href", "/static/examples/" + loadExampleName + ".zip");
+  };
+
   $(window).load(function() {
-    var loadExample, loadExampleName;
-    loadExample = function(loadExampleName) {
-      if (typeof ga !== "undefined" && ga !== null) {
-        ga("send", "pageview", "/examples/" + loadExampleName);
-      }
-      $("#code").attr("src", "code.html?name=" + loadExampleName);
-      $("#example").attr("src", "example.html?name=" + loadExampleName);
-      return $("a.download").attr("href", "/static/examples/" + loadExampleName + ".zip");
-    };
+    var loadExampleName;
     loadExampleName = window.location.hash.slice(1);
     return loadExample(loadExampleName);
   });
