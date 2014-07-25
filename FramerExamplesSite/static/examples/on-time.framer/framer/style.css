@@ -1,0 +1,33 @@
+* {
+	margin: 0;
+	padding: 0;
+	border: none;
+	cursor: url('images/cursor.png') 39 39, auto;
+	/*
+	cursor: -webkit-image-set(
+		url('images/cursor.png') 1x,
+		url('images/cursor@2x.png') 2x
+	) 39 39, auto;
+	*/
+	-webkit-user-select: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+body {
+	background: black url("images/background.png") repeat scroll top left;
+	font: 28px/1em "Helvetica";
+	color: #FFF;
+}
+
+a {
+	color: #FFF;
+}
+
+::-webkit-scrollbar {
+	display: none;
+}
+
+.framerAlert {
+	font: 12px/1.6em Menlo;
+	margin: 10px;
+}
