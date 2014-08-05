@@ -30,9 +30,3 @@ body {
 .half {
 	zoom: 0.5; 
 }
-
-#example.mobile {
-	margin: 0 auto;
-	background: red;
-	border: 2px solid red;
-}
