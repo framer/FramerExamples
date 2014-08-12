@@ -76,4 +76,7 @@ $(document).ready ->
 		$(".zoom-toggle").addClass("inactive")
 
 		window.parent.$('#example').contents().find("#FramerRoot").addClass('half')
+
+
+
 	

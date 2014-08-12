@@ -26,3 +26,5 @@ $(document).ready ->
 
 	loadScript "framer/framer.js", ->
 		loadScript "app.js", ->
+
+	

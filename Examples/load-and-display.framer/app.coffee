@@ -1,10 +1,7 @@
-canvas = new BackgroundLayer backgroundColor: "#f9f9f9"
 
 # Sketch Import
 bg = Framer.Importer.load "imported/Progress Prototype"
-bg.Screen.superLayer = canvas
 bg.Screen.center()
-#bg.Screen.scale = 0.5
 bg.Screen.pixelAlign()
 
 # Mask

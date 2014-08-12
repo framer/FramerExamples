@@ -1,14 +1,7 @@
-var bg, canvas, container, count, currentY, items, spinner, _i;
-
-canvas = new BackgroundLayer({
-  backgroundColor: "#f9f9f9"
-});
-
 /* Sketch Import */
+var bg, container, count, currentY, items, spinner, _i;
 
 bg = Framer.Importer.load("imported/Progress Prototype");
-
-bg.Screen.superLayer = canvas;
 
 bg.Screen.center();
 
@@ -42,6 +35,8 @@ spinner.superLayer = container;
 spinner.center();
 
 spinner.y = spinner.centerY() + 100;
+
+/* To prevent loading (online only) from messing w/ timing */
 
 Utils.delay(1, function() {
   spinner.opacity = 1;

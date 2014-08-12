@@ -41,8 +41,7 @@ $(document).ready ->
 	    $('#topbar').toggleClass "active"
 	    
 	 
-	    
-		
+
 
 
 	

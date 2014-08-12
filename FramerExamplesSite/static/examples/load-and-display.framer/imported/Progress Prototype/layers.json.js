@@ -15,7 +15,56 @@ window.__imported__["Progress Prototype/layers.json.js"] = [
             "visible" : true,
             "id" : "59C6726B-F2CB-44CA-AC89-2CA6D3155CB0",
             "children" : [
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "6841090E-D39F-4A75-8D6D-88A912EFA1CF",
+                "children" : [
 
+                ],
+                "image" : {
+                  "path" : "images\/iconOval-6841090E-D39F-4A75-8D6D-88A912EFA1CF.png",
+                  "frame" : {
+                    "y" : 1070,
+                    "x" : 480,
+                    "width" : 39,
+                    "height" : 39
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 1070,
+                  "x" : 480,
+                  "width" : 39,
+                  "height" : 39
+                },
+                "name" : "iconOval"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "120A30C1-40E7-48BB-B178-76CE0B58DC47",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/iconOval-120A30C1-40E7-48BB-B178-76CE0B58DC47.png",
+                  "frame" : {
+                    "y" : 1067,
+                    "x" : 298,
+                    "width" : 44,
+                    "height" : 44
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 1067,
+                  "x" : 298,
+                  "width" : 44,
+                  "height" : 44
+                },
+                "name" : "iconOval"
+              }
             ],
             "image" : {
               "path" : "images\/bottomBar-59C6726B-F2CB-44CA-AC89-2CA6D3155CB0.png",

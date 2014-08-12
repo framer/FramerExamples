@@ -1818,6 +1818,10 @@ exports.Layer = (function(_super) {
 
   Layer.define("clip", layerProperty("clip", "overflow", true, _.isBool));
 
+  Layer.define("minWidth", layerStyleProperty("minWidth"));
+
+  Layer.define("minHeight", layerStyleProperty("minHeight"));
+
   Layer.define("scrollHorizontal", layerProperty("scrollHorizontal", "overflowX", false, _.isBool, function(layer, value) {
     if (value === true) {
       return layer.ignoreEvents = false;
@@ -1982,8 +1986,9 @@ exports.Layer = (function(_super) {
   };
 
   Layer.prototype.center = function() {
-    return this.frame = this.centerFrame();
+      return this.frame = this.centerFrame();
   };
+
 
   Layer.prototype.centerX = function() {
     return this.x = this.centerFrame().x;
