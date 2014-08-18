@@ -1,6 +1,8 @@
+canvas = new BackgroundLayer backgroundColor: "#f9f9f9"
 
 # Sketch Import
 bg = Framer.Importer.load "imported/Progress Prototype"
+bg.Screen.superLayer = canvas
 bg.Screen.center()
 bg.Screen.pixelAlign()
 
@@ -9,13 +11,13 @@ container = new Layer width:640, height:1136, backgroundColor:"#fff"
 container.superLayer = bg.Background
 container.style.boxShadow = "0 3px 6px rgba(0,0,0,0.1)"
 
-# Spinner made in AE
-spinner = new VideoLayer video:"images/spinner.mov", width:200, height: 200, backgroundColor: "#fff", rotation: 90, opacity:0
+# Spinner made in After Effects
+spinner = new VideoLayer video: "images/spinner.mp4", width:200, height: 200, backgroundColor: "#fff", rotation: 90, opacity:0
 spinner.superLayer = container
 spinner.center()
 spinner.y = spinner.centerY() + 100
 
-# To prevent loading (online only) from messing w/ timing
+# 1s delay for the video to load (for web)
 Utils.delay 1, ->
 	spinner.opacity = 1
 	spinner.player.play()
@@ -30,7 +32,7 @@ Utils.delay 1, ->
 
 	# Spinner moves up
 	Utils.delay 3.6, ->
-		spinner.animate 
+		spinner.animate  
 			properties:
 				y: spinner.y - 100
 			curve: "spring(100, 70, 0)"
@@ -50,7 +52,7 @@ Utils.delay 3.9 + 1, ->
 	bg.item1.animate 
 		properties:
 			opacity:1, y: currentY
-		curve: "spring(200, 70, 0)"
+		curve: "spring(225, 70, 0)"
 
 # Rest of items, staggered animation
 for count in [2..8]
@@ -62,8 +64,8 @@ for count in [2..8]
 	items.states.switchInstant "hide"
 	
 	items.states.animationOptions = 
-		curve: "spring(200, 70, 0)"
+		curve: "spring(225, 70, 0)"
 	
-	items.states.animationOptions.delay = 4.4 + 1 + 0.08 * count
+	items.states.animationOptions.delay = 4.5 + 1 + (0.08 * count)
 	items.states.switch 'fadein'
 	

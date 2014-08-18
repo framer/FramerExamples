@@ -1,7 +1,14 @@
+var bg, canvas, container, count, currentY, items, spinner, _i;
+
+canvas = new BackgroundLayer({
+  backgroundColor: "#f9f9f9"
+});
+
 /* Sketch Import */
-var bg, container, count, currentY, items, spinner, _i;
 
 bg = Framer.Importer.load("imported/Progress Prototype");
+
+bg.Screen.superLayer = canvas;
 
 bg.Screen.center();
 
@@ -19,10 +26,10 @@ container.superLayer = bg.Background;
 
 container.style.boxShadow = "0 3px 6px rgba(0,0,0,0.1)";
 
-/* Spinner made in AE */
+/* Spinner made in After Effects */
 
 spinner = new VideoLayer({
-  video: "images/spinner.mov",
+  video: "images/spinner.mp4",
   width: 200,
   height: 200,
   backgroundColor: "#fff",
@@ -36,7 +43,7 @@ spinner.center();
 
 spinner.y = spinner.centerY() + 100;
 
-/* To prevent loading (online only) from messing w/ timing */
+/* 1s delay for the video to load (for web) */
 
 Utils.delay(1, function() {
   spinner.opacity = 1;
@@ -86,7 +93,7 @@ Utils.delay(3.9 + 1, function() {
       opacity: 1,
       y: currentY
     },
-    curve: "spring(200, 70, 0)"
+    curve: "spring(225, 70, 0)"
   });
 });
 
@@ -107,8 +114,8 @@ for (count = _i = 2; _i <= 8; count = ++_i) {
   });
   items.states.switchInstant("hide");
   items.states.animationOptions = {
-    curve: "spring(200, 70, 0)"
+    curve: "spring(225, 70, 0)"
   };
-  items.states.animationOptions.delay = 4.4 + 1 + 0.08 * count;
+  items.states.animationOptions.delay = 4.5 + 1 + (0.08 * count);
   items.states["switch"]('fadein');
 }

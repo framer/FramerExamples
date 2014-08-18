@@ -27,6 +27,10 @@ body {
 	width:100%; height:100%;
 } 
 
+#FramerRoot * {
+	-webkit-perspective: 1000;
+}
+
 a {
 	color: #FFF;
 }
