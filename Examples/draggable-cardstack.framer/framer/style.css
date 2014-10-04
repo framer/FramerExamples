@@ -1,0 +1,29 @@
+* {
+	margin: 0;
+	padding: 0;
+	border: none;
+	-webkit-user-select: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+body {
+	background-color: #fff;
+	font: 28px/1em "Helvetica";
+	color: #FFF;
+	overflow: hidden;
+	cursor: url('images/cursor.png') 39 39, auto;
+}
+
+a {
+	color: gray;
+}
+
+.framerAlert {
+	font: 12px/1.6em Menlo;
+	margin: 10px;
+	color: gray;
+}
+
+::-webkit-scrollbar {
+	display: none;
+}

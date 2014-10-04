@@ -1,0 +1,26 @@
+CACHE MANIFEST
+# 1412460183.480383
+CACHE:
+/_server/server.js
+../app.coffee
+../framer/.bowerrc
+../framer/app.manifest
+../framer/coffee-script.js
+../framer/config.json
+../framer/framer.generated.js
+../framer/framer.js
+../framer/framer.js.map
+../framer/images/background.png
+../framer/images/cursor.png
+../framer/images/cursor@2x.png
+../framer/images/icon-120.png
+../framer/images/icon-152.png
+../framer/images/icon-76.png
+../framer/init.js
+../framer/style.css
+../framer/version
+../images/framer-icon.png
+../index.html
+../offline.html
+SETTINGS:
+prefer-online
