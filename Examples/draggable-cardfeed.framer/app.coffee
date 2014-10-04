@@ -89,12 +89,10 @@ cardA = new Layer
 	borderRadius: 10
 	superLayer: container
 	image:"images/PA.png"
-
-cardA.shadowColor = 'rgba(0,0,0,0.5)'
-cardA.shadowBlur = 20
+	shadowColor = 'rgba(0,0,0,0.5)'
+	shadowBlur = 20
 cardA.draggable.enabled = true
 cardA.draggable.speedX = 0
-cardA.draggable.speedY = 1
 
 cardB = new Layer
 	x: 0
@@ -107,9 +105,8 @@ cardB = new Layer
 	borderRadius: 10
 	superLayer: container
 	image:"images/NY.png"
-
-cardB.shadowColor = 'rgba(0,0,0,0.5)'
-cardB.shadowBlur = 20
+	shadowColor = 'rgba(0,0,0,0.5)'
+	shadowBlur = 20
 cardB.draggable.enabled = true
 cardB.draggable.speedX = 0
 
@@ -124,12 +121,10 @@ cardC = new Layer
 	borderRadius: 10
 	superLayer: container
 	image:"images/SF.png"
-
-cardC.shadowColor = 'rgba(0,0,0,0.5)'
-cardC.shadowBlur = 20
+	shadowColor = 'rgba(0,0,0,0.5)'
+	shadowBlur = 20
 cardC.draggable.enabled = true
 cardC.draggable.speedX = 0
-cardC.draggable.speedY = 1
 
 
 chevron = new Layer 
@@ -149,9 +144,15 @@ header.style = {
 }
 
 searchModal = new Layer 
-	x:0, y:110, width:580,  midX:screenMidX*4, height:995, image:"images/Search.png", superLayer: container
-searchModal.shadowColor = 'rgba(0,0,0,0.5)'
-searchModal.shadowBlur = 10
+	x:0, 
+	y:110, 
+	width:580,  
+	midX:screenMidX*3, 
+	height:995, 
+	image:"images/Search.png", 
+	superLayer: container
+	shadowColor = 'rgba(0,0,0,0.5)'
+	shadowBlur = 10
 	
 menu = new Layer 
 	x:5, y:10, width:80, height:80, superLayer: container, backgroundColor: 'transparent'
@@ -164,17 +165,21 @@ back.rotationZ = -90
 # ----------------
 #      EVENTS 
 # ----------------
+cardC.on Events.Click, ->
+	cardC.animate
+		properties:
+			scale: 10
+
 
 # Drill in to Card
 # -----------
 chevron.on Events.Click, ->
+	cardC.animate
+		properties:
+			midX = -screenMidX
 	searchModal.animate	
 		properties: 
 			midX: screenMidX
-		curve: springLoose
-	cardC.animate
-		properties:
-			midX: -screenMidX
 		curve: springLoose
 	menu.animate
 		properties:
@@ -396,23 +401,14 @@ cardC.on Events.DragEnd, ->
 				properties:
 					y: imageStartPos
 				curve: springStiff	
-
 		
+# ----------------
+#      CONTAINER - WHEN SHRUNK 
+# ----------------
+
 menu.on Events.Click, ->
-	if container.scale is 1
-		container.draggable.enabled = true
-		container.draggable.speedY = 0
-		container.originX = 0.5
-		container.animate
-			properties:
-				scale: 0.80
-				y: 500
-			curve: springVal
-		back.animate
-			properties:
-				rotationZ: 90
-			curve: springVal
-	else
+
+	if container.scale < 1
 		container.draggable.enabled = false
 		container.animate
 			properties:
@@ -423,16 +419,17 @@ menu.on Events.Click, ->
 			properties:
 				rotationZ: -90
 			curve: springVal
-			
-# ----------------
-#      CONTAINER - WHEN SHRUNK 
-# ----------------
 
-
-container.on Events.DragEnd, ->
-	container.animate
-		properties:
-			x: 0
-		curve: springVal
+	if container.scale is 1
+		container.originX = 0.5
+		container.animate
+			properties:
+				scale: 0.80
+				y: 500
+			curve: springVal
+		back.animate
+			properties:
+				rotationZ: 90
+			curve: springVal
 
 
