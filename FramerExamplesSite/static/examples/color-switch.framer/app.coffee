@@ -1,5 +1,4 @@
-bg = new BackgroundLayer
-canvas = new Layer(width:584, height:400, backgroundColor:"#00497F").center()
+bg = new BackgroundLayer backgroundColor: "#00497F"
 
 # Animation
 Framer.Defaults.Animation = curve: "spring(260,30,0,0)"
@@ -8,7 +7,7 @@ Framer.Defaults.Animation = curve: "spring(260,30,0,0)"
 card = new Layer(width:240, height:240, backgroundColor:"#A8E5FE").center()
 card.shadowY = 5
 card.shadowBlur = 20
-card.shadowColor = "rgba(0,0,0,0.6)"
+card.shadowColor = "rgba(0,0,0,0.3)"
 
 # Banners
 red = new Layer width:240, height:60, backgroundColor:"#F14445", superLayer:card
@@ -24,7 +23,6 @@ red.states.add
 green.states.add
 	down: {y:0}
 error.states.add
-	big: {scale:1}
 	small: {scale:0}
 check.states.add
 	big: {scale:1}
@@ -43,5 +41,5 @@ red.states.on Events.StateWillSwitch, (stateA, stateB) ->
 bg.on Events.Click, ->
 	red.states.next()
 	green.states.next()
-	error.states.next("small", "big")
+	error.states.next()
 	check.states.next("big", "small")

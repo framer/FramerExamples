@@ -1,12 +1,8 @@
-var bg, canvas, card, check, error, green, red;
+var bg, card, check, error, green, red;
 
-bg = new BackgroundLayer;
-
-canvas = new Layer({
-  width: 584,
-  height: 400,
+bg = new BackgroundLayer({
   backgroundColor: "#00497F"
-}).center();
+});
 
 /* Animation */
 
@@ -26,7 +22,7 @@ card.shadowY = 5;
 
 card.shadowBlur = 20;
 
-card.shadowColor = "rgba(0,0,0,0.6)";
+card.shadowColor = "rgba(0,0,0,0.3)";
 
 /* Banners */
 
@@ -74,9 +70,6 @@ green.states.add({
 });
 
 error.states.add({
-  big: {
-    scale: 1
-  },
   small: {
     scale: 0
   }
@@ -108,6 +101,6 @@ red.states.on(Events.StateWillSwitch, function(stateA, stateB) {
 bg.on(Events.Click, function() {
   red.states.next();
   green.states.next();
-  error.states.next("small", "big");
+  error.states.next();
   return check.states.next("big", "small");
 });
