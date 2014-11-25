@@ -1,0 +1,647 @@
+window.__imported__ = window.__imported__ || {};
+window.__imported__["Pull to Refresh/layers.json.js"] = [
+  {
+    "maskFrame" : null,
+    "visible" : true,
+    "id" : "BBEA0841-C0CE-48DB-9F6B-BE444BCA6068",
+    "children" : [
+
+    ],
+    "image" : {
+      "path" : "images\/Screen-BBEA0841-C0CE-48DB-9F6B-BE444BCA6068.png",
+      "frame" : {
+        "y" : 0,
+        "x" : 0,
+        "width" : 640,
+        "height" : 1136
+      }
+    },
+    "imageType" : "png",
+    "layerFrame" : {
+      "y" : 0,
+      "x" : 0,
+      "width" : 640,
+      "height" : 1136
+    },
+    "name" : "Screen"
+  },
+  {
+    "maskFrame" : null,
+    "visible" : true,
+    "id" : "E2373616-7638-46EE-B98E-146672D53735",
+    "children" : [
+      {
+        "maskFrame" : null,
+        "visible" : true,
+        "id" : "56669779-0270-4701-84CA-E782C0770175",
+        "children" : [
+
+        ],
+        "image" : {
+          "path" : "images\/video-56669779-0270-4701-84CA-E782C0770175.png",
+          "frame" : {
+            "y" : -2,
+            "x" : -4,
+            "width" : 648,
+            "height" : 368
+          }
+        },
+        "imageType" : "png",
+        "layerFrame" : {
+          "y" : -2,
+          "x" : -4,
+          "width" : 648,
+          "height" : 368
+        },
+        "name" : "video"
+      },
+      {
+        "maskFrame" : null,
+        "visible" : true,
+        "id" : "F4C4CD01-40D0-46E8-9DCE-3F803623A20B",
+        "children" : [
+          {
+            "maskFrame" : null,
+            "visible" : true,
+            "id" : "5C04FC75-5B92-493E-9EBB-B90755475AC1",
+            "children" : [
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "DD02C828-3759-4223-806E-C4E3E95AAC03",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/Rectangle_24-DD02C828-3759-4223-806E-C4E3E95AAC03.png",
+                  "frame" : {
+                    "y" : 1046,
+                    "x" : 44,
+                    "width" : 246,
+                    "height" : 140
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 1046,
+                  "x" : 44,
+                  "width" : 246,
+                  "height" : 140
+                },
+                "name" : "Rectangle_24"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "FA8F727D-6303-4B56-BF22-3DC367B6424B",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/Rectangle_23-FA8F727D-6303-4B56-BF22-3DC367B6424B.png",
+                  "frame" : {
+                    "y" : 856,
+                    "x" : 44,
+                    "width" : 246,
+                    "height" : 140
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 856,
+                  "x" : 44,
+                  "width" : 246,
+                  "height" : 140
+                },
+                "name" : "Rectangle_23"
+              }
+            ],
+            "image" : {
+              "path" : "images\/suggestionContent-5C04FC75-5B92-493E-9EBB-B90755475AC1.png",
+              "frame" : {
+                "y" : 780,
+                "x" : 35,
+                "width" : 572,
+                "height" : 406
+              }
+            },
+            "imageType" : "png",
+            "layerFrame" : {
+              "y" : 780,
+              "x" : 35,
+              "width" : 572,
+              "height" : 406
+            },
+            "name" : "suggestionContent"
+          },
+          {
+            "maskFrame" : null,
+            "visible" : true,
+            "id" : "B85CAADB-576B-49E8-A630-94539B1CC422",
+            "children" : [
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "E4342376-4417-4702-B9E8-720DDB7B702B",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/avatarImage-E4342376-4417-4702-B9E8-720DDB7B702B.png",
+                  "frame" : {
+                    "y" : 643,
+                    "x" : 44,
+                    "width" : 74,
+                    "height" : 74
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 643,
+                  "x" : 44,
+                  "width" : 74,
+                  "height" : 74
+                },
+                "name" : "avatarImage"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "0F310474-D5D7-4DA3-9EA9-77E952F54B27",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/subscribeButton-0F310474-D5D7-4DA3-9EA9-77E952F54B27.png",
+                  "frame" : {
+                    "y" : 650,
+                    "x" : 375,
+                    "width" : 220,
+                    "height" : 60
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 650,
+                  "x" : 375,
+                  "width" : 220,
+                  "height" : 60
+                },
+                "name" : "subscribeButton"
+              }
+            ],
+            "image" : {
+              "path" : "images\/midCard-B85CAADB-576B-49E8-A630-94539B1CC422.png",
+              "frame" : {
+                "y" : 640,
+                "x" : 17,
+                "width" : 608,
+                "height" : 536
+              }
+            },
+            "imageType" : "png",
+            "layerFrame" : {
+              "y" : 640,
+              "x" : 17,
+              "width" : 608,
+              "height" : 536
+            },
+            "name" : "midCard"
+          },
+          {
+            "maskFrame" : null,
+            "visible" : true,
+            "id" : "4961F284-1104-4CE7-921E-9AF00855F8DD",
+            "children" : [
+
+            ],
+            "image" : {
+              "path" : "images\/topCard-4961F284-1104-4CE7-921E-9AF00855F8DD.png",
+              "frame" : {
+                "y" : 377,
+                "x" : 17,
+                "width" : 608,
+                "height" : 228
+              }
+            },
+            "imageType" : "png",
+            "layerFrame" : {
+              "y" : 377,
+              "x" : 17,
+              "width" : 608,
+              "height" : 228
+            },
+            "name" : "topCard"
+          }
+        ],
+        "image" : {
+          "path" : "images\/Content-F4C4CD01-40D0-46E8-9DCE-3F803623A20B.png",
+          "frame" : {
+            "y" : 377,
+            "x" : 17,
+            "width" : 608,
+            "height" : 814
+          }
+        },
+        "imageType" : "png",
+        "layerFrame" : {
+          "y" : 377,
+          "x" : 17,
+          "width" : 608,
+          "height" : 814
+        },
+        "name" : "Content"
+      },
+      {
+        "maskFrame" : null,
+        "visible" : true,
+        "id" : "B1D76010-E9AC-425B-818D-84D1A278460A",
+        "children" : [
+          {
+            "maskFrame" : null,
+            "visible" : true,
+            "id" : "294460F1-9817-41DD-A9F0-0E30E97F6582",
+            "children" : [
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "063A8C71-FB57-4B64-8B9D-85B70E33ED03",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin1-063A8C71-FB57-4B64-8B9D-85B70E33ED03.png",
+                  "frame" : {
+                    "y" : 403,
+                    "x" : 318,
+                    "width" : 4,
+                    "height" : 15
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 403,
+                  "x" : 318,
+                  "width" : 4,
+                  "height" : 15
+                },
+                "name" : "spin1"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "BB1834C8-84FE-45C8-9C53-CF330C42977A",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin2-BB1834C8-84FE-45C8-9C53-CF330C42977A.png",
+                  "frame" : {
+                    "y" : 406,
+                    "x" : 325,
+                    "width" : 10,
+                    "height" : 15
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 406,
+                  "x" : 325,
+                  "width" : 10,
+                  "height" : 15
+                },
+                "name" : "spin2"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "7D58A021-532C-4BCF-A7EF-4C789287D932",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin3-7D58A021-532C-4BCF-A7EF-4C789287D932.png",
+                  "frame" : {
+                    "y" : 415,
+                    "x" : 330,
+                    "width" : 14,
+                    "height" : 11
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 415,
+                  "x" : 330,
+                  "width" : 14,
+                  "height" : 11
+                },
+                "name" : "spin3"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "4AA9C09D-841C-483D-9A33-3E375934C1C4",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin4-4AA9C09D-841C-483D-9A33-3E375934C1C4.png",
+                  "frame" : {
+                    "y" : 427,
+                    "x" : 331,
+                    "width" : 16,
+                    "height" : 5
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 427,
+                  "x" : 331,
+                  "width" : 16,
+                  "height" : 5
+                },
+                "name" : "spin4"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "26284114-512E-4245-B27B-A5265F8CBF69",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin5-26284114-512E-4245-B27B-A5265F8CBF69.png",
+                  "frame" : {
+                    "y" : 434,
+                    "x" : 330,
+                    "width" : 14,
+                    "height" : 11
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 434,
+                  "x" : 330,
+                  "width" : 14,
+                  "height" : 11
+                },
+                "name" : "spin5"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "CD5EBD12-146E-47B4-A5B8-5A6FD5140AB1",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin6-CD5EBD12-146E-47B4-A5B8-5A6FD5140AB1.png",
+                  "frame" : {
+                    "y" : 439,
+                    "x" : 325,
+                    "width" : 10,
+                    "height" : 15
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 439,
+                  "x" : 325,
+                  "width" : 10,
+                  "height" : 15
+                },
+                "name" : "spin6"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "1C211DCC-4893-4D89-BC22-7704C5DCAF9D",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin7-1C211DCC-4893-4D89-BC22-7704C5DCAF9D.png",
+                  "frame" : {
+                    "y" : 442,
+                    "x" : 318,
+                    "width" : 4,
+                    "height" : 15
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 442,
+                  "x" : 318,
+                  "width" : 4,
+                  "height" : 15
+                },
+                "name" : "spin7"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "6B49660E-F786-46E7-88D6-106B30A6E7BE",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin8-6B49660E-F786-46E7-88D6-106B30A6E7BE.png",
+                  "frame" : {
+                    "y" : 439,
+                    "x" : 305,
+                    "width" : 10,
+                    "height" : 15
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 439,
+                  "x" : 305,
+                  "width" : 10,
+                  "height" : 15
+                },
+                "name" : "spin8"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "DD59AC72-9D7F-4D05-B816-E526E5F46712",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin9-DD59AC72-9D7F-4D05-B816-E526E5F46712.png",
+                  "frame" : {
+                    "y" : 434,
+                    "x" : 296,
+                    "width" : 14,
+                    "height" : 11
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 434,
+                  "x" : 296,
+                  "width" : 14,
+                  "height" : 11
+                },
+                "name" : "spin9"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "9EC90DE6-E61D-4146-9DE0-5AC3065CE3E4",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin10-9EC90DE6-E61D-4146-9DE0-5AC3065CE3E4.png",
+                  "frame" : {
+                    "y" : 427,
+                    "x" : 293,
+                    "width" : 16,
+                    "height" : 5
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 427,
+                  "x" : 293,
+                  "width" : 16,
+                  "height" : 5
+                },
+                "name" : "spin10"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "0AB657B6-3C19-44B3-871A-432EAD22E8E5",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin11-0AB657B6-3C19-44B3-871A-432EAD22E8E5.png",
+                  "frame" : {
+                    "y" : 415,
+                    "x" : 296,
+                    "width" : 14,
+                    "height" : 11
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 415,
+                  "x" : 296,
+                  "width" : 14,
+                  "height" : 11
+                },
+                "name" : "spin11"
+              },
+              {
+                "maskFrame" : null,
+                "visible" : true,
+                "id" : "C11CFEFE-36CA-488C-92D6-0EDF81BB981A",
+                "children" : [
+
+                ],
+                "image" : {
+                  "path" : "images\/spin12-C11CFEFE-36CA-488C-92D6-0EDF81BB981A.png",
+                  "frame" : {
+                    "y" : 406,
+                    "x" : 305,
+                    "width" : 10,
+                    "height" : 15
+                  }
+                },
+                "imageType" : "png",
+                "layerFrame" : {
+                  "y" : 406,
+                  "x" : 305,
+                  "width" : 10,
+                  "height" : 15
+                },
+                "name" : "spin12"
+              }
+            ],
+            "image" : {
+              "path" : "images\/allSpins-294460F1-9817-41DD-A9F0-0E30E97F6582.png",
+              "frame" : {
+                "y" : 403,
+                "x" : 293,
+                "width" : 54,
+                "height" : 54
+              }
+            },
+            "imageType" : "png",
+            "layerFrame" : {
+              "y" : 403,
+              "x" : 293,
+              "width" : 54,
+              "height" : 54
+            },
+            "name" : "allSpins"
+          }
+        ],
+        "image" : {
+          "path" : "images\/Spinner-B1D76010-E9AC-425B-818D-84D1A278460A.png",
+          "frame" : {
+            "y" : 403,
+            "x" : 293,
+            "width" : 54,
+            "height" : 54
+          }
+        },
+        "imageType" : "png",
+        "layerFrame" : {
+          "y" : 403,
+          "x" : 293,
+          "width" : 54,
+          "height" : 54
+        },
+        "name" : "Spinner"
+      }
+    ],
+    "image" : {
+      "path" : "images\/Group-E2373616-7638-46EE-B98E-146672D53735.png",
+      "frame" : {
+        "y" : -3,
+        "x" : -4,
+        "width" : 648,
+        "height" : 1145
+      }
+    },
+    "imageType" : "png",
+    "layerFrame" : {
+      "y" : -3,
+      "x" : -4,
+      "width" : 648,
+      "height" : 1145
+    },
+    "name" : "Group"
+  },
+  {
+    "maskFrame" : null,
+    "visible" : true,
+    "id" : "BA708407-2745-4226-847E-23770CB9184F",
+    "children" : [
+
+    ],
+    "image" : {
+      "path" : "images\/spinGradient-BA708407-2745-4226-847E-23770CB9184F.png",
+      "frame" : {
+        "y" : 403,
+        "x" : -277,
+        "width" : 54,
+        "height" : 54
+      }
+    },
+    "imageType" : "png",
+    "layerFrame" : {
+      "y" : 403,
+      "x" : -277,
+      "width" : 54,
+      "height" : 54
+    },
+    "name" : "spinGradient"
+  }
+]

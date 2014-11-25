@@ -1,55 +1,56 @@
-/* Create layer, set properties */
-var layerA, layerB, layerC;
+/* Made with Framer
+by Benjamin den Boer
+www.framerjs.com */
+var bg, layerA, layerB;
+
+bg = new BackgroundLayer({
+  backgroundColor: "#28AFFA"
+});
+
+/* Create Layers */
 
 layerA = new Layer({
   width: 80,
   height: 80,
-  backgroundColor: "#7ed6ff",
-  borderRadius: "4px"
+  backgroundColor: "#fff",
+  borderRadius: 4
 });
 
-/* Move down 300px */
+layerA.center();
 
-layerA.animate({
-  properties: {
-    y: 300
-  }
-});
-
-/* You can animate multiple properties at once */
+layerA.x -= 50;
 
 layerB = new Layer({
   width: 80,
   height: 80,
-  x: 100,
-  backgroundColor: "#26b4f6",
-  borderRadius: "4px"
+  backgroundColor: "#fff",
+  borderRadius: 50
 });
+
+layerB.center();
+
+layerB.x += 50;
+
+/* Easing Curve Animation with Timing & Repeat
+Ease, Ease-in, Ease-Out, Ease-In-Out */
+
+layerA.animate({
+  properties: {
+    rotation: 90
+  },
+  curve: "ease",
+  time: 2,
+  repeat: 1
+});
+
+/* Spring Curve Animation with Delay
+Tension, Friction, Velocity (Bounciness, Weight, Wind-Up) */
 
 layerB.animate({
   properties: {
-    y: 300,
-    rotationZ: 360
+    rotation: 180,
+    borderRadius: 4
   },
-
-  /* Duration of the animation */
-  time: 2
-});
-
-/* Curve options describe the animation curve. The default is linear, but you can use others like "cubic-bezier" or "spring" */
-
-layerC = new Layer({
-  width: 80,
-  height: 80,
-  x: 200,
-  backgroundColor: "#0079c6",
-  borderRadius: "4px"
-});
-
-layerC.animate({
-  properties: {
-    y: 300
-  },
-  time: 3,
-  curve: "cubic-bezier"
+  curve: "spring(200,50,0)",
+  delay: 2
 });

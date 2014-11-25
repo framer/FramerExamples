@@ -1,6 +1,6 @@
-# Card Feed Prototype 
-# Jul 27, 2014
+# Made with Framer
 # by Ed Chao
+# www.framerjs.com
 
 # Vars
 # -----------

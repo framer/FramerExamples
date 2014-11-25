@@ -1,6 +1,7 @@
 {
-  "contentZoom": "100%",
-  "delay": 0.30000001192092896,
-  "device": "Fullscreen",
-  "deviceZoom": "50%"
+  "contentScale": 1,
+  "deviceOrientation": 0,
+  "deviceScale": -1,
+  "deviceType": "iphone-5s-gold-hand",
+  "updateDelay": 0.29999999999999999
 }

@@ -1,6 +1,7 @@
 {
-  "contentZoom": "75%",
-  "delay": 2.078524112701416,
-  "device": "iPhone 5S Gold",
-  "deviceZoom": "75%"
+  "contentScale": 1,
+  "deviceOrientation": 0,
+  "deviceScale": -1,
+  "deviceType": "iphone-5s-spacegray-hand",
+  "updateDelay": 0.29999999999999999
 }

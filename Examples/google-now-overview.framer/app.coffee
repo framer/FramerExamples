@@ -1,4 +1,7 @@
-# By Noah Levin www.nlevin.com
+# Made with Framer
+# by Noah Levin
+# www.framerjs.com
+
 myLayers = Framer.Importer.load("imported/GoogleNow")
 
 # Settings
@@ -56,11 +59,10 @@ gotoNow = ->
 		time: noBounceCurveSpeed
 
 goHome = ->
-
 	myLayers.ColorLogo.animate
 		properties: { y: 301, scale: 1, opacity: 1 }
 		curve: animateOutCurve
-
+	
 	myLayers.WhiteLogo.animate
 		properties: { y: 321, scale: 1.5, opacity: 0 }
 		curve: animateOutCurve
@@ -102,6 +104,7 @@ goHome = ->
 		properties: { brightness: 104 }
 		curve: noBounceCurve
 		time: noBounceCurveSpeed
+		
 
 # Hide cards that fall off the screen
 myLayers.Content.style.overflow = "hidden"

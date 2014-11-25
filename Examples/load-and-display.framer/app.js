@@ -1,3 +1,6 @@
+/* Made with Framer
+by Benjamin den Boer
+www.framerjs.com */
 var bg, canvas, container, count, currentY, items, spinner, _i;
 
 canvas = new BackgroundLayer({
@@ -14,6 +17,11 @@ bg.Screen.center();
 
 bg.Screen.pixelAlign();
 
+window.onresize = function() {
+  bg.Screen.center();
+  return bg.Screen.pixelAlign();
+};
+
 /* Mask */
 
 container = new Layer({
@@ -29,7 +37,7 @@ container.style.boxShadow = "0 3px 6px rgba(0,0,0,0.1)";
 /* Spinner made in After Effects */
 
 spinner = new VideoLayer({
-  video: "images/spinner.mp4",
+  video: "images/spinner.mov",
   width: 200,
   height: 200,
   backgroundColor: "#fff",
@@ -37,11 +45,15 @@ spinner = new VideoLayer({
   opacity: 0
 });
 
+if (Utils.isChrome()) {
+  spinner.video = "images/spinner.mp4";
+}
+
 spinner.superLayer = container;
 
 spinner.center();
 
-spinner.y = spinner.centerY() + 100;
+spinner.y = spinner.y + 100;
 
 /* 1s delay for the video to load (for web) */
 
@@ -118,4 +130,10 @@ for (count = _i = 2; _i <= 8; count = ++_i) {
   };
   items.states.animationOptions.delay = 4.5 + 1 + (0.08 * count);
   items.states["switch"]('fadein');
+}
+
+/* Retina scaling */
+
+if (window.devicePixelRatio > 1.5) {
+  bg.Screen.scale = 0.5;
 }

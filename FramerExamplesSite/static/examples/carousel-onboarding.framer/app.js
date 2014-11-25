@@ -1,4 +1,6 @@
-/* Global setup */
+/* Made with Framer
+by Josh Puckett
+www.framerjs.com */
 var PSD, c1, c2, keepHintAnimator, keepHintRun, layerGroupName, pic, scrollHintAnimator, scrollHintAnimatorRunning, scrollHintRun, shareHintAnimator, shareHintRun, splashCurve, splashHintRun, swipeHintAnimator, swipeHintAnimatorRunning;
 
 PSD = Framer.Importer.load("imported/carousel-onboarding");

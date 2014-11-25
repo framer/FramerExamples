@@ -1,3 +1,7 @@
+# Made with Framer
+# by Benjamin den Boer
+# www.framerjs.com
+
 canvas = new BackgroundLayer backgroundColor: "#f9f9f9"
 
 # Sketch Import
@@ -5,17 +9,24 @@ bg = Framer.Importer.load "imported/Progress Prototype"
 bg.Screen.superLayer = canvas
 bg.Screen.center()
 bg.Screen.pixelAlign()
-
+window.onresize = ->
+	bg.Screen.center()
+	bg.Screen.pixelAlign()
+	
 # Mask
 container = new Layer width:640, height:1136, backgroundColor:"#fff"
 container.superLayer = bg.Background
 container.style.boxShadow = "0 3px 6px rgba(0,0,0,0.1)"
 
 # Spinner made in After Effects
-spinner = new VideoLayer video: "images/spinner.mp4", width:200, height: 200, backgroundColor: "#fff", rotation: 90, opacity:0
+spinner = new VideoLayer video: "images/spinner.mov", width:200, height:200, backgroundColor: "#fff", rotation: 90, opacity:0
+
+if Utils.isChrome()
+	spinner.video = "images/spinner.mp4"
+	
 spinner.superLayer = container
 spinner.center()
-spinner.y = spinner.centerY() + 100
+spinner.y = spinner.y + 100
 
 # 1s delay for the video to load (for web)
 Utils.delay 1, ->
@@ -69,3 +80,6 @@ for count in [2..8]
 	items.states.animationOptions.delay = 4.5 + 1 + (0.08 * count)
 	items.states.switch 'fadein'
 	
+# Retina scaling
+if window.devicePixelRatio > 1.5
+	bg.Screen.scale = 0.5

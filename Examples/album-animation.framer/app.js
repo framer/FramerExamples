@@ -1,4 +1,6 @@
-/* Background, Import, Position and Animation Defaults ––––––––––––––––––– */
+/* Made with Framer
+by Jorn van Dijk
+www.framerjs.com */
 var albums, bg, colors, count, layerGroup, _i, _j;
 
 bg = new BackgroundLayer({
@@ -16,6 +18,10 @@ layerGroup.View.shadowColor = "rgba(0, 0, 0, 0.6)";
 layerGroup.View.clip = true;
 
 layerGroup.View.center();
+
+window.onresize = function() {
+  return layerGroup.View.center();
+};
 
 Framer.Defaults.Animation = {
   curve: "spring",
@@ -86,3 +92,9 @@ Utils.delay(1, function() {
     return layerGroup.Color4.states.next();
   });
 });
+
+/* Retina scaling */
+
+if (window.devicePixelRatio > 1.5) {
+  layerGroup.View.scale = 0.75;
+}

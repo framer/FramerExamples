@@ -1,36 +1,55 @@
+(function() {
+
+function isFramerStudio() {
+	return (navigator.userAgent.indexOf("FramerStudio") != -1)
+}
+
 function showAlert() {
 
-	var alertNode = document.createElement("div");
-	alertNode.classList.add("framerAlert");
-	alertNode.innerHTML  = "Error: Chrome has security restrictions loading local files. Safari works fine.<br> You can get Chrome to work by running this on a small webserver. <a href='https://github.com/koenbok/Framer/wiki/LocalLoading'>Read more here</a>.";
+	var alertNode = document.createElement("div")
+
+	alertNode.classList.add("framerAlert")
+	alertNode.innerHTML  = "Error: Chrome has security restrictions loading local files. Safari works fine.<br>"
+	alertNode.innerHTML += " You can get Chrome to work by running this on a small webserver. "
+	alertNode.innerHTML += "<a href='https://github.com/koenbok/Framer/wiki/LocalLoading'>Read more here</a>."
+	
+	console.log(alertNode.innerHTML)
 
 	document.addEventListener("DOMContentLoaded", function(event) {
-		document.body.appendChild(alertNode);
-	});
-};
+		document.body.appendChild(alertNode)
+	})
 
-function loadApp() {
-
-	var scriptNode = document.createElement("script");
-	scriptNode.setAttribute("src", "app.coffee");
-	scriptNode.setAttribute("type", "text/coffeescript");
-
-	document.head.appendChild(scriptNode);
-};
+}
 
 function init() {
 
-	// Only run this outside of Framer Studio
-	if (navigator.userAgent.indexOf("FramerStudio") != -1)
+	if (isFramerStudio()) {
 		return
+	}
 
-	// See if this is Chrome and local, and throw a warning if that is the case
-	// Otherwise, just insert the app.coffee script so the transpiler picks it up
-	if (window.chrome && location.protocol == "file:")
-		showAlert();
-	else
-		loadApp();
-};
+	// If no title was set we set it to the project folder name so
+	// you get a nice name on iOS if you bookmark to desktop.
+	document.addEventListener("DOMContentLoaded", function() {
+		if (document.title == "") {
+			document.title = window.location.pathname.replace(/\//g, "")
+		}
+	})
 
-init();
+	xhr = new window.XMLHttpRequest()
+	xhr.open("GET", "app.coffee", true)
+	
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState == 4 && xhr.responseText != "") {
+			CoffeeScript.eval(xhr.responseText)
+		} else {
+			showAlert()
+		}
+	}
+	
+	xhr.send(null)
 
+}
+
+init()
+
+})()

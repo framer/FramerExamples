@@ -1,4 +1,7 @@
-# Global setup
+# Made with Framer
+# by Josh Puckett
+# www.framerjs.com
+
 PSD = Framer.Importer.load "imported/carousel-onboarding"
 
 # Make all the imported layers available on the root
@@ -14,8 +17,6 @@ btnContinue.y = 1100
 swipeHint.scale = 1.3
 swipeHint.opacity = 0
 
-
-
 pic = [pic1, pic2, pic3, pic4, pic5, pic6, btnContinue, splashPhone]
 pic1.properties = {x:-50, y:800, rotation:10 }
 pic2.properties = {x:200, y:950, scale:1.4 }
@@ -23,7 +24,6 @@ pic3.properties = {x:420, y:980, rotation: -3, scale:1.5}
 pic4.properties = {x:250, y:800, rotation:1, scale:1.4}
 pic5.properties = {x:80, y:790, rotation:-7, scale:1.4}
 pic6.properties = {x:430, y:800, rotation:7, scale:1.4}
-
 
 splashCurve = 'spring(60,12,0)'
 welcome.scale = 0 
@@ -41,6 +41,7 @@ splashHintRun = true
 scrollHintRun = false
 shareHintRun = false
 keepHintRun = false
+
 # These are used when scrolling is triggered from a click to ensure that we call the animation only once and the other clicks simply return. The technique is simply to set a var to true, and after the first click on a view, immediately set that var to false
 c1 = true	
 c2 = true

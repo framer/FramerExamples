@@ -1,4 +1,6 @@
-/* By Noah Levin www.nlevin.com */
+/* Made with Framer
+by Noah Levin
+www.framerjs.com */
 var animateInCurve, animateOutCurve, goHome, gotoNow, myLayers, noBounceCurve, noBounceCurveSpeed, toggler;
 
 myLayers = Framer.Importer.load("imported/GoogleNow");

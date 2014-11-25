@@ -1,6 +1,7 @@
 {
-  "contentZoom": "100%",
-  "delay": 0.45653140544891357,
-  "device": "Fullscreen",
-  "deviceZoom": "50%"
+  "contentScale": 1,
+  "deviceOrientation": 0,
+  "deviceScale": -1,
+  "deviceType": "fullscreen",
+  "updateDelay": 0.29999999999999999
 }
