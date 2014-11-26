@@ -1,12 +1,9 @@
-var Layers, bg, canvas, getFrameByIndex, getIndexByFrame, i, layer, layerAtIndex, listHeight, listWidth, yDistance, _i;
-
-document.body.style.cursor = "none";
-
 /* Made with Framer
 by Benjamin den Boer & Koen Bok
 www.framerjs.com */
 
 /* Variables */
+var Layers, bg, canvas, getFrameByIndex, getIndexByFrame, i, layer, layerAtIndex, listHeight, listWidth, yDistance, _i;
 
 listWidth = 320;
 
