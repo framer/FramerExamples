@@ -136,8 +136,8 @@ detailView.on Events.DragEnd, ()->
 		currentCard.video.player.pause()
 		backBtn.visible = false
 		exitDetailView(currentCard)
-	# Otherwise, keep going without exiting
 	else
+		# Otherwise, keep going without exiting
 		backBtn.visible = true
 	# Get ready to snap the detail view one way or another
 	newY = -910
@@ -148,8 +148,8 @@ detailView.on Events.DragEnd, ()->
 		 detailContent.visible = true if currentCard.isSelected
 		 currentCard.overlay.opacity = 1
 		 currentCard.video.player.play()
-	# Or if it's scrolled up, snap into text details
 	else
+		# Or if it's scrolled up, snap into text details
 		header.animate
 			properties:
 				y: 20

@@ -24,6 +24,11 @@ for fileName in os.listdir(path):
 			os.path.join(filePath, "index.html"),
 		)
 
+	shutil.copyfile(
+		os.path.join(os.path.dirname(__file__), "..", "Data", "readme.md"),
+		os.path.join(filePath, "readme.md"),
+	)
+
 	print "Zipping example project '%s'" % filePath
 
 	run("cd '%s'; zip -r '%s.zip' '%s'" % (path, fileName, fileName))
