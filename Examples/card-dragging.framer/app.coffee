@@ -53,6 +53,8 @@ card.on Events.DragMove, (event) ->
 			rotationX: -cardRotationX
 			rotationY: cardRotationY
 		curve: "spring(900,80,0)"
+
+	print cardRotationX
 			
 
 card.on Events.DragEnd, ->
