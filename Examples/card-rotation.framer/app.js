@@ -1,10 +1,8 @@
-/* Made with Framer
-by Wilson Miner
-www.framerjs.com */
 var bg, card, originalX, originalY, springCurve;
 
 bg = new BackgroundLayer({
-  backgroundColor: "#C8C9C1"
+  backgroundColor: "#C8C9C1",
+  perspective: 1000
 });
 
 /* Card */
@@ -15,7 +13,8 @@ card = new Layer({
   y: 640,
   scale: .5,
   z: 100,
-  image: "images/BearCardL@2x.png"
+  image: "images/BearCardL@2x.png",
+  superLayer: bg
 });
 
 card.draggable.enabled = true;

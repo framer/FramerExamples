@@ -1,7 +1,24 @@
 /* Made with Framer
 by Koen Bok
 www.framerjs.com */
-var ballCurve, cols, margin, rows, size, startDelta, _i, _results;
+var ballCurve, bg, cols, container, margin, rows, size, startDelta, _i, _results;
+
+bg = new BackgroundLayer({
+  backgroundColor: "#A793E8"
+});
+
+container = new Layer({
+  backgroundColor: "transparent",
+  clip: false,
+  width: 600,
+  height: 600
+});
+
+container.center();
+
+window.onresize = function() {
+  return container.center();
+};
 
 rows = 4;
 
@@ -30,17 +47,16 @@ startDelta = 200;
     ball = new Layer({
       x: b * (size + margin),
       y: a * (size + margin) + startDelta,
+      backgroundColor: "white",
       width: size,
       height: size,
       opacity: 0,
-      borderRadius: 100
+      borderRadius: 100,
+      superLayer: container
     });
     R1 = 200 / cols * a;
     G1 = 200 / rows * b;
     B1 = 255;
-    ball.style = {
-      backgroundColor: "rgba(" + R1 + "," + G1 + "," + B1 + ",1)"
-    };
     return ball.animate({
       properties: {
         y: a * (size + margin),

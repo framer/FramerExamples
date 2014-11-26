@@ -1,9 +1,11 @@
+# This imports all the layers for "Examples Page - Flow 7" into examplesPageFlow7Layers
+examplesPageFlow7Layers = Framer.Importer.load "imported/Examples Page - Flow 7"
+
 # Made with Framer
 # by Ed Chao
 # www.framerjs.com
 
 # Vars
-# -----------
 cardStartPos = 680
 imageStartPos = 0
 cardHeight = 400
@@ -15,17 +17,12 @@ springStiff = 'spring(800,50,0)'
 springLoose = 'spring(600,40,0)'
 parallaxVal = 6
 
-
 # BG Layer
-# -----------
 bgLayer = new Layer
  x:0, y:0, width:640, height:1136, backgroundColor:'#e9e9e9'
-	
 bgLayer.clip = true
 
-
 # Under Layers
-# -----------	
 info = new Layer
 	x:0, y:300, midX:320, width:640, height:188, backgroundColor: 'transparent'
 info.html = 'Ed Chao'
@@ -57,8 +54,7 @@ info.superLayer = bgLayer
 logout.superLayer = bgLayer
 profile.superLayer = bgLayer
 	
-# Main Layers
-# -----------		
+# Main Layers	
 container = new Layer
  x:0, y:0, width:640, height:1136, backgroundColor:'#000', clip: true
 container.shadowColor = 'rgba(0,0,0,0.5)'
@@ -264,8 +260,8 @@ cardA.on Events.DragEnd, ->
 				y: imageStartPos - screenHeight
 			curve: springStiff
 			
-	# go up one
 	else
+		# go up one
 		this.animate
 			properties:
 				y: screenHeight + cardStartPos
@@ -286,9 +282,8 @@ cardA.on Events.DragEnd, ->
 cardB.on Events.DragEnd, ->
 	if this.y < 800
 		
-		# bounce back
 		if this.y > 400
-			
+			# Bounce back
 			this.animate
 				properties:
 					y: cardStartPos
@@ -305,9 +300,8 @@ cardB.on Events.DragEnd, ->
 				properties:
 					y: -screenHeight
 				curve: springStiff
-		
-		#go down one
 		else	
+			# Go down one
 			this.animate
 				properties:
 					y: -cardHeight - 40
@@ -324,9 +318,8 @@ cardB.on Events.DragEnd, ->
 				properties:
 					y: imageStartPos - screenHeight
 				curve: springStiff
-
-	# go up one
 	else
+		# Go up one
 		this.animate
 			properties:
 				y: screenHeight + cardStartPos
@@ -350,10 +343,8 @@ cardB.on Events.DragEnd, ->
 
 cardC.on Events.DragEnd, ->
 	if this.y < 800
-		
-		# bounce back
+		# Bounce back
 		if this.y > 400
-			
 			this.animate
 				properties:
 					y: cardStartPos
@@ -367,8 +358,8 @@ cardC.on Events.DragEnd, ->
 					y: screenHeight
 				curve: springStiff
 		
-		#go down one
 		else	
+			# Go down one
 			this.animate
 				properties:
 					y: -cardHeight - 40
@@ -387,7 +378,6 @@ cardC.on Events.DragEnd, ->
 				curve: springStiff
 
 	else
-		
 			this.animate
 				properties:
 					y: cardStartPos

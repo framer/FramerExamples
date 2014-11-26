@@ -1,5 +1,7 @@
+document.body.style.cursor = "none"
+
 # Made with Framer
-# by Koen Bok & Benjamin den Boer
+# by Benjamin den Boer & Koen Bok
 # www.framerjs.com
 
 # Variables
@@ -122,5 +124,4 @@ for i in [0..3]
 			
 		# Reset index, delayed to prevent shadow cut-off
 		Utils.delay 0.4, ->
-			layer.shadowColor = "rgba(0,0,0,0.2)"
-			
+			layer.shadowColor = "rgba(0,0,0,0.2)"		

@@ -3,7 +3,6 @@
 # www.framerjs.com
 
 # Vars
-# -----------
 cardStartPos = 680
 imageStartPos = 0
 cardHeight = 400
@@ -15,9 +14,7 @@ springStiff = 'spring(800,50,0)'
 springLoose = 'spring(600,40,0)'
 parallaxVal = 6
 
-
 # BG Layer
-# -----------
 bgLayer = new Layer
  x:0, y:0, width:640, height:1136, backgroundColor:'#e9e9e9'
 	
@@ -25,7 +22,6 @@ bgLayer.clip = true
 
 
 # Under Layers
-# -----------	
 info = new Layer
 	x:0, y:300, midX:320, width:640, height:188, backgroundColor: 'transparent'
 info.html = 'Ed Chao'
@@ -58,7 +54,6 @@ logout.superLayer = bgLayer
 profile.superLayer = bgLayer
 	
 # Main Layers
-# -----------		
 container = new Layer
  x:0, y:0, width:640, height:1136, backgroundColor:'#000', clip: true
 container.shadowColor = 'rgba(0,0,0,0.5)'
@@ -68,14 +63,11 @@ container.superLayer = bgLayer
 imageA = new Layer 
 	x:10, y:imageStartPos, midX:screenMidX, width:1709, height:1136, scale:1, superLayer: container, image:"images/3CoEETpvQYO8x60lnZSA_rue.jpg"
 
-
 imageB = new Layer 
 	x:10, y:imageStartPos - screenHeight, midX:screenMidX, scale:1, width:1704, height:1136, superLayer: container, image:"images/EOZpjI3oSqKPNnF2S4Tp_Untitled.jpg"
 
-
 imageC = new Layer 
 	x:10, y:imageStartPos - screenHeight * 2, midX:screenMidX, scale:1, width:1704, height:1136, superLayer: container, image:"images/lUUnN7VGSoWZ3noefeH7_Baker Beach-12.jpg"
-	
 	
 cardA = new Layer
 	x: 0
@@ -131,7 +123,6 @@ cardC.draggable.enabled = true
 cardC.draggable.speedX = 0
 cardC.draggable.speedY = 2
 
-
 chevron = new Layer 
 	x:500, y:140, width:100, height:90, backgroundColor:'transparent', superLayer: cardC
 
@@ -161,12 +152,11 @@ back = new Layer
 
 back.rotationZ = -90
 	
-# ----------------
-#      EVENTS 
-# ----------------
+
+# EVENTS 
+# ------
 
 # Drill in to Card
-# -----------
 chevron.on Events.Click, ->
 	searchModal.animate	
 		properties: 
@@ -186,7 +176,6 @@ chevron.on Events.Click, ->
 		curve: springVal
 
 # Drill back to Carousel
-# -----------
 back.on Events.Click, ->
 	searchModal.animate	
 		properties: 
@@ -204,10 +193,8 @@ back.on Events.Click, ->
 		properties: 
 			rotationZ: -90
 		curve: springVal
-
 		
 # Card Carousel
-# -----------		
 cardA.on Events.DragMove, ->
 	imageA.animate
 		properties:
@@ -242,11 +229,9 @@ cardC.on Events.DragMove, ->
 			y: screenHeight + (this.y - cardStartPos)/parallaxVal
 		time: 0
 
-		
 cardA.on Events.DragEnd, ->
-	
-	#bounce back
 	if this.y < 800
+		# Bounce back
 		this.animate
 			properties:
 				y: cardStartPos
@@ -262,11 +247,9 @@ cardA.on Events.DragEnd, ->
 		imageB.animate
 			properties:
 				y: imageStartPos - screenHeight
-			curve: springStiff
-			
-	
+			curve: springStiff		
 	else
-		# go up one
+		# Go up one
 		this.animate
 			properties:
 				y: screenHeight + cardStartPos
@@ -286,10 +269,8 @@ cardA.on Events.DragEnd, ->
 
 cardB.on Events.DragEnd, ->
 	if this.y < 800
-		
-		# bounce back
+		# Bounce back
 		if this.y > 400
-			
 			this.animate
 				properties:
 					y: cardStartPos
@@ -307,8 +288,8 @@ cardB.on Events.DragEnd, ->
 					y: -screenHeight
 				curve: springStiff
 		
-		else
-			# go down one
+		else	
+			# Go down one
 			this.animate
 				properties:
 					y: -cardHeight - 40
@@ -327,7 +308,7 @@ cardB.on Events.DragEnd, ->
 				curve: springStiff
 
 	else
-		# go up one
+		# Go up one
 		this.animate
 			properties:
 				y: screenHeight + cardStartPos
@@ -351,10 +332,8 @@ cardB.on Events.DragEnd, ->
 
 cardC.on Events.DragEnd, ->
 	if this.y < 800
-		
-		# bounce back
 		if this.y > 400
-			
+			# Bounce back
 			this.animate
 				properties:
 					y: cardStartPos
@@ -368,8 +347,8 @@ cardC.on Events.DragEnd, ->
 					y: screenHeight
 				curve: springStiff
 		
-		#go down one
 		else	
+			# Go down one
 			this.animate
 				properties:
 					y: -cardHeight - 40
@@ -388,7 +367,6 @@ cardC.on Events.DragEnd, ->
 				curve: springStiff
 
 	else
-		
 			this.animate
 				properties:
 					y: cardStartPos
@@ -397,7 +375,6 @@ cardC.on Events.DragEnd, ->
 				properties:
 					y: imageStartPos
 				curve: springStiff	
-
 		
 menu.on Events.Click, ->
 	if container.scale is 1
@@ -425,15 +402,10 @@ menu.on Events.Click, ->
 				rotationZ: -90
 			curve: springVal
 			
-# ----------------
-#      CONTAINER - WHEN SHRUNK 
-# ----------------
-
-
+# Container - When Shrunk
+# -----------------------
 container.on Events.DragEnd, ->
 	container.animate
 		properties:
 			x: 0
 		curve: springVal
-
-

@@ -1,12 +1,10 @@
 # Made with Framer
-# by Benjamin den Bo
+# by Benjamin den Boer
 # www.framerjs.com
 
-bg = new BackgroundLayer backgroundColor: "#fff"
+bg = new BackgroundLayer backgroundColor: "#ABE86A"
 	
-layerA = new Layer width:200, height: 200, image:"images/avatar.png", borderRadius: 150
-layerA.style.border = "4px solid #fff"
-layerA.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)"
+layerA = new Layer width:100, height:100, backgroundColor:"#fff", borderRadius:100
 layerA.center()
 originX = layerA.x
 originY = layerA.y
@@ -19,7 +17,7 @@ window.onresize = ->
 layerA.draggable.enabled = true
 
 # Horizontal dragging resistance
-layerA.draggable.speedX = 0.25
+layerA.draggable.speedX = 0.5
 
 # Vertical dragging acceleration
 layerA.draggable.speedY = 2

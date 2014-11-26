@@ -2,8 +2,7 @@
 by Ed Chao
 www.framerjs.com */
 
-/* Vars
------------ */
+/* Vars */
 var back, bgLayer, cardA, cardB, cardC, cardHeight, cardStartPos, cardWidth, chevron, container, header, imageA, imageB, imageC, imageStartPos, info, logout, menu, parallaxVal, profile, screenHeight, screenMidX, searchModal, springLoose, springStiff, springVal;
 
 cardStartPos = 680;
@@ -26,8 +25,7 @@ springLoose = 'spring(600,40,0)';
 
 parallaxVal = 6;
 
-/* BG Layer
------------ */
+/* BG Layer */
 
 bgLayer = new Layer({
   x: 0,
@@ -39,8 +37,7 @@ bgLayer = new Layer({
 
 bgLayer.clip = true;
 
-/* Under Layers
------------ */
+/* Under Layers */
 
 info = new Layer({
   x: 0,
@@ -97,8 +94,7 @@ logout.superLayer = bgLayer;
 
 profile.superLayer = bgLayer;
 
-/* Main Layers
------------ */
+/* Main Layers */
 
 container = new Layer({
   x: 0,
@@ -283,12 +279,10 @@ back = new Layer({
 
 back.rotationZ = -90;
 
-/* ----------------
-     EVENTS 
----------------- */
+/* EVENTS 
+------ */
 
-/* Drill in to Card
------------ */
+/* Drill in to Card */
 
 chevron.on(Events.Click, function() {
   searchModal.animate({
@@ -317,8 +311,7 @@ chevron.on(Events.Click, function() {
   });
 });
 
-/* Drill back to Carousel
------------ */
+/* Drill back to Carousel */
 
 back.on(Events.Click, function() {
   searchModal.animate({
@@ -347,8 +340,7 @@ back.on(Events.Click, function() {
   });
 });
 
-/* Card Carousel
------------ */
+/* Card Carousel */
 
 cardA.on(Events.DragMove, function() {
   imageA.animate({
@@ -403,6 +395,8 @@ cardC.on(Events.DragMove, function() {
 
 cardA.on(Events.DragEnd, function() {
   if (this.y < 800) {
+
+    /* Bounce back */
     this.animate({
       properties: {
         y: cardStartPos
@@ -429,7 +423,7 @@ cardA.on(Events.DragEnd, function() {
     });
   } else {
 
-    /* go up one */
+    /* Go up one */
     this.animate({
       properties: {
         y: screenHeight + cardStartPos
@@ -460,7 +454,7 @@ cardA.on(Events.DragEnd, function() {
 cardB.on(Events.DragEnd, function() {
   if (this.y < 800) {
 
-    /* bounce back */
+    /* Bounce back */
     if (this.y > 400) {
       this.animate({
         properties: {
@@ -488,7 +482,7 @@ cardB.on(Events.DragEnd, function() {
       });
     } else {
 
-      /* go down one */
+      /* Go down one */
       this.animate({
         properties: {
           y: -cardHeight - 40
@@ -516,7 +510,7 @@ cardB.on(Events.DragEnd, function() {
     }
   } else {
 
-    /* go up one */
+    /* Go up one */
     this.animate({
       properties: {
         y: screenHeight + cardStartPos
@@ -552,9 +546,9 @@ cardB.on(Events.DragEnd, function() {
 
 cardC.on(Events.DragEnd, function() {
   if (this.y < 800) {
-
-    /* bounce back */
     if (this.y > 400) {
+
+      /* Bounce back */
       this.animate({
         properties: {
           y: cardStartPos
@@ -574,6 +568,8 @@ cardC.on(Events.DragEnd, function() {
         curve: springStiff
       });
     } else {
+
+      /* Go down one */
       this.animate({
         properties: {
           y: -cardHeight - 40
@@ -651,9 +647,8 @@ menu.on(Events.Click, function() {
   }
 });
 
-/* ----------------
-     CONTAINER - WHEN SHRUNK 
----------------- */
+/* Container - When Shrunk
+----------------------- */
 
 container.on(Events.DragEnd, function() {
   return container.animate({

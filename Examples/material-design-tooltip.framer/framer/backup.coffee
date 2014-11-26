@@ -2,10 +2,7 @@
 # by Benjamin den Boer
 # www.framerjs.com
 
-canvas = new BackgroundLayer backgroundColor:"#F1F1F1"
-
-wrapper = new Layer width:192, height:300
-wrapper.center()
+canvas = new BackgroundLayer backgroundColor:"#fff"
 
 # Transparent Layer
 button = new Layer width:192, height:96, 

@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 1416480419.891698
+# 1417004099.581847
 CACHE:
 /_server/server.js
 ../.temp.html
@@ -14,6 +14,8 @@ CACHE:
 ../framer/framer.generated.js
 ../framer/framer.js
 ../framer/framer.js.map
+../framer/framer.js.map.old
+../framer/framer.js.old
 ../framer/images/background.png
 ../framer/images/cursor.png
 ../framer/images/cursor@2x.png

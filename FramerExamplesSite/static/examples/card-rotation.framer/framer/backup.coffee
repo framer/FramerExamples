@@ -1,8 +1,9 @@
-bg = new BackgroundLayer backgroundColor: "#C8C9C1"
+bg = new BackgroundLayer backgroundColor: "#C8C9C1", perspective: 1000
 
 # Card
 card = new Layer
-	width:480, height:720, y:640, scale:.5, z:100, image:"images/BearCardL@2x.png"
+	width:480, height:720, y:640, scale:.5, z:100, 
+	image:"images/BearCardL@2x.png", superLayer: bg
 
 card.draggable.enabled = true
 card.center()
@@ -48,13 +49,13 @@ card.on Events.DragMove, (event) ->
 	card.states.switch("drag")	
 	card.shadowX = (card.x - card.dragStartX) * -0.125
 	card.shadowY = (card.y - card.dragStartY) * -0.125
+		
 	card.animate
 		properties:
 			rotationX: -cardRotationX
 			rotationY: cardRotationY
 		curve: "spring(900,80,0)"
 			
-
 card.on Events.DragEnd, ->
 	card.animate
 		properties:

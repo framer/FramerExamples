@@ -1,3 +1,5 @@
+document.body.style.cursor = "none"
+
 # Made with Framer
 # by Benjamin den Boer & Koen Bok
 # www.framerjs.com
