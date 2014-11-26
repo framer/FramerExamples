@@ -264,8 +264,9 @@ cardA.on Events.DragEnd, ->
 				y: imageStartPos - screenHeight
 			curve: springStiff
 			
-	# go up one
+	
 	else
+		# go up one
 		this.animate
 			properties:
 				y: screenHeight + cardStartPos

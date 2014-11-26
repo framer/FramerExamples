@@ -93,7 +93,7 @@ exports.Animation = (function(_super) {
   }
 
   Animation.prototype.start = function() {
-    var AnimatorClass, k, key, runningAnimation, v, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3,
+    var AnimatorClass, animation, k, property, v, _ref, _ref1, _ref2,
       _this = this;
     if (this.options.layer === null) {
       console.error("Animation: missing layer");
@@ -126,32 +126,27 @@ exports.Animation = (function(_super) {
       console.warn("Animation: nothing to animate, all properties are equal to what it is now");
       return false;
     }
-    _ref1 = this._target.animations();
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      runningAnimation = _ref1[_i];
-      _ref2 = _.keys(runningAnimation._stateA);
-      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-        key = _ref2[_j];
-        if (this._stateA.hasOwnProperty(key)) {
-          console.warn("Animation: property " + key + " is already being animated for this layer by another animation, so we bail");
-          return false;
-        }
+    _ref1 = this._target.animatingProperties();
+    for (property in _ref1) {
+      animation = _ref1[property];
+      if (this._stateA.hasOwnProperty(property)) {
+        animation.stop();
       }
     }
     if (this.options.debug) {
       console.log("Animation.start");
-      _ref3 = this._stateB;
-      for (k in _ref3) {
-        v = _ref3[k];
+      _ref2 = this._stateB;
+      for (k in _ref2) {
+        v = _ref2[k];
         console.log("\t" + k + ": " + this._stateA[k] + " -> " + this._stateB[k]);
       }
     }
     if (this._repeatCounter > 0) {
       this.once("end", function() {
-        var _ref4;
-        _ref4 = _this._stateA;
-        for (k in _ref4) {
-          v = _ref4[k];
+        var _ref3;
+        _ref3 = _this._stateA;
+        for (k in _ref3) {
+          v = _ref3[k];
           _this._target[k] = v;
         }
         _this._repeatCounter--;
@@ -407,7 +402,7 @@ exports.AnimationLoop = (function(_super) {
 
   function AnimationLoop() {
     this.start = __bind(this.start, this);
-    this.fps = 60;
+    this.delta = 1 / 60;
     this.raf = true;
     if (Utils.webkitVersion() > 600 && Utils.isDesktop()) {
       this.raf = false;
@@ -423,9 +418,13 @@ exports.AnimationLoop = (function(_super) {
     _timestamp = getTime();
     update = function() {
       var delta, timestamp;
-      timestamp = getTime();
-      delta = (timestamp - _timestamp) / 1000;
-      _timestamp = timestamp;
+      if (animationLoop.delta) {
+        delta = animationLoop.delta;
+      } else {
+        timestamp = getTime();
+        delta = (timestamp - _timestamp) / 1000;
+        _timestamp = timestamp;
+      }
       animationLoop.emit("update", delta);
       return animationLoop.emit("render", delta);
     };
@@ -648,10 +647,10 @@ exports.LinearAnimator = (function(_super) {
   };
 
   LinearAnimator.prototype.next = function(delta) {
+    this._time += delta;
     if (this.finished()) {
       return 1;
     }
-    this._time += delta;
     return this._time / this.options.time;
   };
 
@@ -1147,7 +1146,9 @@ Utils.domComplete(function() {
 
 
 },{"./Utils":33}],13:[function(require,module,exports){
-var Config, Counter, EventManager, Utils, _;
+var Config, Counter, EventEmitter, EventManager, Utils, _,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Utils = require("./Utils");
 
@@ -1157,13 +1158,18 @@ Config = require("./Config").Config;
 
 EventManager = require("./EventManager").EventManager;
 
+EventEmitter = require("./EventEmitter").EventEmitter;
+
 Counter = 1;
 
-exports.Context = (function() {
+exports.Context = (function(_super) {
+  __extends(Context, _super);
+
   function Context(options) {
     if (options == null) {
       options = {};
     }
+    Context.__super__.constructor.apply(this, arguments);
     Counter++;
     options = Utils.setDefaultProperties(options, {
       contextName: null,
@@ -1212,7 +1218,8 @@ exports.Context = (function() {
     this._layerList = [];
     this._animationList = [];
     this._delayTimers = [];
-    return this._delayIntervals = [];
+    this._delayIntervals = [];
+    return this.emit("reset", this);
   };
 
   Context.prototype.getRootElement = function() {
@@ -1248,10 +1255,10 @@ exports.Context = (function() {
 
   return Context;
 
-})();
+})(EventEmitter);
 
 
-},{"./Config":12,"./EventManager":18,"./Underscore":32,"./Utils":33}],14:[function(require,module,exports){
+},{"./Config":12,"./EventEmitter":17,"./EventManager":18,"./Underscore":32,"./Utils":33}],14:[function(require,module,exports){
 var Context, EventKeys, Utils, errorWarning, hideDebug, showDebug, toggleDebug, _debugStyle, _errorContext, _errorShown;
 
 Utils = require("./Utils");
@@ -2842,8 +2849,6 @@ layerProperty = function(obj, name, cssProperty, fallback, validator, set) {
 };
 
 exports.Layer = (function(_super) {
-  var scaledScreenFrame, screenOriginX, screenOriginY;
-
   __extends(Layer, _super);
 
   function Layer(options) {
@@ -2865,6 +2870,7 @@ exports.Layer = (function(_super) {
     options = Defaults.getDefaults("Layer", options);
     Layer.__super__.constructor.call(this, options);
     this._context._layerList.push(this);
+    this._id = this._context._layerList.length;
     _ref = ["minX", "midX", "maxX", "minY", "midY", "maxY"];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       k = _ref[_i];
@@ -2880,6 +2886,7 @@ exports.Layer = (function(_super) {
       this.superLayer = options.superLayer;
     }
     this._subLayers = [];
+    this._context.emit("layer:create", this);
   }
 
   Layer.define("width", layerProperty(Layer, "width", "width", 100, _.isNumber));
@@ -3186,56 +3193,59 @@ exports.Layer = (function(_super) {
     return this.y = parseInt(this.y);
   };
 
-  Layer.prototype._superOrParentLayer = function() {
-    if (this.superLayer) {
-      return this.superLayer;
-    }
-    if (this._context._parentLayer) {
-      return this._context._parentLayer;
-    }
-  };
-
-  screenOriginX = function() {
-    if (this._superOrParentLayer()) {
-      return this._superOrParentLayer().screenOriginX();
-    }
-    return this.originX;
-  };
-
-  screenOriginY = function() {
-    if (this._superOrParentLayer()) {
-      return this._superOrParentLayer().screenOriginY();
-    }
-    return this.originY;
-  };
-
   Layer.prototype.screenScaleX = function() {
-    if (this._superOrParentLayer()) {
-      return this._superOrParentLayer().screenScaleX();
+    var context, scale, superLayer, _i, _len, _ref;
+    scale = this.scale * this.scaleX;
+    _ref = this.superLayers(context = true);
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      superLayer = _ref[_i];
+      scale = scale * superLayer.scale * superLayer.scaleX;
     }
-    return this.scale * this.scaleX;
+    return scale;
   };
 
   Layer.prototype.screenScaleY = function() {
-    if (this._superOrParentLayer()) {
-      return this._superOrParentLayer().screenScaleY();
+    var context, scale, superLayer, _i, _len, _ref;
+    scale = this.scale * this.scaleY;
+    _ref = this.superLayers(context = true);
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      superLayer = _ref[_i];
+      scale = scale * superLayer.scale * superLayer.scaleY;
     }
-    return this.scale * this.scaleY;
+    return scale;
   };
 
-  Layer.prototype.screenRotationX = function() {};
+  Layer.prototype.screenScaledFrame = function() {
+    var context, factorX, factorY, frame, layerScaledFrame, layers, superLayer, _i, _len;
+    frame = {
+      x: 0,
+      y: 0,
+      width: this.width * this.screenScaleX(),
+      height: this.height * this.screenScaleY()
+    };
+    layers = this.superLayers(context = true);
+    layers.push(this);
+    layers.reverse();
+    for (_i = 0, _len = layers.length; _i < _len; _i++) {
+      superLayer = layers[_i];
+      factorX = superLayer._superOrParentLayer() ? superLayer._superOrParentLayer().screenScaleX() : 1;
+      factorY = superLayer._superOrParentLayer() ? superLayer._superOrParentLayer().screenScaleY() : 1;
+      layerScaledFrame = superLayer.scaledFrame();
+      frame.x += layerScaledFrame.x * factorX;
+      frame.y += layerScaledFrame.y * factorY;
+    }
+    return frame;
+  };
 
-  Layer.prototype.screenRotationY = function() {};
-
-  Layer.prototype.screenRotationZ = function() {};
-
-  scaledScreenFrame = function() {
-    var frame;
-    frame = this.screenFrame;
-    frame.width *= this.screenScaleX();
-    frame.height *= this.screenScaleY();
-    frame.x += (this.width - frame.width) * this.screenOriginX;
-    frame.y += (this.height - frame.height) * this.screenOriginY;
+  Layer.prototype.scaledFrame = function() {
+    var frame, scaleX, scaleY;
+    frame = this.frame;
+    scaleX = this.scale * this.scaleX;
+    scaleY = this.scale * this.scaleY;
+    frame.width *= scaleX;
+    frame.height *= scaleY;
+    frame.x += (1 - scaleX) * this.originX * this.width;
+    frame.y += (1 - scaleY) * this.originY * this.height;
     return frame;
   };
 
@@ -3309,7 +3319,8 @@ exports.Layer = (function(_super) {
       _ref.removeChild(this._element);
     }
     this.removeAllListeners();
-    return this._context._layerList = _.without(this._context._layerList, this);
+    this._context._layerList = _.without(this._context._layerList, this);
+    return this._context.emit("layer:destroy", this);
   };
 
   Layer.prototype.copy = function() {
@@ -3337,6 +3348,9 @@ exports.Layer = (function(_super) {
     set: function(value) {
       var currentValue, imageUrl, loader, _ref, _ref1,
         _this = this;
+      if (!(_.isString(value) || value === null)) {
+        layerValueTypeError("image", value);
+      }
       currentValue = this._getPropertyValue("image");
       if (currentValue === value) {
         return this.emit("load");
@@ -3405,20 +3419,6 @@ exports.Layer = (function(_super) {
     }
   });
 
-  Layer.prototype.superLayers = function() {
-    var recurse, superLayers;
-    superLayers = [];
-    recurse = function(layer) {
-      if (!layer.superLayer) {
-        return;
-      }
-      superLayers.push(layer.superLayer);
-      return recurse(layer.superLayer);
-    };
-    recurse(this);
-    return superLayers;
-  };
-
   Layer.define("subLayers", {
     exportable: false,
     get: function() {
@@ -3454,6 +3454,36 @@ exports.Layer = (function(_super) {
     return _.filter(this.subLayers, function(layer) {
       return layer.name === name;
     });
+  };
+
+  Layer.prototype.superLayers = function(context) {
+    var currentLayer, superLayers;
+    if (context == null) {
+      context = false;
+    }
+    superLayers = [];
+    currentLayer = this;
+    if (context === false) {
+      while (currentLayer.superLayer) {
+        superLayers.push(currentLayer.superLayer);
+        currentLayer = currentLayer.superLayer;
+      }
+    } else {
+      while (currentLayer._superOrParentLayer()) {
+        superLayers.push(currentLayer._superOrParentLayer());
+        currentLayer = currentLayer._superOrParentLayer();
+      }
+    }
+    return superLayers;
+  };
+
+  Layer.prototype._superOrParentLayer = function() {
+    if (this.superLayer) {
+      return this.superLayer;
+    }
+    if (this._context._parentLayer) {
+      return this._context._parentLayer;
+    }
   };
 
   Layer.prototype.animate = function(options) {
@@ -3596,9 +3626,10 @@ exports.Layer = (function(_super) {
     }
   });
 
-  Layer.prototype.addListener = function(eventName, originalListener) {
-    var listener, _base,
+  Layer.prototype.addListener = function() {
+    var eventName, eventNames, listener, originalListener, _i, _j, _len, _results,
       _this = this;
+    eventNames = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), originalListener = arguments[_i++];
     if (!originalListener) {
       return;
     }
@@ -3608,29 +3639,53 @@ exports.Layer = (function(_super) {
       return originalListener.call.apply(originalListener, [_this].concat(__slice.call(args), [_this]));
     };
     originalListener.modifiedListener = listener;
-    Layer.__super__.addListener.call(this, eventName, listener);
-    this._context.eventManager.wrap(this._element).addEventListener(eventName, listener);
-    if (this._eventListeners == null) {
-      this._eventListeners = {};
+    if (typeof eventNames === 'string') {
+      eventNames = [eventNames];
     }
-    if ((_base = this._eventListeners)[eventName] == null) {
-      _base[eventName] = [];
+    _results = [];
+    for (_j = 0, _len = eventNames.length; _j < _len; _j++) {
+      eventName = eventNames[_j];
+      _results.push((function(eventName) {
+        var _base;
+        Layer.__super__.addListener.call(_this, eventName, listener);
+        _this._context.eventManager.wrap(_this._element).addEventListener(eventName, listener);
+        if (_this._eventListeners == null) {
+          _this._eventListeners = {};
+        }
+        if ((_base = _this._eventListeners)[eventName] == null) {
+          _base[eventName] = [];
+        }
+        _this._eventListeners[eventName].push(listener);
+        if (!_.startsWith(eventName, "change:")) {
+          return _this.ignoreEvents = false;
+        }
+      })(eventName));
     }
-    this._eventListeners[eventName].push(listener);
-    if (!_.startsWith(eventName, "change:")) {
-      return this.ignoreEvents = false;
-    }
+    return _results;
   };
 
-  Layer.prototype.removeListener = function(eventName, listener) {
+  Layer.prototype.removeListener = function() {
+    var eventName, eventNames, listener, _i, _j, _len, _results,
+      _this = this;
+    eventNames = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), listener = arguments[_i++];
     if (listener.modifiedListener) {
       listener = listener.modifiedListener;
     }
-    Layer.__super__.removeListener.call(this, eventName, listener);
-    this._context.eventManager.wrap(this._element).removeEventListener(eventName, listener);
-    if (this._eventListeners) {
-      return this._eventListeners[eventName] = _.without(this._eventListeners[eventName], listener);
+    if (typeof eventNames === 'string') {
+      eventNames = [eventNames];
     }
+    _results = [];
+    for (_j = 0, _len = eventNames.length; _j < _len; _j++) {
+      eventName = eventNames[_j];
+      _results.push((function(eventName) {
+        Layer.__super__.removeListener.call(_this, eventName, listener);
+        _this._context.eventManager.wrap(_this._element).removeEventListener(eventName, listener);
+        if (_this._eventListeners) {
+          return _this._eventListeners[eventName] = _.without(_this._eventListeners[eventName], listener);
+        }
+      })(eventName));
+    }
+    return _results;
   };
 
   Layer.prototype.removeAllListeners = function() {
@@ -3658,6 +3713,20 @@ exports.Layer = (function(_super) {
   Layer.prototype.on = Layer.prototype.addListener;
 
   Layer.prototype.off = Layer.prototype.removeListener;
+
+  Layer.prototype.toString = function() {
+    var round;
+    round = function(value) {
+      if (parseInt(value) === value) {
+        return parseInt(value);
+      }
+      return Utils.round(value, 1);
+    };
+    if (this.name) {
+      return "&lt;Layer id:" + this.id + " name:" + this.name + " (" + (round(this.x)) + "," + (round(this.y)) + ") " + (round(this.width)) + "x" + (round(this.height)) + "&gt;";
+    }
+    return "&lt;Layer id:" + this.id + " (" + (round(this.x)) + "," + (round(this.y)) + ") " + (round(this.width)) + "x" + (round(this.height)) + "&gt;";
+  };
 
   return Layer;
 
@@ -5025,6 +5094,7 @@ exports.VideoLayer = (function(_super) {
     }
     VideoLayer.__super__.constructor.call(this, options);
     this.player = document.createElement("video");
+    this.player.setAttribute("webkit-playsinline", "true");
     this.player.style.width = "100%";
     this.player.style.height = "100%";
     this.player.on = this.player.addEventListener;

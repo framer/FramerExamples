@@ -3348,6 +3348,9 @@ exports.Layer = (function(_super) {
     set: function(value) {
       var currentValue, imageUrl, loader, _ref, _ref1,
         _this = this;
+      if (!(_.isString(value) || value === null)) {
+        layerValueTypeError("image", value);
+      }
       currentValue = this._getPropertyValue("image");
       if (currentValue === value) {
         return this.emit("load");
@@ -5091,6 +5094,7 @@ exports.VideoLayer = (function(_super) {
     }
     VideoLayer.__super__.constructor.call(this, options);
     this.player = document.createElement("video");
+    this.player.setAttribute("webkit-playsinline", "true");
     this.player.style.width = "100%";
     this.player.style.height = "100%";
     this.player.on = this.player.addEventListener;

@@ -264,8 +264,9 @@ cardA.on Events.DragEnd, ->
 				y: imageStartPos - screenHeight
 			curve: springStiff
 			
-	# go up one
+	
 	else
+		# go up one
 		this.animate
 			properties:
 				y: screenHeight + cardStartPos
@@ -306,8 +307,8 @@ cardB.on Events.DragEnd, ->
 					y: -screenHeight
 				curve: springStiff
 		
-		#go down one
-		else	
+		else
+			# go down one
 			this.animate
 				properties:
 					y: -cardHeight - 40
@@ -325,8 +326,8 @@ cardB.on Events.DragEnd, ->
 					y: imageStartPos - screenHeight
 				curve: springStiff
 
-	# go up one
 	else
+		# go up one
 		this.animate
 			properties:
 				y: screenHeight + cardStartPos

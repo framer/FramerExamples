@@ -121,8 +121,9 @@ detailView.on Events.DragMove, ()->
 		@scale = 1-(@y/5000)
 		backBtn.visible = false
 		header.visible = false
-	# If it's moving up, start animating into text details
+	
 	else
+		# If it's moving up, start animating into text details
 		currentCard.overlay.opacity = 1+(@y/300)
 		detailContent.visible = true
 		backBtn.visible = true
