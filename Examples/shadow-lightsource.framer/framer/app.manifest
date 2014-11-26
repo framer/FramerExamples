@@ -1,7 +1,8 @@
 CACHE MANIFEST
-# 1416484839.256390
+# 1417013337.862095
 CACHE:
 /_server/server.js
+../.DS_Store
 ../.temp.html
 ../app.coffee
 ../app.js

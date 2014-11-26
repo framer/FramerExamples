@@ -14,11 +14,11 @@ layerA = new Layer({
 
 layerA.center();
 
-window.onmousemove = function(event) {
+bg.on(Events.TouchMove, function(event) {
   var alpha, delta, dist;
   delta = {
-    x: layerA.midX - event.clientX,
-    y: layerA.midY - event.clientY
+    x: layerA.midX - Events.touchEvent(event).clientX,
+    y: layerA.midY - Events.touchEvent(event).clientY
   };
   dist = Math.abs(delta.x) + Math.abs(delta.y);
   alpha = Utils.modulate(dist, [0, 150], [0, .2], true);
@@ -26,4 +26,4 @@ window.onmousemove = function(event) {
   layerA.shadowY = Utils.modulate(delta.y, [0, Screen.height / 2], [0, 50]);
   layerA.shadowBlur = Utils.modulate(dist, [0, 100], [5, 15]);
   return layerA.shadowColor = "rgba(0,0,0," + alpha + ")";
-};
+});

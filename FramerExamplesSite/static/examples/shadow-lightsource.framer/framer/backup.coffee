@@ -8,10 +8,10 @@ bg = new BackgroundLayer
 layerA = new Layer backgroundColor: "#fff", borderRadius: 4
 layerA.center()
 
-window.onmousemove = (event) ->
+bg.on Events.TouchMove, (event) ->
 	delta =
-		x: layerA.midX - event.clientX
-		y: layerA.midY - event.clientY
+		x: layerA.midX - Events.touchEvent(event).clientX
+		y: layerA.midY - Events.touchEvent(event).clientY
 	
 	dist = Math.abs(delta.x) + Math.abs(delta.y)
 	alpha = Utils.modulate dist, [0, 150], [0, .2], true

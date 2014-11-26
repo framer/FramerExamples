@@ -68,7 +68,7 @@ for (i = _i = 0; _i <= 3; i = ++_i) {
     height: listHeight,
     y: i * yDistance,
     clip: false,
-    borderRadius: "4px",
+    borderRadius: 4,
     superLayer: canvas
   });
 

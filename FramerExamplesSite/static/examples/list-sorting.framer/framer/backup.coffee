@@ -1,5 +1,3 @@
-document.body.style.cursor = "none"
-
 # Made with Framer
 # by Benjamin den Boer & Koen Bok
 # www.framerjs.com
@@ -33,7 +31,7 @@ layerAtIndex = (index) ->
 # Create list items
 for i in [0..3]
 	layer = new Layer width:listWidth, height:listHeight, y:i*yDistance, clip:false,
-	borderRadius: "4px", superLayer:canvas
+	borderRadius: 4, superLayer:canvas
 		
 	# Assign indeces
 	layer.listIndex = i
