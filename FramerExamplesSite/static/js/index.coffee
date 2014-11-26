@@ -21,9 +21,15 @@ $(document).ready ->
 		$("a.download").attr "href", "/static/examples/#{exampleName}.zip"
 
 	if not window.location.hash[1..]
+<<<<<<< HEAD
 		window.location.hash = "animation-basics.framer"
 		loadExample "animation-basics.framer"
 
+=======
+		window.location.hash = "carousel-onboarding.framer"
+		loadExample "carousel-onboarding.framer"	
+			
+>>>>>>> FETCH_HEAD
 	$(".navigation ul li a").click ->
 
 		exampleName = $(@).attr("href")[1..]
