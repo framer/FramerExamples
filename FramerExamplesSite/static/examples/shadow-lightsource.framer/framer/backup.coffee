@@ -8,6 +8,11 @@ bg = new BackgroundLayer
 layerA = new Layer backgroundColor: "#fff", borderRadius: 4
 layerA.center()
 
+color = "rgba(0,0,0,0.2)"
+color.hueRotate 
+layerA.backgroundColor = "rgba(0,0,0,0.2)"
+
+
 bg.on Events.TouchMove, (event) ->
 	delta =
 		x: layerA.midX - Events.touchEvent(event).clientX
@@ -19,4 +24,5 @@ bg.on Events.TouchMove, (event) ->
 	layerA.shadowX = Utils.modulate delta.x, [0, Screen.width /2], [0, 50]
 	layerA.shadowY = Utils.modulate delta.y, [0, Screen.height/2], [0, 50]
 	layerA.shadowBlur = Utils.modulate dist, [0, 100], [5, 15]
+	
 	layerA.shadowColor = "rgba(0,0,0,#{alpha})"

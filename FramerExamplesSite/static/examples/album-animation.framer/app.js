@@ -33,7 +33,7 @@ Framer.Defaults.Animation = {
   }
 };
 
-/* Album & Color Start States –––––––––––––––––––––––––––––––––––––––––––– */
+/* Album & Color Start States */
 
 for (count = _i = 1; _i <= 6; count = ++_i) {
   albums = layerGroup["Album" + count];
@@ -56,7 +56,7 @@ for (count = _j = 1; _j <= 4; count = ++_j) {
   colors.states.switchInstant("start");
 }
 
-/* Album Animation ––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+/* Album Animation */
 
 Utils.delay(1, function() {
   var timeFactor;

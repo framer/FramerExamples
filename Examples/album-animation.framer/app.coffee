@@ -20,7 +20,7 @@ Framer.Defaults.Animation =
 		velocity: 0
 		tolerance: 0.01
 
-# Album & Color Start States ––––––––––––––––––––––––––––––––––––––––––––
+# Album & Color Start States
 
 for count in [1..6]
 	albums = layerGroup["Album" + count]
@@ -34,7 +34,7 @@ for count in [1..4]
 		start: {opacity:0}
 	colors.states.switchInstant "start"
 
-# Album Animation –––––––––––––––––––––––––––––––––––––––––––––––––––––––
+# Album Animation
 
 Utils.delay 1, ->
 	timeFactor = 0.1
