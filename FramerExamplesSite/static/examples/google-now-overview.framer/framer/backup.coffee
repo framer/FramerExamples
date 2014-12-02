@@ -1,4 +1,7 @@
-# By Noah Levin www.nlevin.com
+# Made with Framer
+# by Noah Levin
+# www.framerjs.com
+
 myLayers = Framer.Importer.load("imported/GoogleNow")
 
 # Settings

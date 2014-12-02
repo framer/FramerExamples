@@ -1,5 +1,5 @@
 # Made with Framer
-# by Brandon Souba
+# by Aaron Carámbula
 # www.framerjs.com
 
 bg = new BackgroundLayer 
