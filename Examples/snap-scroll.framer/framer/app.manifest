@@ -1,11 +1,13 @@
 CACHE MANIFEST
-# 1423659507.753136
+# 1423660403.198788
 CACHE:
 /_server/server.js
+../.DS_Store
 ../.temp.html
 ../app.coffee
 ../app.js
 ../framer/.bowerrc
+../framer/.DS_Store
 ../framer/app.manifest
 ../framer/backup.coffee
 ../framer/coffee-script.js
@@ -13,9 +15,9 @@ CACHE:
 ../framer/framer.generated.js
 ../framer/framer.js
 ../framer/framer.js.map
+../framer/images/.DS_Store
 ../framer/images/background.png
 ../framer/images/cursor.png
-../framer/images/cursor2.png
 ../framer/images/cursor@2x.png
 ../framer/images/device-htc.png
 ../framer/images/device-htc@2x.png
