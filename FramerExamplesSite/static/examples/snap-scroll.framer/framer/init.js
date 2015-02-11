@@ -99,7 +99,11 @@ function setDefaultPageTitle() {
 	// you get a nice name on iOS if you bookmark to desktop.
 	document.addEventListener("DOMContentLoaded", function() {
 		if (document.title == "") {
-			document.title = window.location.pathname.replace(/\//g, "")
+			if (window.FramerStudioInfo && window.FramerStudioInfo.documentTitle) {
+				document.title = window.FramerStudioInfo.documentTitle
+			} else {
+				document.title = window.location.pathname.replace(/\//g, "")
+			}
 		}
 	})
 }

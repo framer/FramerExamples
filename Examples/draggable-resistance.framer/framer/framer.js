@@ -1615,7 +1615,7 @@ exports.DeviceView = (function(_super) {
     if (Utils.isFramerStudio() && window.FramerStudioInfo) {
       resourceUrl = window.FramerStudioInfo.deviceImagesUrl;
     } else {
-      resourceUrl = "http://resources.framerjs.com/static/DeviceResources";
+      resourceUrl = "//resources.framerjs.com/static/DeviceResources";
     }
     if (Utils.isJP2Supported()) {
       return "" + resourceUrl + "/" + (name.replace(".png", ".jp2"));
@@ -1668,7 +1668,7 @@ exports.DeviceView = (function(_super) {
       return this._deviceType;
     },
     set: function(deviceType) {
-      var device;
+      var device, shouldZoomToFit;
       if (deviceType === this._deviceType) {
         return;
       }
@@ -1682,6 +1682,7 @@ exports.DeviceView = (function(_super) {
       if (this._device === device) {
         return;
       }
+      shouldZoomToFit = this._deviceType === "fullscreen";
       this._device = device;
       this._deviceType = deviceType;
       this.fullscreen = false;
@@ -1689,7 +1690,10 @@ exports.DeviceView = (function(_super) {
       this._update();
       this.keyboard = false;
       this._positionKeyboard();
-      return this.emit("change:deviceType");
+      this.emit("change:deviceType");
+      if (shouldZoomToFit) {
+        return this.deviceScale = "fit";
+      }
     }
   });
 
@@ -2132,6 +2136,33 @@ Devices = {
   "fullscreen": {
     name: "Fullscreen",
     deviceType: "desktop"
+  },
+  "desktop-browser-1024": {
+    deviceType: "browser",
+    deviceImage: "desktop-safari-1024-600.png",
+    name: "Desktop Browser 1024 x 600",
+    screenWidth: 1024,
+    screenHeight: 600,
+    deviceImageWidth: 1136,
+    deviceImageHeight: 760
+  },
+  "desktop-browser-1280": {
+    deviceType: "browser",
+    deviceImage: "desktop-safari-1280-800.png",
+    name: "Desktop Browser 1280 x 800",
+    screenWidth: 1280,
+    screenHeight: 800,
+    deviceImageWidth: 1392,
+    deviceImageHeight: 960
+  },
+  "desktop-browser-1440": {
+    deviceType: "browser",
+    deviceImage: "desktop-safari-1440-900.png",
+    name: "Desktop Browser 1440 x 900",
+    screenWidth: 1440,
+    screenHeight: 900,
+    deviceImageWidth: 1552,
+    deviceImageHeight: 1060
   },
   "iphone-6-spacegray": _.extend({}, iPhone6BaseDevice, {
     deviceImage: "iphone-6-spacegray.png"
@@ -2914,11 +2945,12 @@ exports.Layer = (function(_super) {
   }));
 
   Layer.define("scroll", {
+    exportable: true,
     get: function() {
       return this.scrollHorizontal === true || this.scrollVertical === true;
     },
     set: function(value) {
-      return this.scrollHorizontal = this.scrollVertical = true;
+      return this.scrollHorizontal = this.scrollVertical = value;
     }
   });
 
@@ -3523,6 +3555,13 @@ exports.Layer = (function(_super) {
     return properties;
   };
 
+  Layer.define("isAnimating", {
+    exportable: false,
+    get: function() {
+      return this.animations().length !== 0;
+    }
+  });
+
   Layer.prototype.animateStop = function() {
     return _.invoke(this.animations(), "stop");
   };
@@ -3965,7 +4004,7 @@ exports.LayerStates = (function(_super) {
   };
 
   LayerStates.prototype["switch"] = function(stateName, animationOptions, instant) {
-    var animatingKeys, properties, propertyName, value, _ref, _ref1,
+    var animatablePropertyKeys, animatingKeys, k, properties, propertyName, v, value, _ref, _ref1,
       _this = this;
     if (instant == null) {
       instant = false;
@@ -3992,6 +4031,16 @@ exports.LayerStates = (function(_super) {
       }
       properties[propertyName] = value;
     }
+    animatablePropertyKeys = [];
+    for (k in properties) {
+      v = properties[k];
+      if (_.isNumber(v)) {
+        animatablePropertyKeys.push(k);
+      }
+    }
+    if (animatablePropertyKeys.length === 0) {
+      instant = true;
+    }
     if (instant === true) {
       this.layer.properties = properties;
       return this.emit(Events.StateDidSwitch, _.last(this._previousStates), stateName, this);
@@ -4005,6 +4054,12 @@ exports.LayerStates = (function(_super) {
       }
       this._animation = this.layer.animate(animationOptions);
       return this._animation.on("stop", function() {
+        for (k in properties) {
+          v = properties[k];
+          if (!_.isNumber(v)) {
+            _this.layer[k] = v;
+          }
+        }
         return _this.emit(Events.StateDidSwitch, _.last(_this._previousStates), stateName, _this);
       });
     }
@@ -5073,6 +5128,20 @@ Utils.convertPoint = function(input, layerA, layerB) {
     point.y -= layer.y + layer.scrollFrame.y;
   }
   return point;
+};
+
+Utils.globalLayers = function(importedLayers) {
+  var layer, layerName;
+  for (layerName in importedLayers) {
+    layer = importedLayers[layerName];
+    layerName = layerName.replace(/\s/g, "");
+    if (window.hasOwnProperty(layerName) && !window.Framer._globalWarningGiven) {
+      print("Warning: Cannot make layer '" + layerName + "' a global, an variable with that name already exists");
+    } else {
+      window[layerName] = layer;
+    }
+  }
+  return window.Framer._globalWarningGiven = true;
 };
 
 _.extend(exports, Utils);

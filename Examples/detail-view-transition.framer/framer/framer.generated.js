@@ -108,7 +108,7 @@ window.Framer.Defaults.DeviceView = {
 };
 
 window.FramerStudioInfo = {
-  "deviceImagesUrl" : "file:\/\/\/Applications\/Framer%20Studio.app\/Contents\/Resources\/DeviceImages\/"
+  "deviceImagesUrl" : "file:\/\/\/Users\/ben\/Downloads\/Framer%20Studio%20v1.9-45-g2c5b93b.app\/Contents\/Resources\/DeviceImages\/"
 };
 
 Framer.Device = new Framer.DeviceView();

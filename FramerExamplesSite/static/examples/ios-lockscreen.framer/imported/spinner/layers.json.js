@@ -1,0 +1,77 @@
+window.__imported__ = window.__imported__ || {};
+window.__imported__["spinner/layers.json.js"] = [
+  {
+    "maskFrame" : null,
+    "id" : "F821E43A-8CF2-4168-AE5C-1BB134F09732",
+    "visible" : true,
+    "children" : [
+      {
+        "maskFrame" : null,
+        "id" : "87570127-8AD8-40F2-A30B-A59B206DFC2E",
+        "visible" : true,
+        "children" : [
+
+        ],
+        "image" : {
+          "path" : "images\/spinner-87570127-8AD8-40F2-A30B-A59B206DFC2E.png",
+          "frame" : {
+            "y" : 61,
+            "x" : 889,
+            "width" : 13,
+            "height" : 13
+          }
+        },
+        "imageType" : "png",
+        "layerFrame" : {
+          "y" : 61,
+          "x" : 889,
+          "width" : 13,
+          "height" : 13
+        },
+        "name" : "spinner"
+      },
+      {
+        "maskFrame" : null,
+        "id" : "0051343A-3487-42FA-BD10-2285D64D9212",
+        "visible" : true,
+        "children" : [
+
+        ],
+        "image" : {
+          "path" : "images\/fs-0051343A-3487-42FA-BD10-2285D64D9212.png",
+          "frame" : {
+            "y" : 6,
+            "x" : 8,
+            "width" : 1319,
+            "height" : 969
+          }
+        },
+        "imageType" : "png",
+        "layerFrame" : {
+          "y" : 6,
+          "x" : 8,
+          "width" : 1319,
+          "height" : 969
+        },
+        "name" : "fs"
+      }
+    ],
+    "image" : {
+      "path" : "images\/view-F821E43A-8CF2-4168-AE5C-1BB134F09732.png",
+      "frame" : {
+        "y" : 6,
+        "x" : 8,
+        "width" : 1319,
+        "height" : 969
+      }
+    },
+    "imageType" : "png",
+    "layerFrame" : {
+      "y" : 6,
+      "x" : 8,
+      "width" : 1319,
+      "height" : 969
+    },
+    "name" : "view"
+  }
+]

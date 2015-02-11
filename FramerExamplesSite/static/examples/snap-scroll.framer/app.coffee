@@ -1,13 +1,22 @@
+
+
+Framer.Device.screen.on Events.MouseOver, ->
+	document.body.style.cursor = "none"
+	
+Framer.Device.screen.on Events.MouseOut, ->
+	document.body.style.cursor = "url(framer/images/cursor2.png) 2 2, auto"
+
 # Made with Framer
 # by Floris Verloop
 # www.framerjs.com
 
 l = Framer.Importer.load "imported/stream"
-Framer.Defaults.Animation = curve: "spring(500, 34, 0)"
+Framer.Defaults.Animation = curve: "spring(500, 36, 0)"
 
 screenW = Framer.Device.screen.width
 screenH = Framer.Device.screen.height
 bezier = "cubic-bezier(0.19, 1, 0.22, 1)"
+
 
 
 # Classes

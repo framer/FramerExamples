@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 1416480580.724615
+# 1418912285.707687
 CACHE:
 /_server/server.js
 ../.DS_Store
@@ -7,6 +7,7 @@ CACHE:
 ../app.coffee
 ../app.js
 ../framer/.bowerrc
+../framer/.DS_Store
 ../framer/app.manifest
 ../framer/backup.coffee
 ../framer/backup.js
@@ -15,10 +16,6 @@ CACHE:
 ../framer/framer.generated.js
 ../framer/framer.js
 ../framer/framer.js.map
-../framer/framer.js.map.old
-../framer/framer.js.map.old1
-../framer/framer.js.old
-../framer/framer.js.old1
 ../framer/images/background.png
 ../framer/images/cursor.png
 ../framer/images/cursor@2x.png
@@ -41,6 +38,19 @@ CACHE:
 ../images/mask.png
 ../images/spinGradient.png
 ../imported/.DS_Store
+../imported/Examples Addition Screenshots/images/badge-D6503ADA-503F-472A-9726-08EDE612E816.png
+../imported/Examples Addition Screenshots/images/Group-9D405663-E417-48C3-AD59-AABD78B59E90.png
+../imported/Examples Addition Screenshots/images/Group_3-A11272DB-850D-4F27-B782-D6FFE90E12CB.png
+../imported/Examples Addition Screenshots/images/iconcode-6BC3FC91-E814-43AC-B282-DF934E9910BC.png
+../imported/Examples Addition Screenshots/images/icondl-CEBC1597-31DD-45F1-BFF0-1DCDB3144952.png
+../imported/Examples Addition Screenshots/images/modalclosebg__Rectangle_29__Close-86632A80-1339-493B-9835-878C8264906A.png
+../imported/Examples Addition Screenshots/images/modalclosebg__Rectangle_29__Close_2-731EF623-1C24-4C40-8C24-BDAEDE6F9B13.png
+../imported/Examples Addition Screenshots/images/Path_30__Oval_58-59F7616A-C5DB-43BE-99A9-2DE1724AE3BF.png
+../imported/Examples Addition Screenshots/images/Path_30__Oval_59-06637A85-7423-449E-A1A5-C1370D29F35B.png
+../imported/Examples Addition Screenshots/images/Path_8__Path_9__Path_10-9C002647-0689-407B-8ABA-653035AB4043.png
+../imported/Examples Addition Screenshots/images/Rectangle_29__Rectangle_61-733F5687-B27E-4485-8FC3-21FFEB7A982D.png
+../imported/Examples Addition Screenshots/layers.json
+../imported/Examples Addition Screenshots/layers.json.js
 ../imported/Pull to Refresh/images/allSpins-294460F1-9817-41DD-A9F0-0E30E97F6582.png
 ../imported/Pull to Refresh/images/avatarImage-E4342376-4417-4702-B9E8-720DDB7B702B.png
 ../imported/Pull to Refresh/images/Content-F4C4CD01-40D0-46E8-9DCE-3F803623A20B.png

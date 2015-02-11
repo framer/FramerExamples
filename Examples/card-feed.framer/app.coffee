@@ -20,7 +20,6 @@ bgLayer = new Layer
 	
 bgLayer.clip = true
 
-
 # Under Layers
 info = new Layer
 	x:0, y:300, midX:320, width:640, height:188, backgroundColor: 'transparent'

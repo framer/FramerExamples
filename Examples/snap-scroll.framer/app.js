@@ -1,15 +1,24 @@
-/* Made with Framer
-by Floris Verloop
-www.framerjs.com */
 var App, Detail, Navigation, Stream, app, bezier, l, screenH, screenW,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
+Framer.Device.screen.on(Events.MouseOver, function() {
+  return document.body.style.cursor = "none";
+});
+
+Framer.Device.screen.on(Events.MouseOut, function() {
+  return document.body.style.cursor = "url(framer/images/cursor2.png) 2 2, auto";
+});
+
+/* Made with Framer
+by Floris Verloop
+www.framerjs.com */
+
 l = Framer.Importer.load("imported/stream");
 
 Framer.Defaults.Animation = {
-  curve: "spring(500, 34, 0)"
+  curve: "spring(500, 36, 0)"
 };
 
 screenW = Framer.Device.screen.width;
