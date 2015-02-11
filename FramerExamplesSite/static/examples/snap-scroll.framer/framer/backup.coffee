@@ -1,11 +1,3 @@
-
-
-Framer.Device.screen.on Events.MouseOver, ->
-	document.body.style.cursor = "none"
-	
-Framer.Device.screen.on Events.MouseOut, ->
-	document.body.style.cursor = "url(framer/images/cursor2.png) 2 2, auto"
-
 # Made with Framer
 # by Floris Verloop
 # www.framerjs.com

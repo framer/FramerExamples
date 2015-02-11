@@ -1,10 +1,11 @@
 CACHE MANIFEST
-# 1422537640.982006
+# 1423662876.822359
 CACHE:
 /_server/server.js
 ../.DS_Store
 ../.temp.html
 ../app.coffee
+../app.js
 ../framer/.bowerrc
 ../framer/.DS_Store
 ../framer/app.manifest
@@ -14,9 +15,9 @@ CACHE:
 ../framer/framer.generated.js
 ../framer/framer.js
 ../framer/framer.js.map
+../framer/images/.DS_Store
 ../framer/images/background.png
 ../framer/images/cursor.png
-../framer/images/cursor2.png
 ../framer/images/cursor@2x.png
 ../framer/images/device-htc.png
 ../framer/images/device-htc@2x.png
@@ -36,7 +37,6 @@ CACHE:
 ../framer/style.css
 ../framer/version
 ../images/framer-icon.png
-../imported/.DS_Store
 ../imported/dribbble/images/Battery_Icon-FEA81CD0-ABF2-4FAA-A29C-A8D2DF068CD5.png
 ../imported/dribbble/images/Charge-5014FF33-BE5A-4CDD-881B-463F5487E171.png
 ../imported/dribbble/images/detailContent-7A16F014-34AA-44C4-80F8-C0B8BA12F638.png

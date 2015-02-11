@@ -846,7 +846,6 @@ exports.BackgroundLayer = (function(_super) {
     if (options.backgroundColor == null) {
       options.backgroundColor = "#fff";
     }
-    options.name = "Background";
     BackgroundLayer.__super__.constructor.call(this, options);
     this.sendToBack();
     this.layout();
@@ -1138,7 +1137,7 @@ var FramerCSS, Utils;
 
 Utils = require("./Utils");
 
-FramerCSS = "body {\n	margin: 0;\n}\n\n.framerContext {	\n	position: absolute;\n	left: 0;\n	top: 0;\n	right: 0;\n	bottom: 0;\n	pointer-events: none;\n	overflow: hidden;\n}\n\n.framerLayer {\n	display: block;\n	position: absolute;\n	background-repeat: no-repeat;\n	background-size: cover;\n	-webkit-overflow-scrolling: touch;\n	-webkit-box-sizing: border-box;\n	-webkit-user-select: none;\n}\n\n.framerLayer input,\n.framerLayer textarea,\n.framerLayer select,\n.framerLayer option\n{\n	pointer-events: auto;\n	-webkit-user-select: auto;\n}\n\n.framerDebug {\n	padding: 6px;\n	color: #fff;\n	font: 10px/1em Monaco;\n}\n";
+FramerCSS = "body {\n	margin: 0;\n}\n\n.framerContext {	\n	position: absolute;\n	left: 0;\n	top: 0;\n	right: 0;\n	bottom: 0;\n	pointer-events: none;\n	overflow: hidden;\n}\n\n.framerLayer {\n	display: block;\n	position: absolute;\n	background-repeat: no-repeat;\n	background-size: cover;\n	-webkit-overflow-scrolling: touch;\n	-webkit-box-sizing: border-box;\n	-webkit-user-select: none;\n}\n\n.framerLayer input,\n.framerLayer textarea,\n.framerLayer select,\n.framerLayer option,\n.framerLayer div[contenteditable=true]\n{\n	pointer-events: auto;\n	-webkit-user-select: auto;\n}\n\n.framerDebug {\n	padding: 6px;\n	color: #fff;\n	font: 10px/1em Monaco;\n}\n";
 
 Utils.domComplete(function() {
   return Utils.insertCSS(FramerCSS);
@@ -1436,7 +1435,7 @@ exports.Defaults = {
 
 
 },{"./Underscore":32,"./Utils":33}],16:[function(require,module,exports){
-var AppleWatchDevice, BaseClass, Defaults, DeviceViewDefaultDevice, Devices, Events, Layer, Nexus5BaseDevice, Nexus5BaseDeviceHand, Utils, iPadAirBaseDevice, iPadAirBaseDeviceHand, iPadMiniBaseDevice, iPadMiniBaseDeviceHand, iPhone5BaseDevice, iPhone5BaseDeviceHand, iPhone5CBaseDevice, iPhone5CBaseDeviceHand, iPhone6BaseDevice, iPhone6BaseDeviceHand, _,
+var AppleWatch38Device, AppleWatch42Device, BaseClass, Defaults, DeviceViewDefaultDevice, Devices, Events, Layer, Nexus5BaseDevice, Nexus5BaseDeviceHand, Utils, iPadAirBaseDevice, iPadAirBaseDeviceHand, iPadMiniBaseDevice, iPadMiniBaseDeviceHand, iPhone5BaseDevice, iPhone5BaseDeviceHand, iPhone5CBaseDevice, iPhone5CBaseDeviceHand, iPhone6BaseDevice, iPhone6BaseDeviceHand, iPhone6PlusBaseDevice, iPhone6PlusBaseDeviceHand, _,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1615,7 +1614,7 @@ exports.DeviceView = (function(_super) {
     if (Utils.isFramerStudio() && window.FramerStudioInfo) {
       resourceUrl = window.FramerStudioInfo.deviceImagesUrl;
     } else {
-      resourceUrl = "http://resources.framerjs.com/static/DeviceResources";
+      resourceUrl = "//resources.framerjs.com/static/DeviceResources";
     }
     if (Utils.isJP2Supported()) {
       return "" + resourceUrl + "/" + (name.replace(".png", ".jp2"));
@@ -1683,7 +1682,7 @@ exports.DeviceView = (function(_super) {
         return;
       }
       shouldZoomToFit = this._deviceType === "fullscreen";
-      this._device = device;
+      this._device = _.clone(device);
       this._deviceType = deviceType;
       this.fullscreen = false;
       this._updateDeviceImage();
@@ -1702,7 +1701,7 @@ exports.DeviceView = (function(_super) {
       return this.phone.image = "";
     } else {
       this.phone._cacheImage = true;
-      this.phone.image = this._deviceImageUrl(this._device.deviceImage);
+      this.phone.image = this._deviceImageUrl("" + this._deviceType + ".png");
       this.phone.width = this._device.deviceImageWidth;
       return this.phone.height = this._device.deviceImageHeight;
     }
@@ -1859,6 +1858,9 @@ exports.DeviceView = (function(_super) {
       this.viewport.animate(_.extend(this.animationOptions, {
         properties: contentProperties
       }));
+      animation.on(Events.AnimationEnd, function() {
+        return _this._update();
+      });
       if (_hadKeyboard) {
         animation.on(Events.AnimationEnd, function() {
           return _this.showKeyboard(true);
@@ -1867,6 +1869,7 @@ exports.DeviceView = (function(_super) {
     } else {
       this.phone.properties = phoneProperties;
       this.viewport.properties = contentProperties;
+      this._update();
       if (_hadKeyboard) {
         this.showKeyboard(true);
       }
@@ -2055,6 +2058,20 @@ iPhone6BaseDeviceHand = _.extend({}, iPhone6BaseDevice, {
   paddingOffset: -150
 });
 
+iPhone6PlusBaseDevice = {
+  deviceImageWidth: 1280,
+  deviceImageHeight: 2524,
+  screenWidth: 1080,
+  screenHeight: 1920,
+  deviceType: "phone"
+};
+
+iPhone6PlusBaseDeviceHand = _.extend({}, iPhone6PlusBaseDevice, {
+  deviceImageWidth: 2720,
+  deviceImageHeight: 3032,
+  paddingOffset: -150
+});
+
 iPhone5BaseDevice = {
   deviceImageWidth: 780,
   deviceImageHeight: 1608,
@@ -2125,11 +2142,18 @@ Nexus5BaseDeviceHand = _.extend({}, Nexus5BaseDevice, {
   paddingOffset: -120
 });
 
-AppleWatchDevice = {
-  deviceImageWidth: 472,
-  deviceImageHeight: 806,
-  screenWidth: 320,
-  screenHeight: 400
+AppleWatch42Device = {
+  deviceImageWidth: 552,
+  deviceImageHeight: 938,
+  screenWidth: 312,
+  screenHeight: 390
+};
+
+AppleWatch38Device = {
+  deviceImageWidth: 508,
+  deviceImageHeight: 900,
+  screenWidth: 272,
+  screenHeight: 340
 };
 
 Devices = {
@@ -2137,138 +2161,92 @@ Devices = {
     name: "Fullscreen",
     deviceType: "desktop"
   },
-  "desktop-browser-1024": {
+  "desktop-safari-1024-600": {
     deviceType: "browser",
-    deviceImage: "desktop-safari-1024-600.png",
-    name: "Desktop Browser 1024 x 600",
+    name: "Desktop Safari 1024 x 600",
     screenWidth: 1024,
     screenHeight: 600,
     deviceImageWidth: 1136,
     deviceImageHeight: 760
   },
-  "desktop-browser-1280": {
+  "desktop-safari-1280-800": {
     deviceType: "browser",
-    deviceImage: "desktop-safari-1280-800.png",
-    name: "Desktop Browser 1280 x 800",
+    name: "Desktop Safari 1280 x 800",
     screenWidth: 1280,
     screenHeight: 800,
     deviceImageWidth: 1392,
     deviceImageHeight: 960
   },
-  "desktop-browser-1440": {
+  "desktop-safari-1440-900": {
     deviceType: "browser",
-    deviceImage: "desktop-safari-1440-900.png",
-    name: "Desktop Browser 1440 x 900",
+    name: "Desktop Safari 1440 x 900",
     screenWidth: 1440,
     screenHeight: 900,
     deviceImageWidth: 1552,
     deviceImageHeight: 1060
   },
-  "iphone-6-spacegray": _.extend({}, iPhone6BaseDevice, {
-    deviceImage: "iphone-6-spacegray.png"
-  }),
-  "iphone-6-spacegray-hand": _.extend({}, iPhone6BaseDeviceHand, {
-    deviceImage: "iphone-6-spacegray-hand.png"
-  }),
-  "iphone-6-silver": _.extend({}, iPhone6BaseDevice, {
-    deviceImage: "iphone-6-silver.png"
-  }),
-  "iphone-6-silver-hand": _.extend({}, iPhone6BaseDeviceHand, {
-    deviceImage: "iphone-6-silver-hand.png"
-  }),
-  "iphone-6-gold": _.extend({}, iPhone6BaseDevice, {
-    deviceImage: "iphone-6-gold.png"
-  }),
-  "iphone-6-gold-hand": _.extend({}, iPhone6BaseDeviceHand, {
-    deviceImage: "iphone-6-gold-hand.png"
-  }),
-  "iphone-5s-spacegray": _.extend({}, iPhone5BaseDevice, {
-    deviceImage: "iphone-5s-spacegray.png"
-  }),
-  "iphone-5s-spacegray-hand": _.extend({}, iPhone5BaseDeviceHand, {
-    deviceImage: "iphone-5s-spacegray-hand.png"
-  }),
-  "iphone-5s-silver": _.extend({}, iPhone5BaseDevice, {
-    deviceImage: "iphone-5s-silver.png"
-  }),
-  "iphone-5s-silver-hand": _.extend({}, iPhone5BaseDeviceHand, {
-    deviceImage: "iphone-5s-silver-hand.png"
-  }),
-  "iphone-5s-gold": _.extend({}, iPhone5BaseDevice, {
-    deviceImage: "iphone-5s-gold.png"
-  }),
-  "iphone-5s-gold-hand": _.extend({}, iPhone5BaseDeviceHand, {
-    deviceImage: "iphone-5s-gold-hand.png"
-  }),
-  "iphone-5c-green": _.extend({}, iPhone5CBaseDevice, {
-    deviceImage: "iphone-5c-green.png"
-  }),
-  "iphone-5c-green-hand": _.extend({}, iPhone5CBaseDeviceHand, {
-    deviceImage: "iphone-5c-green-hand.png"
-  }),
-  "iphone-5c-blue": _.extend({}, iPhone5CBaseDevice, {
-    deviceImage: "iphone-5c-blue.png"
-  }),
-  "iphone-5c-blue-hand": _.extend({}, iPhone5CBaseDeviceHand, {
-    deviceImage: "iphone-5c-blue-hand.png"
-  }),
-  "iphone-5c-pink": _.extend({}, iPhone5CBaseDevice, {
-    deviceImage: "iphone-5c-pink.png"
-  }),
-  "iphone-5c-pink-hand": _.extend({}, iPhone5CBaseDeviceHand, {
-    deviceImage: "iphone-5c-pink-hand.png"
-  }),
-  "iphone-5c-white": _.extend({}, iPhone5CBaseDevice, {
-    deviceImage: "iphone-5c-white.png"
-  }),
-  "iphone-5c-white-hand": _.extend({}, iPhone5CBaseDeviceHand, {
-    deviceImage: "iphone-5c-white-hand.png"
-  }),
-  "iphone-5c-yellow": _.extend({}, iPhone5CBaseDevice, {
-    deviceImage: "iphone-5c-yellow.png"
-  }),
-  "iphone-5c-yellow-hand": _.extend({}, iPhone5CBaseDeviceHand, {
-    deviceImage: "iphone-5c-yellow-hand.png"
-  }),
-  "ipad-mini-spacegray": _.extend({}, iPadMiniBaseDevice, {
-    deviceImage: "ipad-mini-spacegray.png"
-  }),
-  "ipad-mini-spacegray-hand": _.extend({}, iPadMiniBaseDeviceHand, {
-    deviceImage: "ipad-mini-spacegray-hand.png"
-  }),
-  "ipad-mini-silver": _.extend({}, iPadMiniBaseDevice, {
-    deviceImage: "ipad-mini-silver.png"
-  }),
-  "ipad-mini-silver-hand": _.extend({}, iPadMiniBaseDeviceHand, {
-    deviceImage: "ipad-mini-silver-hand.png"
-  }),
-  "ipad-air-spacegray": _.extend({}, iPadMiniBaseDevice, {
-    deviceImage: "ipad-air-spacegray.png"
-  }),
-  "ipad-air-spacegray-hand": _.extend({}, iPadMiniBaseDeviceHand, {
-    deviceImage: "ipad-air-spacegray-hand.png"
-  }),
-  "ipad-air-silver": _.extend({}, iPadMiniBaseDevice, {
-    deviceImage: "ipad-mini-silver.png"
-  }),
-  "ipad-air-silver-hand": _.extend({}, iPadMiniBaseDeviceHand, {
-    deviceImage: "ipad-mini-silver-hand.png"
-  }),
-  "nexus-5-black": _.extend({}, Nexus5BaseDevice, {
-    deviceImage: "nexus-5-black.png"
-  }),
-  "nexus-5-black-hand": _.extend({}, Nexus5BaseDeviceHand, {
-    deviceImage: "nexus-5-black-hand.png"
-  }),
-  "apple-watch": _.extend({}, AppleWatchDevice, {
-    deviceImage: "apple-watch.png"
-  }),
-  "apple-watch-sport": _.extend({}, AppleWatchDevice, {
-    deviceImage: "apple-watch-sport.png"
-  }),
-  "apple-watch-edition": _.extend({}, AppleWatchDevice, {
-    deviceImage: "apple-watch-edition.png"
-  })
+  "iphone-6-spacegray": iPhone6BaseDevice,
+  "iphone-6-spacegray-hand": iPhone6BaseDeviceHand,
+  "iphone-6-silver": iPhone6BaseDevice,
+  "iphone-6-silver-hand": iPhone6BaseDeviceHand,
+  "iphone-6-gold": iPhone6BaseDevice,
+  "iphone-6-gold-hand": iPhone6BaseDeviceHand,
+  "iphone-6plus-spacegray": iPhone6PlusBaseDevice,
+  "iphone-6plus-spacegray-hand": iPhone6PlusBaseDeviceHand,
+  "iphone-6plus-silver": iPhone6PlusBaseDevice,
+  "iphone-6plus-silver-hand": iPhone6PlusBaseDeviceHand,
+  "iphone-6plus-gold": iPhone6PlusBaseDevice,
+  "iphone-6plus-gold-hand": iPhone6PlusBaseDeviceHand,
+  "iphone-5s-spacegray": iPhone5BaseDevice,
+  "iphone-5s-spacegray-hand": iPhone5BaseDeviceHand,
+  "iphone-5s-silver": iPhone5BaseDevice,
+  "iphone-5s-silver-hand": iPhone5BaseDeviceHand,
+  "iphone-5s-gold": iPhone5BaseDevice,
+  "iphone-5s-gold-hand": iPhone5BaseDeviceHand,
+  "iphone-5c-green": iPhone5CBaseDevice,
+  "iphone-5c-green-hand": iPhone5CBaseDeviceHand,
+  "iphone-5c-blue": iPhone5CBaseDevice,
+  "iphone-5c-blue-hand": iPhone5CBaseDeviceHand,
+  "iphone-5c-pink": iPhone5CBaseDevice,
+  "iphone-5c-pink-hand": iPhone5CBaseDeviceHand,
+  "iphone-5c-white": iPhone5CBaseDevice,
+  "iphone-5c-white-hand": iPhone5CBaseDeviceHand,
+  "iphone-5c-yellow": iPhone5CBaseDevice,
+  "iphone-5c-yellow-hand": iPhone5CBaseDeviceHand,
+  "ipad-mini-spacegray": iPadMiniBaseDevice,
+  "ipad-mini-spacegray-hand": iPadMiniBaseDeviceHand,
+  "ipad-mini-silver": iPadMiniBaseDevice,
+  "ipad-mini-silver-hand": iPadMiniBaseDeviceHand,
+  "ipad-air-spacegray": iPadAirBaseDevice,
+  "ipad-air-spacegray-hand": iPadAirBaseDeviceHand,
+  "ipad-air-silver": iPadAirBaseDevice,
+  "ipad-air-silver-hand": iPadAirBaseDeviceHand,
+  "nexus-5-black": Nexus5BaseDevice,
+  "nexus-5-black-hand": Nexus5BaseDeviceHand,
+  "applewatchsport-38-aluminum-sportband-black": AppleWatch38Device,
+  "applewatchsport-38-aluminum-sportband-blue": AppleWatch38Device,
+  "applewatchsport-38-aluminum-sportband-green": AppleWatch38Device,
+  "applewatchsport-38-aluminum-sportband-pink": AppleWatch38Device,
+  "applewatchsport-38-aluminum-sportband-white": AppleWatch38Device,
+  "applewatch-38-black-bracelet": AppleWatch38Device,
+  "applewatch-38-steel-bracelet": AppleWatch38Device,
+  "applewatchedition-38-gold-buckle-blue": AppleWatch38Device,
+  "applewatchedition-38-gold-buckle-gray": AppleWatch38Device,
+  "applewatchedition-38-gold-buckle-red": AppleWatch38Device,
+  "applewatchedition-38-gold-sportband-black": AppleWatch38Device,
+  "applewatchedition-38-gold-sportband-white": AppleWatch38Device,
+  "applewatchsport-42-aluminum-sportband-black": AppleWatch42Device,
+  "applewatchsport-42-aluminum-sportband-blue": AppleWatch42Device,
+  "applewatchsport-42-aluminum-sportband-green": AppleWatch42Device,
+  "applewatchsport-42-aluminum-sportband-pink": AppleWatch42Device,
+  "applewatchsport-42-aluminum-sportband-white": AppleWatch42Device,
+  "applewatch-42-black-bracelet": AppleWatch42Device,
+  "applewatch-42-steel-bracelet": AppleWatch42Device,
+  "applewatchedition-42-gold-buckle-blue": AppleWatch42Device,
+  "applewatchedition-42-gold-buckle-gray": AppleWatch42Device,
+  "applewatchedition-42-gold-buckle-red": AppleWatch42Device,
+  "applewatchedition-42-gold-sportband-black": AppleWatch42Device,
+  "applewatchedition-42-gold-sportband-white": AppleWatch42Device
 };
 
 exports.DeviceView.Devices = Devices;
@@ -2945,11 +2923,12 @@ exports.Layer = (function(_super) {
   }));
 
   Layer.define("scroll", {
+    exportable: true,
     get: function() {
       return this.scrollHorizontal === true || this.scrollVertical === true;
     },
     set: function(value) {
-      return this.scrollHorizontal = this.scrollVertical = true;
+      return this.scrollHorizontal = this.scrollVertical = value;
     }
   });
 
@@ -3554,6 +3533,13 @@ exports.Layer = (function(_super) {
     return properties;
   };
 
+  Layer.define("isAnimating", {
+    exportable: false,
+    get: function() {
+      return this.animations().length !== 0;
+    }
+  });
+
   Layer.prototype.animateStop = function() {
     return _.invoke(this.animations(), "stop");
   };
@@ -3717,6 +3703,19 @@ exports.Layer = (function(_super) {
       })(eventName));
     }
     return _results;
+  };
+
+  Layer.prototype.once = function(eventName, listener) {
+    var originalListener,
+      _this = this;
+    originalListener = listener;
+    listener = function() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      originalListener.apply(null, args);
+      return _this.removeListener(eventName, listener);
+    };
+    return this.addListener(eventName, listener);
   };
 
   Layer.prototype.removeAllListeners = function() {
@@ -3996,7 +3995,7 @@ exports.LayerStates = (function(_super) {
   };
 
   LayerStates.prototype["switch"] = function(stateName, animationOptions, instant) {
-    var animatingKeys, properties, propertyName, value, _ref, _ref1,
+    var animatablePropertyKeys, animatingKeys, k, properties, propertyName, v, value, _ref, _ref1,
       _this = this;
     if (instant == null) {
       instant = false;
@@ -4023,6 +4022,16 @@ exports.LayerStates = (function(_super) {
       }
       properties[propertyName] = value;
     }
+    animatablePropertyKeys = [];
+    for (k in properties) {
+      v = properties[k];
+      if (_.isNumber(v)) {
+        animatablePropertyKeys.push(k);
+      }
+    }
+    if (animatablePropertyKeys.length === 0) {
+      instant = true;
+    }
     if (instant === true) {
       this.layer.properties = properties;
       return this.emit(Events.StateDidSwitch, _.last(this._previousStates), stateName, this);
@@ -4036,6 +4045,12 @@ exports.LayerStates = (function(_super) {
       }
       this._animation = this.layer.animate(animationOptions);
       return this._animation.on("stop", function() {
+        for (k in properties) {
+          v = properties[k];
+          if (!_.isNumber(v)) {
+            _this.layer[k] = v;
+          }
+        }
         return _this.emit(Events.StateDidSwitch, _.last(_this._previousStates), stateName, _this);
       });
     }
@@ -4367,7 +4382,7 @@ exports._ = _;
 
 
 },{"lodash":36,"underscore.string":37}],33:[function(require,module,exports){
-var Screen, Utils, _, __domComplete, __domReady,
+var Screen, Utils, _, __domComplete, __domReady, _textSizeNode,
   __slice = [].slice,
   _this = this;
 
@@ -5104,6 +5119,69 @@ Utils.convertPoint = function(input, layerA, layerB) {
     point.y -= layer.y + layer.scrollFrame.y;
   }
   return point;
+};
+
+Utils.globalLayers = function(importedLayers) {
+  var layer, layerName;
+  for (layerName in importedLayers) {
+    layer = importedLayers[layerName];
+    layerName = layerName.replace(/\s/g, "");
+    if (window.hasOwnProperty(layerName) && !window.Framer._globalWarningGiven) {
+      print("Warning: Cannot make layer '" + layerName + "' a global, a variable with that name already exists");
+    } else {
+      window[layerName] = layer;
+    }
+  }
+  return window.Framer._globalWarningGiven = true;
+};
+
+_textSizeNode = null;
+
+Utils.textSize = function(text, style, constraints) {
+  var frame, rect, shouldCreateNode;
+  if (style == null) {
+    style = {};
+  }
+  if (constraints == null) {
+    constraints = {};
+  }
+  shouldCreateNode = !_textSizeNode;
+  if (shouldCreateNode) {
+    _textSizeNode = document.createElement("div");
+    _textSizeNode.id = "_textSizeNode";
+  }
+  _textSizeNode.innerHTML = text;
+  style = _.extend(style, {
+    position: "fixed",
+    display: "inline",
+    visibility: "hidden",
+    top: "-10000px",
+    left: "-10000px"
+  });
+  delete style.width;
+  delete style.height;
+  delete style.bottom;
+  delete style.right;
+  if (constraints.width) {
+    style.width = "" + constraints.width + "px";
+  }
+  if (constraints.height) {
+    style.height = "" + constraints.height + "px";
+  }
+  _.extend(_textSizeNode.style, style);
+  if (shouldCreateNode) {
+    if (!window.document.body) {
+      document.write(_textSizeNode.outerHTML);
+      _textSizeNode = document.getElementById("_textSizeNode");
+    } else {
+      window.document.body.appendChild(_textSizeNode);
+    }
+  }
+  rect = _textSizeNode.getBoundingClientRect();
+  return frame = {
+    width: rect.right - rect.left,
+    height: rect.bottom - rect.top
+  };
 };
 
 _.extend(exports, Utils);
