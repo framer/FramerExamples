@@ -656,30 +656,13 @@ window.Framer.Defaults.DeviceView = {
 };
 
 window.FramerStudioInfo = {
-  "deviceImagesUrl" : "file:\/\/\/Applications\/Framer%20Studio.app\/Contents\/Resources\/DeviceImages\/",
+  "deviceImagesUrl" : "file:\/\/\/Users\/ben\/Downloads\/Framer%20Studio%20v1.10-17-gc103a21.app\/Contents\/Resources\/DeviceImages\/",
   "documentTitle" : "pull-to-refresh.framer"
 };
 
 Framer.Device = new Framer.DeviceView();
 Framer.Device.setupContext();
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var HighlightComponent;
-
-exports.bridge = (require("../src/Bridge.coffee")).bridge;
-
-exports.runtime = (require("../src/Runtime.coffee")).runtime;
-
-exports.context = require("../src/Context.coffee");
-
-HighlightComponent = require("../src/HighlightComponent.coffee").HighlightComponent;
-
-if (typeof window !== "undefined" && window !== null) {
-  window.FramerStudio = exports;
-}
-
-
-
-},{"../src/Bridge.coffee":3,"../src/Context.coffee":4,"../src/HighlightComponent.coffee":5,"../src/Runtime.coffee":6}],2:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 /**
@@ -910,7 +893,7 @@ EventEmitter.EventEmitter3 = EventEmitter;
 //
 module.exports = EventEmitter;
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 var Bridge, EventEmitter,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -959,12 +942,12 @@ exports.bridge = new Bridge();
 
 
 
-},{"eventemitter3":2}],4:[function(require,module,exports){
+},{"eventemitter3":1}],3:[function(require,module,exports){
 var ContextListener, ContextListenerPropertyUpdateKeys, bridge, getLayerProperties, traverseUp,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-bridge = require("./Bridge.coffee").bridge;
+bridge = require("./Bridge").bridge;
 
 traverseUp = function(layer) {
   var layers;
@@ -1053,7 +1036,7 @@ exports.ContextListener = ContextListener;
 
 
 
-},{"./Bridge.coffee":3}],5:[function(require,module,exports){
+},{"./Bridge":2}],4:[function(require,module,exports){
 var ANIMATING_KEYS, highlightColor,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -1158,22 +1141,25 @@ exports.HighlightComponent = (function() {
 
 
 
-},{}],6:[function(require,module,exports){
-var EventEmitter, Runtime, TRANSFORM_REGEX, bridge,
+},{}],5:[function(require,module,exports){
+var BUILDS, EventEmitter, Runtime, TRANSFORM_REGEX, bridge,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   __hasProp = {}.hasOwnProperty;
 
-bridge = require("./Bridge.coffee").bridge;
-
 EventEmitter = require("eventemitter3");
 
+bridge = require("./Bridge").bridge;
+
 TRANSFORM_REGEX = /(([\w.]+) += +new [\w]*Layer[^;]*;)/g;
+
+BUILDS = 0;
 
 Runtime = (function(_super) {
   __extends(Runtime, _super);
 
   function Runtime() {
+    this._windowErrorHandler = __bind(this._windowErrorHandler, this);
     this._errorHandler = __bind(this._errorHandler, this);
     this.init();
   }
@@ -1196,6 +1182,8 @@ Runtime = (function(_super) {
     if (this.coffeescript === coffeescript) {
       return;
     }
+    console.clear();
+    console.log("» Framer build " + (BUILDS++));
     this._errorHandlerRemove();
     this.coffeescript = coffeescript;
     result = this.uncoffee(this.coffeescript);
@@ -1223,8 +1211,10 @@ Runtime = (function(_super) {
         error = new SyntaxError(e.message);
         error.lineNumber = e.location.first_line + 1;
         bridge.sendError(error);
+        throw new Error("Framer syntax error line " + error.lineNumber + ": " + e.message);
+      } else {
+        throw e;
       }
-      throw e;
     }
     return result;
   };
@@ -1233,19 +1223,27 @@ Runtime = (function(_super) {
     return code.replace(TRANSFORM_REGEX, "$1 $2._variableName = \"$2\";");
   };
 
-  Runtime.prototype._errorHandler = function(errorMessage, url, lineNumber) {
-    var error;
-    error = new Error(errorMessage);
-    error.lineNumber = this._lookupLine(lineNumber);
+  Runtime.prototype._errorHandler = function(error) {
+    error.lineNumber = this._lookupLine(error.lineno);
     return bridge.sendError(error);
   };
 
+  Runtime.prototype._windowErrorHandler = function(message, url, line, col) {
+    if (_.endsWith(url, ".temp.html")) {
+      console.error("Framer script error line " + (this._lookupLine(line)) + ": " + message);
+      return true;
+    }
+    return false;
+  };
+
   Runtime.prototype._errorHandlerSetup = function() {
-    return typeof window !== "undefined" && window !== null ? window.onerror = this._errorHandler : void 0;
+    window.addEventListener("error", this._errorHandler);
+    return window.onerror = this._windowErrorHandler;
   };
 
   Runtime.prototype._errorHandlerRemove = function() {
-    return typeof window !== "undefined" && window !== null ? window.onerror = null : void 0;
+    window.removeEventListener("error", this._errorHandler);
+    return window.onerror = null;
   };
 
   Runtime.prototype._lookupLine = function(lineNumber) {
@@ -1277,4 +1275,43 @@ exports.runtime = new Runtime();
 
 
 
-},{"./Bridge.coffee":3,"eventemitter3":2}]},{},[1]);
+},{"./Bridge":2,"eventemitter3":1}],6:[function(require,module,exports){
+var HighlightComponent, setupContext;
+
+exports.bridge = (require("./Bridge.coffee")).bridge;
+
+exports.runtime = (require("./Runtime.coffee")).runtime;
+
+exports.context = require("./Context.coffee");
+
+HighlightComponent = require("./HighlightComponent.coffee").HighlightComponent;
+
+setupContext = function() {
+  var context, getLayerById, highlighter;
+  context = new exports.context.ContextListener(Framer.CurrentContext);
+  highlighter = new HighlightComponent();
+  exports.bridge.on("ui:highlight", function(info) {
+    return highlighter.highlight(getLayerById(info.id));
+  });
+  exports.bridge.on("ui:unhighlight", function() {
+    return highlighter.unhighlight();
+  });
+  return getLayerById = function(id) {
+    var layer, _i, _len, _ref;
+    _ref = Framer.CurrentContext._layerList;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      layer = _ref[_i];
+      if (layer.id === id) {
+        return layer;
+      }
+    }
+  };
+};
+
+if (typeof window !== "undefined" && window !== null) {
+  window.FramerStudio = exports;
+}
+
+
+
+},{"./Bridge.coffee":2,"./Context.coffee":3,"./HighlightComponent.coffee":4,"./Runtime.coffee":5}]},{},[6])

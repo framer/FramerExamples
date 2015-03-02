@@ -1,7 +1,7 @@
 {
-  "contentScale": 1,
-  "deviceOrientation": 0,
-  "deviceScale": -1,
-  "deviceType": "iphone-5s-spacegray-hand",
-  "updateDelay": 0.29999999999999999
+  "deviceScale" : -1,
+  "updateDelay" : 0.3,
+  "deviceOrientation" : 0,
+  "contentScale" : 1,
+  "deviceType" : "iphone-5s-spacegray-hand"
 }

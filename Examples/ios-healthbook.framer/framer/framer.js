@@ -2743,6 +2743,10 @@ exports.Importer = (function() {
       layerInfo.frame = info.maskFrame;
       layerInfo.clip = true;
     }
+    if ((superLayer != null ? superLayer.clip : void 0) && info.children.length === 0) {
+      layerInfo.frame = info.image.frame;
+      layerInfo.clip = false;
+    }
     if (superLayer != null ? superLayer.contentLayer : void 0) {
       layerInfo.superLayer = superLayer.contentLayer;
     } else if (superLayer) {
@@ -2893,6 +2897,9 @@ exports.Layer = (function(_super) {
       }
     } else {
       this.superLayer = options.superLayer;
+    }
+    if (options.hasOwnProperty("index")) {
+      this.index = options.index;
     }
     this._subLayers = [];
     this._context.emit("layer:create", this);

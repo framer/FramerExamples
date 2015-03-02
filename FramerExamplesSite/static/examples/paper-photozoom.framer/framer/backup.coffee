@@ -1,5 +1,5 @@
 # Made with Framer
-# by Wahlström
+# by Andreas Wahlström
 # www.framerjs.com
 
 new BackgroundLayer backgroundColor: "black"
