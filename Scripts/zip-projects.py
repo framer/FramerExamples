@@ -29,6 +29,9 @@ for fileName in os.listdir(path):
 		os.path.join(filePath, "readme.md"),
 	)
 
+	run("rm '%s/.temp.html'" % filePath)
+	run("rm -Rf '%s/framer/backups'" % filePath)
+
 	print "Zipping example project '%s'" % filePath
 
 	run("cd '%s'; zip -r '%s.zip' '%s'" % (path, fileName, fileName))

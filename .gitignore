@@ -42,3 +42,5 @@ app.tmp.coffee
 node_modules/
 
 *.espressostorage
+
+.temp.html
