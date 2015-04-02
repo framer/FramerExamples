@@ -1,4 +1,4 @@
-new BackgroundLayer backgroundColor: "#28AFFA"
+new BackgroundLayer backgroundColor: "#2DD7AA"
 
 # Set-up ScrollComponent
 scroll = new ScrollComponent 

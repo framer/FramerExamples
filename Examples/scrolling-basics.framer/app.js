@@ -1,3 +1,6 @@
+/* Made with Framer
+by Benjamin den Boer
+www.framerjs.com */
 var allLayers, height, i, layer, margin, scroll;
 
 new BackgroundLayer({
@@ -8,7 +11,7 @@ new BackgroundLayer({
 
 scroll = new ScrollComponent({
   width: 320,
-  height: 430,
+  height: 440,
   scrollHorizontal: false,
   borderRadius: 4,
   clip: true

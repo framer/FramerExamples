@@ -1,8 +1,12 @@
+# Made with Framer
+# by Benjamin den Boer
+# www.framerjs.com
+
 new BackgroundLayer backgroundColor: "#2DD7AA"
 
 # Set-up ScrollComponent
 scroll = new ScrollComponent 
-	width:320, height:430
+	width:320, height:440
 	scrollHorizontal: false
 	borderRadius: 4
 	clip: true
