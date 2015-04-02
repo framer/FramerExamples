@@ -1,7 +1,7 @@
 all: build
 
-update:
-	python Scripts/update-framer.py
+# update:
+# 	python Scripts/update-framer.py
 
 convert:
 	python Scripts/coffee2js.py

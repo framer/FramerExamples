@@ -5,12 +5,11 @@
 new BackgroundLayer backgroundColor: "#2DD7AA"
 	
 layerA = new Layer 
-	width:100, height:100, backgroundColor:"#fff", borderRadius:3
+	backgroundColor:"#fff", borderRadius:3
 	shadowY:1, shadowBlur:3, shadowColor:"rgba(0,0,0,0.15)"
 	
 layerA.center()
-window.onresze = ->
-	layerA.center()
+window.onresize = -> layerA.center()
 
 # Enable dragging
 layerA.draggable.enabled = true
