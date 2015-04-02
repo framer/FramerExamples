@@ -285,7 +285,7 @@ exports.Animation = (function(_super) {
         });
       }
       if (animatorClass === SpringRK4Animator) {
-        _ref = ["tension", "friction", "velocity"];
+        _ref = ["tension", "friction", "velocity", "tolerance"];
         for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
           k = _ref[i];
           value = parseFloat(parsedCurve.args[i]);
@@ -1435,7 +1435,7 @@ exports.Defaults = {
 
 
 },{"./Underscore":32,"./Utils":33}],16:[function(require,module,exports){
-var AppleWatch38Device, AppleWatch42Device, BaseClass, Defaults, DeviceViewDefaultDevice, Devices, Events, Layer, Nexus5BaseDevice, Nexus5BaseDeviceHand, Utils, iPadAirBaseDevice, iPadAirBaseDeviceHand, iPadMiniBaseDevice, iPadMiniBaseDeviceHand, iPhone5BaseDevice, iPhone5BaseDeviceHand, iPhone5CBaseDevice, iPhone5CBaseDeviceHand, iPhone6BaseDevice, iPhone6BaseDeviceHand, iPhone6PlusBaseDevice, iPhone6PlusBaseDeviceHand, _,
+var AppleWatch38Device, AppleWatch42Device, BaseClass, Defaults, DeviceViewDefaultDevice, Devices, Events, Layer, Nexus5BaseDevice, Nexus5BaseDeviceHand, Nexus9BaseDevice, Utils, iPadAirBaseDevice, iPadAirBaseDeviceHand, iPadMiniBaseDevice, iPadMiniBaseDeviceHand, iPhone5BaseDevice, iPhone5BaseDeviceHand, iPhone5CBaseDevice, iPhone5CBaseDeviceHand, iPhone6BaseDevice, iPhone6BaseDeviceHand, iPhone6PlusBaseDevice, iPhone6PlusBaseDeviceHand, _,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1600,7 +1600,13 @@ exports.DeviceView = (function(_super) {
     if (this.deviceType === "fullscreen") {
       return true;
     }
-    if (Utils.deviceType() === this._device.deviceType) {
+    if (Utils.deviceType() === "phone" && Utils.deviceType() === this._device.deviceType) {
+      return true;
+    }
+    if (Utils.deviceType() === "tablet" && Utils.deviceType() === this._device.deviceType) {
+      return true;
+    }
+    if (Utils.deviceType() === "phone" && this._device.deviceType === "tablet") {
       return true;
     }
     return false;
@@ -2059,16 +2065,16 @@ iPhone6BaseDeviceHand = _.extend({}, iPhone6BaseDevice, {
 });
 
 iPhone6PlusBaseDevice = {
-  deviceImageWidth: 1280,
-  deviceImageHeight: 2524,
-  screenWidth: 1080,
-  screenHeight: 1920,
+  deviceImageWidth: 1460,
+  deviceImageHeight: 2900,
+  screenWidth: 1242,
+  screenHeight: 2208,
   deviceType: "phone"
 };
 
 iPhone6PlusBaseDeviceHand = _.extend({}, iPhone6PlusBaseDevice, {
-  deviceImageWidth: 2720,
-  deviceImageHeight: 3032,
+  deviceImageWidth: 3128,
+  deviceImageHeight: 3487,
   paddingOffset: -150
 });
 
@@ -2141,6 +2147,14 @@ Nexus5BaseDeviceHand = _.extend({}, Nexus5BaseDevice, {
   deviceImageHeight: 2996,
   paddingOffset: -120
 });
+
+Nexus9BaseDevice = {
+  deviceImageWidth: 1733,
+  deviceImageHeight: 2575,
+  screenWidth: 1536,
+  screenHeight: 2048,
+  deviceType: "tablet"
+};
 
 AppleWatch42Device = {
   deviceImageWidth: 552,
@@ -2223,6 +2237,7 @@ Devices = {
   "ipad-air-silver-hand": iPadAirBaseDeviceHand,
   "nexus-5-black": Nexus5BaseDevice,
   "nexus-5-black-hand": Nexus5BaseDeviceHand,
+  "nexus-9": Nexus9BaseDevice,
   "applewatchsport-38-aluminum-sportband-black": AppleWatch38Device,
   "applewatchsport-38-aluminum-sportband-blue": AppleWatch38Device,
   "applewatchsport-38-aluminum-sportband-green": AppleWatch38Device,
@@ -2669,7 +2684,8 @@ Framer.resetDefaults = Defaults.reset;
 
 
 },{"./Animation":1,"./AnimationGroup":2,"./AnimationLoop":3,"./Animators/BezierCurveAnimator":5,"./Animators/LinearAnimator":6,"./Animators/SpringDHOAnimator":7,"./Animators/SpringRK4Animator":8,"./BackgroundLayer":9,"./BaseClass":10,"./Compat":11,"./Config":12,"./Context":13,"./Debug":14,"./Defaults":15,"./DeviceView":16,"./EventEmitter":17,"./Events":19,"./Extras/Extras":20,"./Frame":23,"./Importer":25,"./Layer":26,"./LayerStyle":29,"./Print":30,"./Screen":31,"./Underscore":32,"./Utils":33,"./VideoLayer":34}],25:[function(require,module,exports){
-var ChromeAlert, Utils, _;
+var ChromeAlert, Utils, _,
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 _ = require("./Underscore")._;
 
@@ -2743,7 +2759,7 @@ exports.Importer = (function() {
       layerInfo.frame = info.maskFrame;
       layerInfo.clip = true;
     }
-    if ((superLayer != null ? superLayer.clip : void 0) && info.children.length === 0) {
+    if (info.children.length === 0 && __indexOf.call(_.pluck(superLayer != null ? superLayer.superLayers() : void 0, "clip"), true) >= 0) {
       layerInfo.frame = info.image.frame;
       layerInfo.clip = false;
     }
@@ -2806,7 +2822,7 @@ exports.Importer.load = function(path) {
 
 
 },{"./Underscore":32,"./Utils":33}],26:[function(require,module,exports){
-var Animation, BaseClass, Config, Defaults, EventEmitter, Frame, LayerDraggable, LayerStates, LayerStyle, Utils, layerProperty, layerValueTypeError, _,
+var Animation, BaseClass, Config, Defaults, EventEmitter, Frame, LayerDraggable, LayerStates, LayerStyle, NoCacheDateKey, Utils, layerProperty, layerValueTypeError, _,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -2834,6 +2850,8 @@ LayerStyle = require("./LayerStyle").LayerStyle;
 LayerStates = require("./LayerStates").LayerStates;
 
 LayerDraggable = require("./LayerDraggable").LayerDraggable;
+
+NoCacheDateKey = Date.now();
 
 layerValueTypeError = function(name, value) {
   throw new Error("Layer." + name + ": value '" + value + "' of type '" + (typeof value) + "'' is not valid");
@@ -3380,7 +3398,7 @@ exports.Layer = (function(_super) {
       }
       imageUrl = value;
       if (Utils.isLocal() && !imageUrl.match(/^https?:\/\//) && this._cacheImage === false) {
-        imageUrl += "?nocache=" + (Date.now());
+        imageUrl += "?nocache=" + NoCacheDateKey;
       }
       if ((_ref = this.events) != null ? _ref.hasOwnProperty("load" || ((_ref1 = this.events) != null ? _ref1.hasOwnProperty("error") : void 0)) : void 0) {
         loader = new Image();
@@ -4743,11 +4761,11 @@ Utils.isJP2Supported = function() {
 };
 
 Utils.deviceType = function() {
+  if (/(tablet)|(iPad)|(Nexus 9)/i.test(navigator.userAgent)) {
+    return "tablet";
+  }
   if (/(mobi)/i.test(navigator.userAgent)) {
     return "phone";
-  }
-  if (/(tablet)|(iPad)/i.test(navigator.userAgent)) {
-    return "tablet";
   }
   return "desktop";
 };
@@ -4977,10 +4995,10 @@ Utils.pointAbs = function(point) {
 };
 
 Utils.pointInFrame = function(point, frame) {
-  if (point.x < frame.minX || point.x > frame.maxX) {
+  if (point.x < Utils.frameGetMinX(frame) || point.x > Utils.frameGetMaxX(frame)) {
     return false;
   }
-  if (point.y < frame.minY || point.y > frame.maxY) {
+  if (point.y < Utils.frameGetMinY(frame) || point.y > Utils.frameGetMaxY(frame)) {
     return false;
   }
   return true;

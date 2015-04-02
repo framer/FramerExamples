@@ -17,11 +17,11 @@ def downloadFile(url, path):
 tempPath = tempfile.mkdtemp()
 
 downloadFile(
-	"http://builds.framerjs.com/latest/framer.js",
+	"http://builds.framerjs.com/86b7691/framer.js",
 	os.path.join(tempPath, "framer.js"))
 
 downloadFile(
-	"http://builds.framerjs.com/latest/framer.js.map",
+	"http://builds.framerjs.com/86b7691/framer.js.map",
 	os.path.join(tempPath, "framer.js.map"))
 
 

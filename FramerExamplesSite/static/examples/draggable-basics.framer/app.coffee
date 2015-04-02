@@ -2,7 +2,7 @@
 # by Benjamin den Boer
 # www.framerjs.com
 
-bg = new BackgroundLayer backgroundColor: "#97E345"
+new BackgroundLayer backgroundColor: "#2DD7AA"
 	
 layerA = new Layer 
 	width:100, height:100, backgroundColor:"#fff", borderRadius:3
