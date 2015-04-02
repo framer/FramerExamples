@@ -1,6 +1,6 @@
 ### Examples for Framer
 
-This is http://examples.framerjs.com, examples for [Framer](http://framerjs.com).
+This is http://projects.framerjs.com, examples for [Framer](http://framerjs.com).
 
 
 #### Contributing
