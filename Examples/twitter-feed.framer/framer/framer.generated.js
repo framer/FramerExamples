@@ -276,6 +276,13 @@ window.Framer.Defaults.DeviceView = {
   "deviceType" : "iphone-6-silver-hand"
 };
 
+window.Framer.Defaults.DeviceComponent = {
+  "deviceScale" : -1,
+  "orientation" : 0,
+  "contentScale" : 1,
+  "deviceType" : "iphone-6-silver-hand"
+};
+
 window.FramerStudioInfo = {
   "deviceImagesUrl" : "file:\/\/\/Applications\/Framer%20Studio.app\/Contents\/Resources\/DeviceImages\/",
   "documentTitle" : "twitter-feed.framer"

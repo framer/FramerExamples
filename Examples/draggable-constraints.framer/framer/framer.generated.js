@@ -8,6 +8,13 @@ window.Framer.Defaults.DeviceView = {
   "deviceType" : "fullscreen"
 };
 
+window.Framer.Defaults.DeviceComponent = {
+  "deviceScale" : -1,
+  "orientation" : 0,
+  "contentScale" : 1,
+  "deviceType" : "fullscreen"
+};
+
 window.FramerStudioInfo = {
   "deviceImagesUrl" : "file:\/\/\/Applications\/Framer%20Studio.app\/Contents\/Resources\/DeviceImages\/",
   "documentTitle" : "draggable-constraints.framer"
