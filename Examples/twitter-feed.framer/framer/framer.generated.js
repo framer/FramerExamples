@@ -273,14 +273,14 @@ window.Framer.Defaults.DeviceView = {
   "deviceScale" : -1,
   "orientation" : 0,
   "contentScale" : 1,
-  "deviceType" : "iphone-6-silver-hand"
+  "deviceType" : "iphone-6-gold-hand"
 };
 
 window.Framer.Defaults.DeviceComponent = {
   "deviceScale" : -1,
   "orientation" : 0,
   "contentScale" : 1,
-  "deviceType" : "iphone-6-silver-hand"
+  "deviceType" : "iphone-6-gold-hand"
 };
 
 window.FramerStudioInfo = {
