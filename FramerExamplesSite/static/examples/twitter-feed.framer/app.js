@@ -1,3 +1,7 @@
+/* Made with Framer
+by Jorn van Dijk
+www.framerjs.com */
+
 /* Sketch Import */
 var bg, scroll, sketch;
 

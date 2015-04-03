@@ -1,3 +1,7 @@
+# Made with Framer
+# by Jorn van Dijk
+# www.framerjs.com
+
 # Sketch Import
 bg = new BackgroundLayer backgroundColor: "#fff"
 sketch = Framer.Importer.load "imported/twitter-feed"

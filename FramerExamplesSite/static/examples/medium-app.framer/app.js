@@ -13,7 +13,7 @@ bg = new BackgroundLayer({
   backgroundColor: "white"
 });
 
-/* The page indicator is the bright blue line at the bottom of the navigation bar */
+/* The page indicator is the black line at the bottom of the navigation bar */
 
 pageIndicator = new Layer({
   height: 2,
