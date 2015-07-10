@@ -2,33 +2,32 @@
 # by Benjamin den Boer
 # www.framerjs.com
 
-new BackgroundLayer backgroundColor: "#2DD7AA"
+# Set background
+bg = new BackgroundLayer 
+	backgroundColor: "#2DD7AA"
 
-# Set-up ScrollComponent
-scroll = new ScrollComponent 
-	width:320, height:440
+# Create ScrollComponent
+scroll = new ScrollComponent
+	backgroundColor: "rgba(255,255,255,0.2)"
 	scrollHorizontal: false
-	borderRadius: 4
-	clip: true
+	width: 220
+	height: 220
+	borderRadius: 8
 
-# Center the ScrollComponent, also on resize
-window.onresize = -> scroll.center()
 scroll.center()
 
-# Set force2d to allow for clipping with borderRadius
-scroll.content.force2d = true
+# Add spacing
+scroll.contentInset = 
+	top: 10
+	bottom: 10
 
-# Define height and margins
-height = 100
-margin = 10
-
-# Create layers in a for-loop
-allLayers = for i in [0...80]
-	layer = new Layer 
-		backgroundColor: "#fff"
-		width: scroll.width
-		height: height
-		y: (height + margin) * i 
+# Create 10 layers
+for i in [0..6]
+	layer = new Layer
 		superLayer: scroll.content
+		backgroundColor: "#fff"
 		borderRadius: 4
-		force2d: true
+		width: 200
+		height: 60
+		x: 10
+		y: 70 * i

@@ -3,18 +3,22 @@
 # www.framerjs.com
 
 bg = new BackgroundLayer 
-	backgroundColor: "#535F71"
+	backgroundColor: "#2DD7AA"
 
 # Create Layers
-layerA = new Layer width:80, height:80, 
-backgroundColor: "#fff", borderRadius:4
-layerA.center()
-layerA.x -= 50
+layerA = new Layer
+	backgroundColor: "#fff"
+	borderRadius: 4
 
-layerB = new Layer width:80, height:80, 
-backgroundColor: "#fff", borderRadius:4
+layerB = new Layer 
+	backgroundColor: "#fff"
+	borderRadius: 4
+
+# Staging
+layerA.center()
 layerB.center()
-layerB.x += 50
+layerA.x -= 60
+layerB.x += 60
 
 # Click Event
 layerA.on Events.Click, ->
@@ -32,6 +36,7 @@ layerB.on Events.TouchStart, ->
 			scale: 0.8
 		curve: "ease"
 		time: 0.5
+		
 layerB.on Events.TouchEnd, -> 
 	layerB.animate 
 		properties:

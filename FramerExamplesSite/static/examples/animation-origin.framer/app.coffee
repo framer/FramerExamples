@@ -3,13 +3,16 @@
 # www.framerjs.com
 
 bg = new BackgroundLayer 
-	backgroundColor: "#28AFFA"
+	backgroundColor: "#877DD7"
 
 # Create Layers
-layerA = new Layer width:80, height:80, 
-backgroundColor: "#fff", borderRadius:4
+layerA = new Layer 
+	width: 150
+	height: 150
+	backgroundColor: "#fff"
+	borderRadius: 4
+	
 layerA.center()
-
 layerA.originX = 1
 layerA.originY = 0
 

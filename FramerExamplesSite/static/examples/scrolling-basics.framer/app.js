@@ -1,55 +1,43 @@
 /* Made with Framer
 by Benjamin den Boer
 www.framerjs.com */
-var allLayers, height, i, layer, margin, scroll;
 
-new BackgroundLayer({
+/* Set background */
+var bg, i, j, layer, scroll;
+
+bg = new BackgroundLayer({
   backgroundColor: "#2DD7AA"
-
-  /* Set-up ScrollComponent */
 });
+
+/* Create ScrollComponent */
 
 scroll = new ScrollComponent({
-  width: 320,
-  height: 440,
+  backgroundColor: "rgba(255,255,255,0.2)",
   scrollHorizontal: false,
-  borderRadius: 4,
-  clip: true
+  width: 220,
+  height: 220,
+  borderRadius: 8
 });
-
-/* Center the ScrollComponent, also on resize */
-
-window.onresize = function() {
-  return scroll.center();
-};
 
 scroll.center();
 
-/* Set force2d to allow for clipping with borderRadius */
+/* Add spacing */
 
-scroll.content.force2d = true;
+scroll.contentInset = {
+  top: 10,
+  bottom: 10
+};
 
-/* Define height and margins */
+/* Create 10 layers */
 
-height = 100;
-
-margin = 10;
-
-/* Create layers in a for-loop */
-
-allLayers = (function() {
-  var j, results;
-  results = [];
-  for (i = j = 0; j < 80; i = ++j) {
-    results.push(layer = new Layer({
-      backgroundColor: "#fff",
-      width: scroll.width,
-      height: height,
-      y: (height + margin) * i,
-      superLayer: scroll.content,
-      borderRadius: 4,
-      force2d: true
-    }));
-  }
-  return results;
-})();
+for (i = j = 0; j <= 6; i = ++j) {
+  layer = new Layer({
+    superLayer: scroll.content,
+    backgroundColor: "#fff",
+    borderRadius: 4,
+    width: 200,
+    height: 60,
+    x: 10,
+    y: 70 * i
+  });
+}

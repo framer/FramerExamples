@@ -54,17 +54,12 @@ window.__imported__["facebookpaper/layers.json.js"] = [
     "name" : "photo"
   }
 ]
-window.Framer.Defaults.DeviceView = {
-  "deviceScale" : -1,
-  "orientation" : 0,
-  "contentScale" : 1,
-  "deviceType" : "iphone-5s-silver-hand"
-};
+if (typeof(DeviceComponent) !== "undefined") {DeviceComponent.Devices["iphone-6-silver"].deviceImageJP2 = false};
+window.Framer.Defaults.DeviceView = {"deviceScale":-1,"deviceType":"iphone-5s-silver-hand","contentScale":1,"orientation":0};
 
-window.FramerStudioInfo = {
-  "deviceImagesUrl" : "file:\/\/\/Applications\/Framer%20Studio.app\/Contents\/Resources\/DeviceImages\/",
-  "documentTitle" : "paper-photozoom.framer"
-};
+window.Framer.Defaults.DeviceComponent = {"deviceScale":-1,"deviceType":"iphone-5s-silver-hand","contentScale":1,"orientation":0};
+
+window.FramerStudioInfo = {"deviceImagesUrl":"\/_server\/resources\/DeviceImages","documentTitle":"paper-photozoom.framer"};
 
 Framer.Device = new Framer.DeviceView();
 Framer.Device.setupContext();
@@ -301,17 +296,17 @@ module.exports = EventEmitter;
 
 },{}],2:[function(require,module,exports){
 var Bridge, EventEmitter,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  __hasProp = {}.hasOwnProperty;
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 EventEmitter = require("eventemitter3");
 
-Bridge = (function(_super) {
-  __extends(Bridge, _super);
+Bridge = (function(superClass) {
+  extend(Bridge, superClass);
 
   function Bridge() {
-    this.receive = __bind(this.receive, this);
+    this.receive = bind(this.receive, this);
     if (typeof window !== "undefined" && window !== null) {
       window._receive = this.receive;
     }
@@ -350,14 +345,14 @@ exports.bridge = new Bridge();
 
 },{"eventemitter3":1}],3:[function(require,module,exports){
 var ContextListener, ContextListenerPropertyUpdateKeys, bridge, getLayerProperties, traverseUp,
-  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 bridge = require("./Bridge").bridge;
 
 traverseUp = function(layer) {
   var layers;
-  layers = [];
+  layers = [layer];
   while (layer.superLayer) {
     layers.push(layer.superLayer);
     layer = layer.superLayer;
@@ -366,18 +361,20 @@ traverseUp = function(layer) {
 };
 
 getLayerProperties = function(layer) {
-  var properties;
+  var properties, ref;
   properties = {
     id: layer.id,
-    name: layer.name || layer._variableName || ("Layer " + layer.id),
-    superLayer: null,
-    index: layer.index,
-    visible: layer.visible
+    name: layer.name || ((ref = layer.__framerInstanceInfo) != null ? ref.name : void 0) || (layer.constructor.name + " " + layer.id),
+    superLayer: null
   };
+  _.extend(properties, _.pick(layer, ["x", "y", "z", "index", "width", "height", "scale", "opacity", "rotationX", "rotationY", "rotationZ", "blur"]));
   if (properties.visible === false) {
     properties.visibleResult = false;
   } else {
-    properties.visibleResult = __indexOf.call(_.pluck(traverseUp(layer), "visible"), false) < 0;
+    properties.visibleResult = indexOf.call(_.pluck(traverseUp(layer), "visible"), false) < 0;
+  }
+  if (layer._states) {
+    properties.states = layer._states._states;
   }
   if (layer.superLayer != null) {
     properties.superLayer = layer.superLayer.id;
@@ -389,10 +386,10 @@ ContextListenerPropertyUpdateKeys = ["name", "superLayer", "index", "visible"];
 
 ContextListener = (function() {
   function ContextListener(context) {
-    this.onLayerDestroy = __bind(this.onLayerDestroy, this);
-    this.onLayerCreate = __bind(this.onLayerCreate, this);
-    this.onContextReset = __bind(this.onContextReset, this);
-    this._update = __bind(this._update, this);
+    this.onLayerDestroy = bind(this.onLayerDestroy, this);
+    this.onLayerCreate = bind(this.onLayerCreate, this);
+    this.onContextReset = bind(this.onContextReset, this);
+    this._update = bind(this._update, this);
     this._context = context;
     this.update = _.debounce(this._update, 10);
     this._context.on("reset", this.onContextReset);
@@ -413,25 +410,25 @@ ContextListener = (function() {
   };
 
   ContextListener.prototype.onLayerCreate = function(layer) {
-    var key, _i, _len, _results;
+    var i, key, len, results;
     this.update();
-    _results = [];
-    for (_i = 0, _len = ContextListenerPropertyUpdateKeys.length; _i < _len; _i++) {
-      key = ContextListenerPropertyUpdateKeys[_i];
-      _results.push(layer.on("change:" + key, this.update));
+    results = [];
+    for (i = 0, len = ContextListenerPropertyUpdateKeys.length; i < len; i++) {
+      key = ContextListenerPropertyUpdateKeys[i];
+      results.push(layer.on("change:" + key, this.update));
     }
-    return _results;
+    return results;
   };
 
   ContextListener.prototype.onLayerDestroy = function(layer) {
-    var key, _i, _len, _results;
+    var i, key, len, results;
     this.update();
-    _results = [];
-    for (_i = 0, _len = ContextListenerPropertyUpdateKeys.length; _i < _len; _i++) {
-      key = ContextListenerPropertyUpdateKeys[_i];
-      _results.push(layer.on("change:" + key, this.update));
+    results = [];
+    for (i = 0, len = ContextListenerPropertyUpdateKeys.length; i < len; i++) {
+      key = ContextListenerPropertyUpdateKeys[i];
+      results.push(layer.on("change:" + key, this.update));
     }
-    return _results;
+    return results;
   };
 
   return ContextListener;
@@ -443,17 +440,77 @@ exports.ContextListener = ContextListener;
 
 
 },{"./Bridge":2}],4:[function(require,module,exports){
-var ANIMATING_KEYS, highlightColor,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+var ANIMATING_KEYS, CONFIG, canvasScaleX, canvasScaleY, highlightColor, scaledFrame, screenScaledFrame,
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-highlightColor = "#00A4FF";
+highlightColor = "#28AFFA";
 
 ANIMATING_KEYS = ["x", "y", "width", "height", "scaleX", "scaleY", "scaleZ", "scale"];
 
+CONFIG = {
+  borderWidth: 2
+};
+
+canvasScaleX = function(layer) {
+  var context, i, len, ref, scale, superLayer;
+  scale = layer.scale * layer.scaleX;
+  ref = layer.superLayers(context = true);
+  for (i = 0, len = ref.length; i < len; i++) {
+    superLayer = ref[i];
+    scale = scale * superLayer.scale * superLayer.scaleX;
+  }
+  return scale;
+};
+
+canvasScaleY = function(layer) {
+  var context, i, len, ref, scale, superLayer;
+  scale = layer.scale * layer.scaleY;
+  ref = layer.superLayers(context = true);
+  for (i = 0, len = ref.length; i < len; i++) {
+    superLayer = ref[i];
+    scale = scale * superLayer.scale * superLayer.scaleY;
+  }
+  return scale;
+};
+
+screenScaledFrame = function(layer) {
+  var context, factorX, factorY, frame, i, layerScaledFrame, layers, len, superLayer;
+  frame = {
+    x: 0,
+    y: 0,
+    width: layer.width * canvasScaleX(layer),
+    height: layer.height * canvasScaleY(layer)
+  };
+  layers = layer.superLayers(context = true);
+  layers.push(layer);
+  layers.reverse();
+  for (i = 0, len = layers.length; i < len; i++) {
+    superLayer = layers[i];
+    factorX = superLayer._superOrParentLayer() ? canvasScaleX(superLayer._superOrParentLayer()) : 1;
+    factorY = superLayer._superOrParentLayer() ? canvasScaleY(superLayer._superOrParentLayer()) : 1;
+    layerScaledFrame = scaledFrame(superLayer);
+    frame.x += layerScaledFrame.x * factorX;
+    frame.y += layerScaledFrame.y * factorY;
+  }
+  return frame;
+};
+
+scaledFrame = function(layer) {
+  var frame, scaleX, scaleY;
+  frame = layer.frame;
+  scaleX = layer.scale * layer.scaleX;
+  scaleY = layer.scale * layer.scaleY;
+  frame.width *= scaleX;
+  frame.height *= scaleY;
+  frame.x += (1 - scaleX) * layer.originX * layer.width;
+  frame.y += (1 - scaleY) * layer.originY * layer.height;
+  return frame;
+};
+
 exports.HighlightComponent = (function() {
   function HighlightComponent() {
-    this.update = __bind(this.update, this);
-    this.highlight = __bind(this.highlight, this);
+    this.update = bind(this.update, this);
+    this.highlight = bind(this.highlight, this);
     var ctx;
     ctx = new Framer.Context({
       name: "Highlight"
@@ -465,14 +522,15 @@ exports.HighlightComponent = (function() {
       };
     })(this));
     this.layer.style = {
-      border: "2px solid " + highlightColor,
+      border: CONFIG.borderWidth + "px solid " + highlightColor,
       zIndex: 10000
     };
-    this.layer.backgroundColor = "transparent";
+    this.layer.backgroundColor = "rgba(40,175,250,0.2)";
     this.info.style = {
-      font: "10px/1em Menlo",
+      font: "bold 11px HelveticaNeue",
       zIndex: 10000,
-      textAlign: "center"
+      textAlign: "center",
+      letterSpacing: ".4px"
     };
     this.info.color = "white";
     this.info.backgroundColor = "transparent";
@@ -480,11 +538,10 @@ exports.HighlightComponent = (function() {
     _.extend(this.info.textElement.style, {
       color: "#FFFFFF",
       display: "inline-block",
-      backgroundColor: "rgba(0,164,255,0.80)",
-      borderRadius: "4px",
-      border: "1px solid #00A4FF",
-      padding: "5px 5px 3px 5px",
-      textShadow: "0px 1px 0px rgba(0,0,0,0.30)"
+      backgroundColor: "rgba(40,175,250,1)",
+      borderRadius: "3px",
+      padding: "5px 8px 5px 8px",
+      textShadow: "0px 1px 0px rgba(0,0,0,0.1)"
     });
     this.info._element.appendChild(this.info.textElement);
     this.layer.visible = false;
@@ -493,27 +550,27 @@ exports.HighlightComponent = (function() {
   }
 
   HighlightComponent.prototype.highlight = function(layer) {
-    var p, _i, _len, _results;
+    var i, len, p, results;
     if (this.current === layer) {
       return;
     }
     this.current = layer;
     this.update();
-    _results = [];
-    for (_i = 0, _len = ANIMATING_KEYS.length; _i < _len; _i++) {
-      p = ANIMATING_KEYS[_i];
-      _results.push(this.current.on("change:" + p, this.update));
+    results = [];
+    for (i = 0, len = ANIMATING_KEYS.length; i < len; i++) {
+      p = ANIMATING_KEYS[i];
+      results.push(this.current.on("change:" + p, this.update));
     }
-    return _results;
+    return results;
   };
 
   HighlightComponent.prototype.unhighlight = function() {
-    var p, _i, _len;
+    var i, len, p;
     if (!this.current) {
       return;
     }
-    for (_i = 0, _len = ANIMATING_KEYS.length; _i < _len; _i++) {
-      p = ANIMATING_KEYS[_i];
+    for (i = 0, len = ANIMATING_KEYS.length; i < len; i++) {
+      p = ANIMATING_KEYS[i];
       this.current.off("change:" + p, this.update);
     }
     this.current = null;
@@ -522,23 +579,77 @@ exports.HighlightComponent = (function() {
   };
 
   HighlightComponent.prototype.update = function() {
-    var currentFrame;
+    var canvasFrame, currentFrame, infoOnTopOrBottom, margin, midXPos, midYPos, ref, yPos;
     if (!this.layer) {
       return;
     }
     if (!this.current) {
       return;
     }
-    currentFrame = this.current.screenScaledFrame();
+    currentFrame = screenScaledFrame(this.current);
+    currentFrame.x -= CONFIG.borderWidth;
+    currentFrame.y -= CONFIG.borderWidth;
+    currentFrame.width += 2 * CONFIG.borderWidth;
+    currentFrame.height += 2 * CONFIG.borderWidth;
     this.layer.visible = true;
     this.layer.frame = currentFrame;
+    this.layer.rotation = this.current.rotation;
+    this.info.textElement.textContent = "x: " + (this.current.x.toFixed(1)) + ", y: " + (this.current.y.toFixed(1)) + ", width: " + (this.current.width.toFixed(1)) + ", height: " + (this.current.height.toFixed(1));
+    canvasFrame = (ref = Framer.Canvas) != null ? ref.frame : void 0;
+    if (!canvasFrame) {
+      canvasFrame = {
+        width: Screen.width,
+        height: Screen.height
+      };
+    }
+    margin = 12;
     this.info.visible = true;
     this.info.frame = currentFrame;
-    this.info.width = 500;
-    this.info.midX = this.layer.midX;
-    this.info.pixelAlign();
-    this.info.y += this.info.height + 12;
-    return this.info.textElement.textContent = "x:" + (this.current.x.toFixed(1)) + " y:" + (this.current.y.toFixed(1)) + " width:" + (this.current.width.toFixed(1)) + " height:" + (this.current.height.toFixed(1));
+    this.info.width = 320;
+    this.info.height = 24;
+    this.info.style.textAlign = "center";
+    midYPos = this.layer.midY;
+    midXPos = this.layer.midX;
+    infoOnTopOrBottom = true;
+    if (this.layer.y < canvasFrame.height - (this.info.height + margin) && this.layer.maxY > (this.info.height + margin)) {
+      if (midXPos > canvasFrame.width - ((this.info.width / 2) + margin)) {
+        this.info.style.textAlign = "right";
+        this.info.maxX = Math.min(this.layer.x - margin, canvasFrame.width - margin);
+        infoOnTopOrBottom = false;
+      } else if (midXPos < ((this.info.width / 2) + margin)) {
+        this.info.style.textAlign = "left";
+        this.info.x = Math.max(this.layer.maxX + margin, margin);
+        infoOnTopOrBottom = false;
+      }
+      if (!infoOnTopOrBottom) {
+        this.info.midY = Math.max(Math.min(midYPos, canvasFrame.height - ((this.info.height + margin) - margin)), (this.info.height + margin) - margin);
+      }
+    }
+    if (infoOnTopOrBottom) {
+      yPos = this.layer.maxY + margin;
+      if (yPos > canvasFrame.height - (this.info.height + margin)) {
+        yPos = this.layer.y - (this.info.height + margin);
+        if (yPos > canvasFrame.height - (this.info.height + margin)) {
+          yPos = canvasFrame.height - (this.info.height + margin);
+        }
+      } else if (yPos < margin) {
+        yPos = margin;
+      }
+      if (midXPos > canvasFrame.width - ((this.info.width / 2) + margin)) {
+        midXPos = canvasFrame.width - ((this.info.width / 2) + margin);
+        this.info.style.textAlign = "right";
+      } else if (midXPos < ((this.info.width / 2) + margin)) {
+        midXPos = (this.info.width / 2) + margin;
+        this.info.style.textAlign = "left";
+      }
+      this.info.midX = midXPos;
+      this.info.y = yPos;
+    }
+    this.info.x = Math.max(margin, this.info.x);
+    this.info.maxX = Math.min(canvasFrame.width - margin, this.info.maxX);
+    this.info.y = Math.max(margin, this.info.y);
+    this.info.maxY = Math.min(canvasFrame.height - margin, this.info.maxY);
+    return this.info.pixelAlign();
   };
 
   return HighlightComponent;
@@ -548,29 +659,33 @@ exports.HighlightComponent = (function() {
 
 
 },{}],5:[function(require,module,exports){
-var BUILDS, EventEmitter, Runtime, TRANSFORM_REGEX, bridge,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  __hasProp = {}.hasOwnProperty;
+var BUILDS, EventEmitter, Runtime, bridge, parseUrl,
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 EventEmitter = require("eventemitter3");
 
 bridge = require("./Bridge").bridge;
 
-TRANSFORM_REGEX = /(([\w.]+) += +new [\w]*Layer[^;]*;)/g;
-
 BUILDS = 0;
 
-Runtime = (function(_super) {
-  __extends(Runtime, _super);
+parseUrl = function(url) {
+  var parser;
+  parser = document.createElement("a");
+  parser.href = url;
+  return parser;
+};
+
+Runtime = (function(superClass) {
+  extend(Runtime, superClass);
 
   function Runtime() {
-    this._windowErrorHandler = __bind(this._windowErrorHandler, this);
-    this._errorHandler = __bind(this._errorHandler, this);
-    this.init();
+    this._errorHandler = bind(this._errorHandler, this);
+    this.setup();
   }
 
-  Runtime.prototype.init = function() {
+  Runtime.prototype.setup = function() {
     var properties;
     if (typeof Framer !== "undefined" && Framer !== null ? Framer.Device : void 0) {
       properties = ["deviceScale", "contentScale", "deviceType", "keyboard", "orientation", "fullScreen"];
@@ -588,15 +703,16 @@ Runtime = (function(_super) {
     if (this.coffeescript === coffeescript) {
       return;
     }
-    console.clear();
     console.log("» Framer build " + (BUILDS++));
     this._errorHandlerRemove();
     this.coffeescript = coffeescript;
     result = this.uncoffee(this.coffeescript);
     this.sourceMap = result.sourceMap;
-    this.javascript = this.transform(result.js);
+    this.javascript = result.js;
     this._errorHandlerSetup();
-    return this.javascript;
+    return JSON.stringify({
+      js: this.javascript
+    });
   };
 
   Runtime.prototype.reset = function() {
@@ -604,56 +720,61 @@ Runtime = (function(_super) {
   };
 
   Runtime.prototype.uncoffee = function(code) {
-    var CoffeeScript, e, error, result;
-    CoffeeScript = (typeof window !== "undefined" && window !== null ? window.CoffeeScript : void 0) || this.CoffeeScript;
-    try {
-      result = CoffeeScript.compile(code, {
-        sourceMap: true,
-        filename: "generated.js"
-      });
-    } catch (_error) {
-      e = _error;
-      if (e instanceof SyntaxError) {
-        error = new SyntaxError(e.message);
-        error.lineNumber = e.location.first_line + 1;
-        bridge.sendError(error);
-        throw new Error("Framer syntax error line " + error.lineNumber + ": " + e.message);
-      } else {
-        throw e;
+    var compile, error, options, optionsEx, ref, result;
+    options = {
+      sourceMap: true,
+      filename: "app.coffee"
+    };
+    optionsEx = {
+      returnAST: false,
+      returnScope: false,
+      returnGlobals: false,
+      returnInfo: false,
+      framerInstanceInfo: true
+    };
+    if (Inferencer.cs2js) {
+      compile = Inferencer.cs2js;
+    } else {
+      compile = CoffeeScript.compile;
+    }
+    result = compile(code, options, optionsEx);
+    if (result.error != null) {
+      error = new SyntaxError(result.error.message);
+      error.lineNumber = -1;
+      if (result.error.location != null) {
+        error.lineNumber = ((ref = result.error.location) != null ? ref.first_line : void 0) + 1;
       }
+      bridge.sendError(error);
+      throw new Error("Framer syntax error line " + error.lineNumber + ": " + e.message);
     }
     return result;
   };
 
-  Runtime.prototype.transform = function(code) {
-    return code.replace(TRANSFORM_REGEX, "$1 $2._variableName = \"$2\";");
-  };
-
-  Runtime.prototype._errorHandler = function(error) {
-    error.lineNumber = this._lookupLine(error.lineno);
+  Runtime.prototype._errorHandler = function(runtimeError) {
+    var error, errorFromCompiledCoffeeScript, fileName;
+    errorFromCompiledCoffeeScript = runtimeError.filename === window.location.href;
+    if (errorFromCompiledCoffeeScript) {
+      error = new Error(runtimeError.message);
+      error.lineNumber = this._lookupLine(runtimeError.lineno);
+    } else {
+      fileName = _.last(parseUrl(runtimeError.filename).pathname.split("/"));
+      error = new Error("[" + fileName + "] " + runtimeError.message);
+      error.lineNumber = -1;
+    }
+    console.log("_errorHandler", runtimeError, error);
     return bridge.sendError(error);
   };
 
-  Runtime.prototype._windowErrorHandler = function(message, url, line, col) {
-    if (_.endsWith(url, ".temp.html")) {
-      console.error("Framer script error line " + (this._lookupLine(line)) + ": " + message);
-      return true;
-    }
-    return false;
-  };
-
   Runtime.prototype._errorHandlerSetup = function() {
-    window.addEventListener("error", this._errorHandler);
-    return window.onerror = this._windowErrorHandler;
+    return window.addEventListener("error", this._errorHandler);
   };
 
   Runtime.prototype._errorHandlerRemove = function() {
-    window.removeEventListener("error", this._errorHandler);
-    return window.onerror = null;
+    return window.removeEventListener("error", this._errorHandler);
   };
 
   Runtime.prototype._lookupLine = function(lineNumber) {
-    var char, charIndex, errorColNumber, errorLine, errorLineIndex, errorLineNumber, loc, sourceLines, _i, _len;
+    var char, charIndex, errorColNumber, errorLine, errorLineIndex, errorLineNumber, i, len, loc, sourceLines;
     sourceLines = this.javascript.split("\n");
     errorLineIndex = lineNumber - 1;
     errorLine = sourceLines[errorLineIndex];
@@ -662,7 +783,7 @@ Runtime = (function(_super) {
     }
     errorLineNumber = 1;
     errorColNumber = 0;
-    for (charIndex = _i = 0, _len = errorLine.length; _i < _len; charIndex = ++_i) {
+    for (charIndex = i = 0, len = errorLine.length; i < len; charIndex = ++i) {
       char = errorLine[charIndex];
       loc = this.sourceMap.sourceLocation([errorLineIndex, charIndex]);
       if (loc && loc[0] > errorLineNumber) {
@@ -682,7 +803,7 @@ exports.runtime = new Runtime();
 
 
 },{"./Bridge":2,"eventemitter3":1}],6:[function(require,module,exports){
-var HighlightComponent, setupContext;
+var HighlightComponent, getLayerById, setupContext;
 
 exports.bridge = (require("./Bridge.coffee")).bridge;
 
@@ -692,8 +813,25 @@ exports.context = require("./Context.coffee");
 
 HighlightComponent = require("./HighlightComponent.coffee").HighlightComponent;
 
+if (window.require == null) {
+  window.require = function(module) {
+    throw Error("Module " + module + " can't be found");
+  };
+}
+
+getLayerById = function(id) {
+  var i, layer, len, ref;
+  ref = Framer.CurrentContext._layerList;
+  for (i = 0, len = ref.length; i < len; i++) {
+    layer = ref[i];
+    if (layer.id === id) {
+      return layer;
+    }
+  }
+};
+
 setupContext = function() {
-  var context, getLayerById, highlighter;
+  var context, highlighter, savedProperties;
   context = new exports.context.ContextListener(Framer.CurrentContext);
   highlighter = new HighlightComponent();
   exports.bridge.on("ui:highlight", function(info) {
@@ -702,20 +840,28 @@ setupContext = function() {
   exports.bridge.on("ui:unhighlight", function() {
     return highlighter.unhighlight();
   });
-  return getLayerById = function(id) {
-    var layer, _i, _len, _ref;
-    _ref = Framer.CurrentContext._layerList;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      layer = _ref[_i];
-      if (layer.id === id) {
-        return layer;
-      }
+  savedProperties = null;
+  exports.bridge.on("ui:setstate", function(info) {
+    var layer;
+    layer = getLayerById(info.id);
+    if (info.state === "Current") {
+      return layer.properties = savedProperties;
+    } else {
+      savedProperties = layer.properties;
+      return layer.states.switchInstant(info.state);
     }
-  };
+  });
+  return exports.bridge.on("ui:updateState", function(info) {
+    var layer;
+    layer = getLayerById(info.layerId);
+    layer[info.propertyName] = info.value;
+    return layer.states._states[info.stateName][info.propertyName] = info.value;
+  });
 };
 
 if (typeof window !== "undefined" && window !== null) {
   window.FramerStudio = exports;
+  setupContext();
 }
 
 

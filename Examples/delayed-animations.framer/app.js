@@ -4,14 +4,14 @@ www.framerjs.com */
 var ballCurve, bg, cols, container, i, margin, results, rows, size, startDelta;
 
 bg = new BackgroundLayer({
-  backgroundColor: "#A793E8"
+  backgroundColor: "#7DDD11"
 });
 
 container = new Layer({
   backgroundColor: "transparent",
-  clip: false,
   width: 600,
-  height: 600
+  height: 600,
+  clip: false
 });
 
 container.center();
@@ -19,6 +19,8 @@ container.center();
 window.onresize = function() {
   return container.center();
 };
+
+/* Variables */
 
 rows = 4;
 
@@ -31,6 +33,8 @@ margin = 50;
 ballCurve = "spring(300,20,0)";
 
 startDelta = 200;
+
+/* Mapping */
 
 (function() {
   results = [];

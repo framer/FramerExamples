@@ -4,37 +4,37 @@ www.framerjs.com */
 var bg, lastYPosition, layer1, layer2, layer3;
 
 bg = new BackgroundLayer({
-  backgroundColor: "#C0C5CF"
+  backgroundColor: "#7DDD11"
 });
 
 layer3 = new Layer({
-  superLayer: bg,
-  x: -35,
-  y: 574,
+  image: "images/layer3.png",
   width: 634,
   height: 1718,
-  image: "images/layer3.png"
+  superLayer: bg,
+  x: -35,
+  y: 57
 });
 
 layer2 = new Layer({
-  superLayer: bg,
-  x: -62,
-  y: -55,
+  image: "images/layer2.png",
   width: 750,
   height: 2222,
-  image: "images/layer2.png"
+  superLayer: bg,
+  x: -62,
+  y: -55
 });
 
 layer1 = new Layer({
-  superLayer: bg,
-  x: -62,
-  y: 86,
+  image: "images/layer1.png",
   width: 750,
   height: 1751,
-  image: "images/layer1.png"
-
-  /* Storing the y position of the last touch on the screen */
+  superLayer: bg,
+  x: -62,
+  y: 86
 });
+
+/* Storing the y position of the last touch on the screen */
 
 lastYPosition = 0;
 

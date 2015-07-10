@@ -2,11 +2,19 @@
 # by Koen Bok
 # www.framerjs.com
 
-bg = new BackgroundLayer backgroundColor: "#A793E8"
-container = new Layer backgroundColor: "transparent", clip:false, width:600, height: 600
+bg = new BackgroundLayer 
+	backgroundColor: "#7DDD11"
+	
+container = new Layer 
+	backgroundColor: "transparent"
+	width: 600
+	height: 600
+	clip:false
+	
 container.center()
 window.onresize = -> container.center()
 	
+# Variables
 rows = 4
 cols = 4
 
@@ -15,6 +23,7 @@ margin = 50
 ballCurve = "spring(300,20,0)"
 startDelta = 200
 
+# Mapping
 [1..rows].map (a) ->
 	[1..cols].map (b) ->
 		ball = new Layer

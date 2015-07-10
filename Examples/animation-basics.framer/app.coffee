@@ -2,33 +2,39 @@
 # by Benjamin den Boer
 # www.framerjs.com
 
+# Set background
 bg = new BackgroundLayer 
-	backgroundColor: "#28AFFA"
+	backgroundColor: "#877DD7"
 
 # Create Layers
-layerA = new Layer width:80, height:80, 
-backgroundColor: "#fff", borderRadius:4
+layerA = new Layer
+	width: 150
+	height: 150
+	backgroundColor: "#fff"
+	borderRadius: 6
+
+layerB = new Layer
+	width: 150
+	height: 150
+	backgroundColor: "#fff"
+	borderRadius: 150
+	
 layerA.center()
-layerA.x -= 50
-
-layerB = new Layer width:80, height:80, 
-backgroundColor: "#fff", borderRadius: 50
 layerB.center()
-layerB.x += 50
+layerA.x -= 90
+layerB.x += 90
 
-# Easing Curve Animation with Timing & Repeat
-# Ease, Ease-in, Ease-Out, Ease-In-Out
+# Easing Animation Curve 
 layerA.animate 
 	properties:
 		rotation: 90
 	curve: "ease"
-	time: 2
-	repeat: 1
 
 # Spring Curve Animation with Delay
 # Tension, Friction, Velocity (Bounciness, Weight, Wind-Up)
 layerB.animate 
 	properties:
-		rotation: 180, borderRadius: 4
-	curve: "spring(200,50,0)"
-	delay: 2
+		rotation: 90
+		borderRadius: 6
+	curve: "spring(200,30,0)"
+	delay: 1

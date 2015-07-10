@@ -4,14 +4,14 @@ www.framerjs.com */
 var bg, layerA;
 
 bg = new BackgroundLayer({
-  backgroundColor: "#28AFFA"
+  backgroundColor: "#877DD7"
 });
 
 /* Create Layers */
 
 layerA = new Layer({
-  width: 80,
-  height: 80,
+  width: 150,
+  height: 150,
   backgroundColor: "#fff",
   borderRadius: 4
 });

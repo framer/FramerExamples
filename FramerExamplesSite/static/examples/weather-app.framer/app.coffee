@@ -24,7 +24,7 @@ weatherScroll = ScrollComponent.wrap(weather)
 weatherScroll.scrollHorizontal = false
 weatherScroll.directionLock = true
 
-# The create a mask for the week days so they won'
+# We create a mask for the week days so it's hidden behind the city name
 weekMask = new Layer
 	y: week.frame.y + 360
 	width: week.frame.width
@@ -63,7 +63,7 @@ weatherScroll.content.on "change:y", ->
 	temperature.opacity = Utils.modulate(yOffset, [0, 100], [1, 0], true)
 	chrome.opacity = Utils.modulate(yOffset, [0, 100], [1, 0], true)
 	
-	# If the y offset is bigger then 418 we fix the week layermask and move the week layers it
+	# If the y offset is bigger then 418 we fix the week layermask and move the week layers
 	if yOffset > 418
 		todayScroll.y = todayScroll.originalY + (yOffset - 418)
 		weekMask.y = weekMask.originalY + (yOffset - 418)

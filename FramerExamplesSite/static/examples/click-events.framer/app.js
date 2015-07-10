@@ -4,32 +4,30 @@ www.framerjs.com */
 var bg, layerA, layerB;
 
 bg = new BackgroundLayer({
-  backgroundColor: "#535F71"
+  backgroundColor: "#2DD7AA"
 });
 
 /* Create Layers */
 
 layerA = new Layer({
-  width: 80,
-  height: 80,
   backgroundColor: "#fff",
   borderRadius: 4
 });
+
+layerB = new Layer({
+  backgroundColor: "#fff",
+  borderRadius: 4
+});
+
+/* Staging */
 
 layerA.center();
 
-layerA.x -= 50;
-
-layerB = new Layer({
-  width: 80,
-  height: 80,
-  backgroundColor: "#fff",
-  borderRadius: 4
-});
-
 layerB.center();
 
-layerB.x += 50;
+layerA.x -= 60;
+
+layerB.x += 60;
 
 /* Click Event */
 
