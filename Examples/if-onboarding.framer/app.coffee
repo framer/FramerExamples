@@ -10,8 +10,8 @@ splashScreen = new Layer
 	width: 320*2, height: 568*2, 
 	image: "images/LaunchImage.png"
 	index: 6
-	ignoreEvents: false  # to disable scrolling or swiping when the splash screen is still visible
-		
+	ignoreEvents: false  # disable scrolling or swiping when the splash screen is still visible
+
 # Paging Scrollview
 page = new PageComponent
 	width: Screen.width, height: Screen.height
@@ -57,7 +57,7 @@ page1 = new Layer
 
 # Page 1 - content
 iPhone = new Layer
-	y:164,
+	y:82*2,
 	width:150*2, height:300*2
 	image:"images/phone.png"
 	superLayer: page1
@@ -656,11 +656,6 @@ switchToState = (state) ->
 
 	currentState = state 
 
-
-# doesn’t work yet. (Version 1.11.188 (1047))
-# bug: https://www.facebook.com/groups/framerjs/permalink/674981579295583/
-page.on Events.Click, ->
-	page.snapToNextPage()
 
 # Listen to the Move event
 page.on Events.Move, ->
