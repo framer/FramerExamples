@@ -3,10 +3,13 @@ all: build
 # update:
 # 	python Scripts/update-framer.py
 
+bootstrap:
+	npm install
+
 convert:
 	python Scripts/coffee2js.py
 
-build:
+build: bootstrap
 	make convert
 
 	rm -Rf FramerExamplesSite/static/examples/*
