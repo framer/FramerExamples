@@ -6,7 +6,7 @@ window.Framer.Defaults.DeviceView = {"deviceScale":-1,"deviceType":"nexus-5-blac
 
 window.Framer.Defaults.DeviceComponent = {"deviceScale":-1,"deviceType":"nexus-5-black","contentScale":1,"orientation":0};
 
-window.FramerStudioInfo = {"deviceImagesUrl":"\/_server\/resources\/DeviceImages","documentTitle":"spaceInFramers.framer"};
+window.FramerStudioInfo = {"deviceImagesUrl":"\/_server\/resources\/DeviceImages","documentTitle":"space-invaders.framer"};
 
 Framer.Device = new Framer.DeviceView();
 Framer.Device.setupContext();
