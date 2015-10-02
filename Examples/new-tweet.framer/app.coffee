@@ -41,8 +41,8 @@ BirdX.states.switchInstant "Home"
 shadebg.states.switchInstant "Home"
 
 for circle, i in circles
- 	
- 	# Add States
+
+	# Add States
 	circle.states.add
 
 		Home:
@@ -50,7 +50,7 @@ for circle, i in circles
 			x: (Screen.width - circle.width) / 2 
 			y: tweet.y
 			rotationZ: circle.rotationZ
-			
+
 		Onboard:
 			opacity: 1
 			x: circle.x
@@ -65,7 +65,7 @@ bgButton.on Events.Click, ->
 
 	# Switch to onboard
 	if isHome	
-			
+
 		tweet.states.switch "Onboard"
 		BirdX.states.switch "Onboard"
 		shadebg.states.switch "Onboard"
@@ -84,7 +84,7 @@ bgButton.on Events.Click, ->
 
 		for circle, i in circles
 			circle.states.switch "Home", delay: 0.06 * i
-		
+
 		isHome = true
 
 
