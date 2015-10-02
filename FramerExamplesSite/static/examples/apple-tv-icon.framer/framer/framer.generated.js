@@ -6,7 +6,7 @@ window.Framer.Defaults.DeviceView = {"deviceScale":-1,"deviceType":"fullscreen",
 
 window.Framer.Defaults.DeviceComponent = {"deviceScale":-1,"deviceType":"fullscreen","contentScale":1,"orientation":0};
 
-window.FramerStudioInfo = {"deviceImagesUrl":"\/_server\/resources\/DeviceImages","documentTitle":"AppleTV.framer"};
+window.FramerStudioInfo = {"deviceImagesUrl":"\/_server\/resources\/DeviceImages","documentTitle":"apple-tv-icon.framer"};
 
 Framer.Device = new Framer.DeviceView();
 Framer.Device.setupContext();

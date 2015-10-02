@@ -1,0 +1,252 @@
+[
+	{
+		"id": 17,
+		"name": "fondo",
+		"layerFrame": {
+			"x": 0,
+			"y": 0,
+			"width": 1080,
+			"height": 1920
+		},
+		"maskFrame": null,
+		"image": {
+			"path": "images/fondo.png",
+			"frame": {
+				"x": 0,
+				"y": 0,
+				"width": 1080,
+				"height": 1920
+			}
+		},
+		"imageType": "png",
+		"children": [
+			
+		],
+		"modification": "935087237"
+	},
+	{
+		"id": 19,
+		"name": "oscuro",
+		"layerFrame": {
+			"x": 0,
+			"y": 0,
+			"width": 1080,
+			"height": 1920
+		},
+		"maskFrame": null,
+		"image": {
+			"path": "images/oscuro.png",
+			"frame": {
+				"x": 0,
+				"y": 0,
+				"width": 1080,
+				"height": 1920
+			}
+		},
+		"imageType": "png",
+		"children": [
+			
+		],
+		"modification": "935087213"
+	},
+	{
+		"id": 23,
+		"name": "Circle2",
+		"layerFrame": {
+			"x": 0,
+			"y": 0,
+			"width": 1080,
+			"height": 1920
+		},
+		"maskFrame": null,
+		"image": {
+			"path": "images/Circle2.png",
+			"frame": {
+				"x": 220,
+				"y": 1611,
+				"width": 90,
+				"height": 90
+			}
+		},
+		"imageType": "png",
+		"children": [
+			
+		],
+		"modification": "935087211"
+	},
+	{
+		"id": 25,
+		"name": "Circle3",
+		"layerFrame": {
+			"x": 0,
+			"y": 0,
+			"width": 1080,
+			"height": 1920
+		},
+		"maskFrame": null,
+		"image": {
+			"path": "images/Circle3.png",
+			"frame": {
+				"x": 328,
+				"y": 1482,
+				"width": 90,
+				"height": 90
+			}
+		},
+		"imageType": "png",
+		"children": [
+			
+		],
+		"modification": "935087208"
+	},
+	{
+		"id": 27,
+		"name": "Circle4",
+		"layerFrame": {
+			"x": 0,
+			"y": 0,
+			"width": 1080,
+			"height": 1920
+		},
+		"maskFrame": null,
+		"image": {
+			"path": "images/Circle4.png",
+			"frame": {
+				"x": 489,
+				"y": 1422,
+				"width": 102,
+				"height": 102
+			}
+		},
+		"imageType": "png",
+		"children": [
+			
+		],
+		"modification": "935087206"
+	},
+	{
+		"id": 29,
+		"name": "Circle5",
+		"layerFrame": {
+			"x": 0,
+			"y": 0,
+			"width": 1080,
+			"height": 1920
+		},
+		"maskFrame": null,
+		"image": {
+			"path": "images/Circle5.png",
+			"frame": {
+				"x": 660,
+				"y": 1482,
+				"width": 90,
+				"height": 90
+			}
+		},
+		"imageType": "png",
+		"children": [
+			
+		],
+		"modification": "935057702"
+	},
+	{
+		"id": 31,
+		"name": "Circle6",
+		"layerFrame": {
+			"x": 0,
+			"y": 0,
+			"width": 1080,
+			"height": 1920
+		},
+		"maskFrame": null,
+		"image": {
+			"path": "images/Circle6.png",
+			"frame": {
+				"x": 770,
+				"y": 1611,
+				"width": 90,
+				"height": 90
+			}
+		},
+		"imageType": "png",
+		"children": [
+			
+		],
+		"modification": "935057700"
+	},
+	{
+		"id": 21,
+		"name": "Circle1",
+		"layerFrame": {
+			"x": 0,
+			"y": 0,
+			"width": 1080,
+			"height": 1920
+		},
+		"maskFrame": null,
+		"image": {
+			"path": "images/Circle1.png",
+			"frame": {
+				"x": 436,
+				"y": 1679,
+				"width": 208,
+				"height": 209
+			}
+		},
+		"imageType": "png",
+		"children": [
+			
+		],
+		"modification": "935057696"
+	},
+	{
+		"id": 43,
+		"name": "Bird",
+		"layerFrame": {
+			"x": 0,
+			"y": 0,
+			"width": 1080,
+			"height": 1920
+		},
+		"maskFrame": null,
+		"image": {
+			"path": "images/Bird.png",
+			"frame": {
+				"x": 493,
+				"y": 1723,
+				"width": 93,
+				"height": 93
+			}
+		},
+		"imageType": "png",
+		"children": [
+			
+		],
+		"modification": "935057694"
+	},
+	{
+		"id": 45,
+		"name": "BirdX",
+		"layerFrame": {
+			"x": 0,
+			"y": 0,
+			"width": 1080,
+			"height": 1920
+		},
+		"maskFrame": null,
+		"image": {
+			"path": "images/BirdX.png",
+			"frame": {
+				"x": 516,
+				"y": 1745,
+				"width": 49,
+				"height": 49
+			}
+		},
+		"imageType": "png",
+		"children": [
+			
+		],
+		"modification": "935057671"
+	}
+]
