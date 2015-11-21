@@ -6,8 +6,7 @@
     if (typeof ga !== "undefined" && ga !== null) {
       ga("send", "pageview", "/examples/" + loadExampleName);
     }
-    $("#code").attr("src", "code.html?name=" + loadExampleName);
-    $("#example").attr("src", "example.html?name=" + loadExampleName);
+    $("#example").attr("src", "/static/examples/" + loadExampleName);
     return $("a.download").attr("href", "/static/examples/" + loadExampleName + ".zip");
   };
 
@@ -23,19 +22,18 @@
       if (typeof ga !== "undefined" && ga !== null) {
         ga("send", "pageview", "/examples/" + exampleName);
       }
-      $("#code").attr("src", "code.html?name=" + exampleName);
-      $("#example").attr("src", "example.html?name=" + exampleName);
+      $("#example").attr("src", "/static/examples/" + exampleName);
       return $("a.download").attr("href", "/static/examples/" + exampleName + ".zip");
     };
     if (!window.location.hash.slice(1)) {
-      window.location.hash = "carousel-onboarding.framer";
-      loadExample("carousel-onboarding.framer");
+      window.location.hash = "voice-onboarding.framer";
+      loadExample("voice-onboarding.framer");
     }
-    $(".navigation ul li a").click(function() {
+    $(".navigation figure a").click(function() {
       var exampleName;
       exampleName = $(this).attr("href").slice(1);
       showExample(exampleName);
-      $(".navigation ul li").removeClass("active");
+      $(".navigation figure").removeClass("active");
       $(this).parent().addClass("active");
       $(".navigation").removeClass("appear");
       return $('#topbar').removeClass("active");

@@ -1,8 +1,148 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% for item in examples %}
-<a href="/static/examples/{{ item.path }}">{{ item.path }}</a><br>
-{% endfor %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="{% static '/js/index.js' %}"></script>
+<script src="{% static '/js/main.js' %}"></script>
+
+<section class="prototype">
+	<header>
+		<a class="btn-open">Open</a>
+	</header>
+
+	<!-- <a class="badge" href="http://www.framerjs.com" target="_blank"><img src="/static/images/badge.png" srcset="/static/images/badge@2x.png 2x"></a> -->
+
+	<iframe id="example" name="example" src="" marginwidth="0" marginheight="0" hspace="0" vspace="0" frameborder="0"></iframe>
+</section>
+
+<div class="navigation">
+	<h1><a href="http://www.framerjs.com">Framer</a> Examples</h1>
+
+        <figure>
+            <a href="#voice-onboarding.framer">
+                <img src="/static/images/examples/voice-onboarding.png" srcset="/static/images/examples/voice-onboarding@2x.png 2x" draggable="false">
+            </a>
+            <p class="small">Voice Onboarding
+            	<span class="author"><a href="https://twitter.com/nlevin" target="_blank">Noah Levin</a></span>
+			</p>
+        </figure>
+
+		<figure>
+			<a href="#medium-app.framer">
+				<img src="/static/images/examples/scrollable-pages.png" srcset="/static/images/examples/scrollable-pages@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Medium App
+				<span class="author"><a href="https://twitter.com/jonastreub" target="_blank">Jonas Treub</a></span>
+			</p>
+		</figure>
+
+        <figure>
+			<a href="#twitter-feed.framer">
+				<img src="/static/images/examples/twitter-feed.png" srcset="/static/images/examples/twitter-feed@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Twitter Feed
+				<span class="author"><a href="https://twitter.com/jornvandijk" target="_blank">Jorn van Dijk</a></span>
+			</p>
+		</figure>
+
+		<figure>
+			<a href="#weather-app.framer">
+				<img src="/static/images/examples/weather-app.png" srcset="/static/images/examples/weather-app@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Weather App
+				<span class="author"><a href="https://twitter.com/jornvandijk" target="_blank">Jorn van Dijk</a></span>
+			</p>
+		</figure>
+
+		<figure>
+			<a href="#ios-lockscreen.framer">
+				<img src="/static/images/examples/ios-lockscreen.png" srcset="/static/images/examples/ios-lockscreen@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">iOS Lockscreen
+				<span class="author"><a href="https://twitter.com/jornvandijk" target="_blank">Jorn van Dijk</a></span>
+			</p>
+		</figure>
+
+		<figure>
+			<a href="#carousel-onboarding.framer">
+				<img src="/static/images/examples/carousel.png" srcset="/static/images/examples/carousel@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Carousel Onboarding
+				<span class="author"><a href="https://twitter.com/joshpuckett" target="_blank">Josh Puckett</a></span>
+			</p>
+		</figure>
+
+		<figure>
+			<a href="#pull-to-refresh.framer">
+				<img src="/static/images/examples/pull-to-refresh.png" srcset="/static/images/examples/pull-to-refresh@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Pull-To-Refresh
+				<span class="author"><a href="https://twitter.com/benjaminnathan" target="_blank">Benjamin den Boer</a></span>
+			</p>
+		</figure>
+
+		<figure>
+			<a href="#sticky-headers.framer">
+				<img src="/static/images/examples/sticky-headers.png" srcset="/static/images/examples/sticky-headers@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Sticky Headers
+				<span class="author"><a href="https://twitter.com/jonastreub" target="_blank">Jonas Treub</a></span>
+			</p>
+		</figure>
+
+		<figure>
+			<a href="#calendar-app.framer">
+				<img src="/static/images/examples/calendar-app.png" srcset="/static/images/examples/calendar-app@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Calendar App
+				<span class="author"><a href="https://twitter.com/kaigenji" target="_blank">Kai Daniels</a></span>
+			</p>
+		</figure>
+
+		<figure>
+			<a href="#guidebook-search.framer">
+				<img src="/static/images/examples/guidebook-search.png" srcset="/static/images/examples/guidebook-search@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Guidebook Search
+				<span class="author"><a href="https://twitter.com/pklada" target="_blank">Pete Lada</a></span>
+			</p>
+		</figure>
+
+		<figure>
+			<a href="#material-maps.framer">
+				<img src="/static/images/examples/material-maps.png" srcset="/static/images/examples/material-maps@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Material Maps</p>
+			<span class="author"><a href="https://twitter.com/radiofun8" target="_blank">Min-Sang Choi</a></span>
+		</figure>
+
+		<figure>
+			<a href="#card-feed.framer">
+				<img src="/static/images/examples/card-feed.png" srcset="/static/images/examples/card-feed@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Card Feed
+				<span class="author"><a href="https://twitter.com/edchao" target="_blank">Ed Chao</a></span>
+			</p>
+		</figure>
+
+		<figure>
+			<a href="#album-animation.framer">
+				<img src="/static/images/examples/album-view.png" srcset="/static/images/examples/album-view@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Album Animation</p>
+			<span class="author"><a href="https://twitter.com/jornvandijk" target="_blank">Jorn van Dijk</a></span>
+		</figure>
+
+		<figure>
+			<a href="#google-now-overview.framer">
+				<img src="/static/images/examples/google-now.png" srcset="/static/images/examples/google-now@2x.png 2x" draggable="false">
+			</a>
+			<p class="small">Google Now</p>
+			<span class="author"><a href="https://twitter.com/nlevin" target="_blank">Noah Levin</a></span>
+		</figure>
+
+</div>
+
+<!-- <a class="download" href="#">Download</a> -->
 
 {% endblock content%}

@@ -1,0 +1,18 @@
+/* glue: {{ version }} hash: {{ hash }} */
+/* 1x */
+{% for image in images %}.{{ image.filename|replace(".png", "")}}{%- if not image.last %}, {%- endif %}{%- endfor %}{
+    background-image:url('/static/images/sprites/{{ sprite_path }}');
+    background-repeat:no-repeat;
+    -webkit-background-size: {{ width }}px {{ height }}px;
+    -moz-background-size: {{ width }}px {{ height }}px;
+    background-size: {{ width }}px {{ height }}px;
+}
+{% for image in images %}
+.{{ image.filename|replace(".png", "") }}{
+    background-position:{{ image.x ~ ('px' if image.x) }} {{ image.y ~ ('px' if image.y) }};
+    width:{{ image.width }}px;
+    height:{{ image.height }}px;
+}
+{% endfor %}
+{% for ratio in ratios %}
+{% endfor %}
