@@ -42,6 +42,7 @@ for (i = 0, len = allSliders.length; i < len; i++) {
   /* Style */
   slider.knobSize = 45;
   slider.knob.scale = 0.8;
+  slider.knob.borderRadius = 30;
   slider.backgroundColor = "rgba(255,255,255,0.1)";
   slider.fill.backgroundColor = "rgba(255,255,255,1)";
 

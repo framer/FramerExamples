@@ -1,10 +1,13 @@
 {
   "device" : "iPhone 5S Space Gray",
-  "sharedPrototype" : 0,
   "deviceOrientation" : 0,
+  "sharedPrototype" : 0,
   "contentScale" : 1,
-  "deviceType" : "applewatchsport-38-aluminum-sportband-black",
+  "deviceType" : "apple-watch-38mm-stainless-steel-black-leather-closed",
+  "selectedHand" : "",
   "updateDelay" : 0.3,
-  "deviceScale" : -1,
-  "delay" : 0.3
+  "deviceScale" : "fit",
+  "delay" : 0.3,
+  "orientation" : 0,
+  "fullScreen" : false
 }

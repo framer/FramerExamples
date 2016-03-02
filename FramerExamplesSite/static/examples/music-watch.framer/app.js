@@ -16,27 +16,10 @@ AudioPlayer = require("audio").AudioPlayer;
 
 audio = new AudioPlayer({
   audio: "local-forecast.mp3",
-  size: 64
+  size: 64,
+  y: 150,
+  x: 110
 });
-
-/* Copy the frame of the audioPlayer */
-
-audio.frame = sketch.play.frame;
-
-audio.controls.size = sketch.play.size;
-
-audio.controls.props = {
-  x: 0,
-  y: 0
-};
-
-audio.controls.showPlay = function() {
-  return this.image = "images/play.png";
-};
-
-audio.controls.showPause = function() {
-  return this.image = "images/pause.png";
-};
 
 /* Selection effect */
 

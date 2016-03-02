@@ -27,40 +27,40 @@ swipeHint.opacity = 0;
 
 pic = [pic1, pic2, pic3, pic4, pic5, pic6, btnContinue, splashPhone];
 
-pic1.properties = {
+pic1.props = {
   x: -50,
   y: 800,
   rotation: 10
 };
 
-pic2.properties = {
+pic2.props = {
   x: 200,
   y: 950,
   scale: 1.4
 };
 
-pic3.properties = {
+pic3.props = {
   x: 420,
   y: 980,
   rotation: -3,
   scale: 1.5
 };
 
-pic4.properties = {
+pic4.props = {
   x: 250,
   y: 800,
   rotation: 1,
   scale: 1.4
 };
 
-pic5.properties = {
+pic5.props = {
   x: 80,
   y: 790,
   rotation: -7,
   scale: 1.4
 };
 
-pic6.properties = {
+pic6.props = {
   x: 430,
   y: 800,
   rotation: 7,

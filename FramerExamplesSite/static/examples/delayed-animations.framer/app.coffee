@@ -2,9 +2,8 @@
 # by Koen Bok
 # www.framerjs.com
 
-bg = new BackgroundLayer 
-	backgroundColor: "#7DDD11"
-	
+Screen.backgroundColor = "#7DDD11"
+
 container = new Layer 
 	backgroundColor: "transparent"
 	width: 600
@@ -30,11 +29,10 @@ startDelta = 200
 			x: b * (size + margin)
 			y: a * (size + margin) + startDelta
 			backgroundColor: "white"
-			width:  size 
-			height: size
+			size: size
 			opacity: 0
 			borderRadius: 100
-			superLayer: container
+			parent: container
 
 		R1 = 200 / cols * a 
 		G1 = 200 / rows * b 

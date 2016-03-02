@@ -23,7 +23,7 @@ playercontainer.clip = yes
 playcontrol.opacity = 0
 
 # Setting up the frame
-frame = new Layer x:0, y:0, width:360, height:640
+frame = new Layer x:0, y:0, width:360, height:640, clip: true
 frame.addSubLayer(playerLayers.View)
 frame.center()
 window.onresize = -> frame.center()

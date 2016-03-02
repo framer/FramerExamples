@@ -31,6 +31,7 @@ weekMask = new Layer
 	height: week.frame.height
 	backgroundColor: null
 	superLayer: weatherScroll.content
+	clip: true
 
 # We put the week layer inside the mask and align it at the top
 week.y = 0

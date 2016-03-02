@@ -1,11 +1,9 @@
 /* Made with Framer
 by Koen Bok
 www.framerjs.com */
-var ballCurve, bg, cols, container, i, margin, results, rows, size, startDelta;
+var ballCurve, cols, container, i, margin, results, rows, size, startDelta;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#7DDD11"
-});
+Screen.backgroundColor = "#7DDD11";
 
 container = new Layer({
   backgroundColor: "transparent",
@@ -52,11 +50,10 @@ startDelta = 200;
       x: b * (size + margin),
       y: a * (size + margin) + startDelta,
       backgroundColor: "white",
-      width: size,
-      height: size,
+      size: size,
       opacity: 0,
       borderRadius: 100,
-      superLayer: container
+      parent: container
     });
     R1 = 200 / cols * a;
     G1 = 200 / rows * b;

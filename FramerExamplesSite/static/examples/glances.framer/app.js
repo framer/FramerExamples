@@ -4,7 +4,7 @@ by Benjamin den Boer
 www.framerjs.com */
 
 /* Sketch Import */
-var allIndicators, checkIfHome, checkTime, home, i, indicator, j, sketch, startTime, switchIndicators, time;
+var checkIfHome, checkTime, currentIndex, home, i, indicator, indicatorWrapper, j, sketch, startTime, switchIndicators, time;
 
 sketch = Framer.Importer.load("imported/glances");
 
@@ -29,9 +29,9 @@ home.addPage(sketch.battery, "bottom");
 
 /* Add weather and calendar glances */
 
-home.addPage(sketch.weather);
+home.addPage(sketch.weather, "right");
 
-home.addPage(sketch.calendar);
+home.addPage(sketch.calendar, "right");
 
 sketch.weather.y = Screen.height;
 
@@ -111,9 +111,11 @@ startTime = function() {
 
 startTime();
 
-/* Store indicators here */
-
-allIndicators = [];
+indicatorWrapper = new Layer({
+  y: Screen.height - 14,
+  backgroundColor: null,
+  superLayer: sketch.battery
+});
 
 /* Create indictors */
 
@@ -122,10 +124,10 @@ for (i = j = 1; j < 4; i = ++j) {
     backgroundColor: "#fff",
     width: 10,
     height: 10,
-    y: Screen.height - 14,
+    x: i * (8 + 10),
     borderRadius: "50%",
     opacity: 0.2,
-    superLayer: sketch.battery
+    superLayer: indicatorWrapper
   });
 
   /* States */
@@ -136,48 +138,40 @@ for (i = j = 1; j < 4; i = ++j) {
   });
   indicator.states.animationOptions = {
     time: 0.5
-
-    /* Store indicators in our array */
   };
-  allIndicators.push(indicator);
 }
 
-/* Set indicator for current page */
+currentIndex = null;
 
 switchIndicators = function() {
-  var current;
-  current = home.horizontalPageIndex(home.currentPage);
-  return allIndicators[current - 1].states["switch"]("active");
+  var indicators, previousIndex;
+  indicators = indicatorWrapper.subLayers;
+  previousIndex = currentIndex;
+  currentIndex = home.horizontalPageIndex(home.currentPage) - 1;
+  indicators[currentIndex].states["switch"]("active");
+  if (previousIndex !== null) {
+    return indicators[previousIndex].states["switch"]("default");
+  }
 };
 
 home.on(Events.Move, function(event) {
 
   /* Set max dragging distance */
-  var k, len, results;
   if (this.y <= -339) {
     this.y = -340;
   }
 
   /* Center indicators */
-  results = [];
-  for (i = k = 0, len = allIndicators.length; k < len; i = ++k) {
-    indicator = allIndicators[i];
-    results.push(indicator.x = (18 * (i + 1)) - event.x + 96);
-  }
-  return results;
+  return indicatorWrapper.x = -home.content.x + (Screen.width / 2 - indicatorWrapper.width / 2);
 });
 
 /* On page changes */
 
 home.on("change:currentPage", function() {
-  var k, len;
   checkIfHome();
-  sketch.home.x = home.currentPage.x;
-  if (home.currentPage !== sketch.home) {
-    for (k = 0, len = allIndicators.length; k < len; k++) {
-      indicator = allIndicators[k];
-      indicator.states["switch"]("default");
-    }
+  if (home.currentPage === sketch.home) {
+    return currentIndex = null;
+  } else {
     return switchIndicators();
   }
 });

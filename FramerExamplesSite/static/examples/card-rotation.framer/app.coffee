@@ -17,6 +17,7 @@ card.shadowY = 0
 card.shadowX = 0
 card.shadowSpread = 4
 
+
 # Parameters
 originalX = card.x
 originalY = card.y
@@ -35,7 +36,7 @@ card.states.animationOptions =
 	curve: springCurve
 
 # Events
-card.on Events.TouchStart, ->
+card.on Events.TapStart, ->
 	card.states.switch("zoom")
 	
 card.on Events.DragStart, ->
@@ -55,7 +56,7 @@ card.on Events.DragMove, (event) ->
 			rotationX: -cardRotationX
 			rotationY: cardRotationY
 		curve: "spring(900,80,0)"
-			
+
 card.on Events.DragEnd, ->
 	card.animate
 		properties:
@@ -67,5 +68,5 @@ card.on Events.DragEnd, ->
 			shadowY: 0
 		curve: springCurve
 
-card.on Events.TouchEnd, ->
+card.on Events.TapEnd, ->	
 	card.states.switch("default")

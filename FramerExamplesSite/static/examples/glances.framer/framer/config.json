@@ -1,8 +1,17 @@
 {
-  "updateDelay" : 0.3,
-  "deviceScale" : 1,
+  "propertyPanelToggleStates" : {
+
+  },
   "deviceOrientation" : 0,
-  "contentScale" : 1,
   "sharedPrototype" : 1,
-  "deviceType" : "applewatch-38-black-bracelet"
+  "contentScale" : 1,
+  "deviceType" : "apple-watch-38mm-stainless-steel-black-leather-closed",
+  "selectedHand" : "",
+  "updateDelay" : 0.3,
+  "deviceScale" : "fit",
+  "codeFolds" : [
+
+  ],
+  "orientation" : 0,
+  "fullScreen" : false
 }

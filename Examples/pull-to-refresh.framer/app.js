@@ -19,7 +19,8 @@ spinMask = new Layer({
   height: 54,
   width: 52,
   backgroundColor: "transparent",
-  opacity: 0
+  opacity: 0,
+  clip: true
 });
 
 spinMask.style["-webkit-mask"] = "url(images/mask.png) no-repeat";

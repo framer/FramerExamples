@@ -12,7 +12,8 @@ bg = new BackgroundLayer({
 mask = new Layer({
   width: 390,
   height: 410,
-  backgroundColor: "null"
+  backgroundColor: "null",
+  clip: true
 });
 
 mask.center();

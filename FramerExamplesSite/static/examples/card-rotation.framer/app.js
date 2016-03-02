@@ -68,7 +68,7 @@ card.states.animationOptions = {
 
 /* Events */
 
-card.on(Events.TouchStart, function() {
+card.on(Events.TapStart, function() {
   return card.states["switch"]("zoom");
 });
 
@@ -108,6 +108,6 @@ card.on(Events.DragEnd, function() {
   });
 });
 
-card.on(Events.TouchEnd, function() {
+card.on(Events.TapEnd, function() {
   return card.states["switch"]("default");
 });

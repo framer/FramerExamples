@@ -72,6 +72,7 @@ for (j = 0, len = allSliders.length; j < len; j++) {
     "0 2px 0 rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.3)": "0 2px 0 rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.3)"
   };
   slider.knob.clip = false;
+  slider.knob.borderRadius = 30;
   slider.knobSize = 50;
   slider.x = 196;
   slider.backgroundColor = "rgba(0,0,0,0.1)";

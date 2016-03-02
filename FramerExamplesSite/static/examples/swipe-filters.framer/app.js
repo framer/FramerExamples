@@ -80,6 +80,7 @@ for (i = j = 0, ref = filterAmount; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref
     width: viewSize,
     height: viewSize,
     backgroundColor: "transparent",
+    clip: true,
     superLayer: view.content
   });
 

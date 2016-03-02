@@ -45,7 +45,8 @@ frame = new Layer({
   x: 0,
   y: 0,
   width: 360,
-  height: 640
+  height: 640,
+  clip: true
 });
 
 frame.addSubLayer(playerLayers.View);

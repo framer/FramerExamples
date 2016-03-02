@@ -48,6 +48,7 @@ for slider in allSliders
 	}
 	
 	slider.knob.clip = false
+	slider.knob.borderRadius = 30
 	slider.knobSize = 50
 	slider.x = 196
 	

@@ -21,7 +21,6 @@ Framer.Defaults.Animation =
 		tolerance: 0.01
 
 # Album & Color Start States
-
 for count in [1..6]
 	albums = layerGroup["Album" + count]
 	albums.states.add
@@ -35,7 +34,6 @@ for count in [1..4]
 	colors.states.switchInstant "start"
 
 # Album Animation
-
 Utils.delay 1, ->
 	timeFactor = 0.1
 	Utils.delay 1 * timeFactor, -> layerGroup.Album1.states.next()

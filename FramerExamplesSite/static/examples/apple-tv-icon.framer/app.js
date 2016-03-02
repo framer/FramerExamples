@@ -12,7 +12,8 @@ bg = new BackgroundLayer({
 settingsLayer = new Layer({
   width: 690,
   height: 590,
-  backgroundColor: "transparant"
+  backgroundColor: "transparant",
+  clip: true
 });
 
 settings = new Layer({
@@ -25,7 +26,8 @@ settings = new Layer({
   shadowY: 40,
   shadowBlur: 100,
   shadowColor: "rgba(0,0,0,0.6)",
-  shadowSpread: -28
+  shadowSpread: -28,
+  clip: true
 });
 
 gearbg = new Layer({
@@ -68,7 +70,7 @@ glow = new Layer({
   width: 800,
   height: 800,
   opacity: 0.4,
-  borderRadius: '100%',
+  borderRadius: 1000,
   superLayer: settings
 });
 

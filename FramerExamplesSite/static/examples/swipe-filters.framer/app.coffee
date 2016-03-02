@@ -41,7 +41,7 @@ for i in [0..filterAmount]
 
 	# Create Mask
 	mask = new Layer
-		x: (Screen.width * i), y: 0, width: viewSize, height: viewSize, backgroundColor: "transparent"
+		x: (Screen.width * i), y: 0, width: viewSize, height: viewSize, backgroundColor: "transparent", clip: true
 		superLayer: view.content
 
 	# Create Photo

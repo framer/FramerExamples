@@ -32,8 +32,6 @@ scroll.contentInset = {
 
 scroll.height -= tabBar.height;
 
-feed.visible = false;
-
 /* Only allow for vertical scrolling */
 
 scroll.scrollHorizontal = false;
@@ -47,7 +45,7 @@ scroll.on(Events.Move, function() {
   photo.blur = Utils.modulate(scroll.scrollY, [-150, -300], [0, 30], true);
 
   /* Limit the distance we can pull upwards to scale the image */
-  if (scroll.content.y > 510) {
+  if (scroll.content.scrollY > 510) {
     scroll.content.y = 510;
   }
 

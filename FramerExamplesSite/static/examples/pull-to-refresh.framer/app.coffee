@@ -10,7 +10,7 @@ bg.Content.draggable.speedY = 0.525
 bg.Content.draggable.maxDragFrame = bg.Content.frame
 bg.Content.draggable.maxDragFrame.height = 1136
 
-spinMask = new Layer height:54, width:52, backgroundColor:"transparent", opacity:0
+spinMask = new Layer height:54, width:52, backgroundColor:"transparent", opacity:0, clip: true
 spinMask.style["-webkit-mask"] = "url(images/mask.png) no-repeat"
 
 spinGradient = new Layer height:54, width:54, image:"images/spinGradient.png"

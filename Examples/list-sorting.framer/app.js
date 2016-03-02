@@ -94,7 +94,7 @@ for (i = j = 0; j <= 3; i = ++j) {
 
   /* Push into array for us to loop over all layers (like in layerAtIndex) */
   Layers.push(layer);
-  layer.on(Events.DragMove, function(event, layer) {
+  layer.on(Events.DragMove, function(event, draggable, layer) {
 
     /* Get the index of the layer being dragged */
     var currentIndex, hoveredLayer;
@@ -126,9 +126,9 @@ for (i = j = 0; j <= 3; i = ++j) {
   });
 
   /* On DragStart */
-  layer.on(Events.DragStart, function(event, layer) {
+  layer.on(Events.DragStart, function(event, draggable, layer) {
     var currentIndex;
-    currentIndex = getIndexByFrame(layer.frame);
+    currentIndex = getIndexByFrame(layer);
     layer.bringToFront();
     layer.shadowColor = "rgba(0,0,0,0.2)";
     layer.animate({
@@ -148,7 +148,7 @@ for (i = j = 0; j <= 3; i = ++j) {
   });
 
   /* On DragEnd */
-  layer.on(Events.DragEnd, function(event, layer) {
+  layer.on(Events.DragEnd, function(event, draggable, layer) {
     var currentIndex;
     layer.animateStop();
     layer.animate({

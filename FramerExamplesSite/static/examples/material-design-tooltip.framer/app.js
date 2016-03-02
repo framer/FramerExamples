@@ -12,6 +12,11 @@ canvas = new BackgroundLayer({
 button = new Layer({
   width: 192,
   height: 96,
+  clip: true,
+  backgroundColor: null
+});
+
+({
   backgroundColor: "none",
   borderRadius: "12px"
 

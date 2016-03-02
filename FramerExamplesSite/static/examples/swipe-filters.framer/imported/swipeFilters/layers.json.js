@@ -271,7 +271,7 @@ window.__imported__["swipeFilters/layers.json.js"] = [
               "width" : 227,
               "height" : 262
             },
-            "name" : "03"
+            "name" : "layer03"
           },
           {
             "maskFrame" : null,
@@ -325,7 +325,7 @@ window.__imported__["swipeFilters/layers.json.js"] = [
               "width" : 227,
               "height" : 262
             },
-            "name" : "02"
+            "name" : "layer02"
           },
           {
             "maskFrame" : null,
@@ -379,7 +379,7 @@ window.__imported__["swipeFilters/layers.json.js"] = [
               "width" : 227,
               "height" : 262
             },
-            "name" : "01"
+            "name" : "layer01"
           }
         ],
         "image" : {

@@ -5,7 +5,7 @@
 canvas = new BackgroundLayer backgroundColor:"#fff"
 
 # Transparent Layer
-button = new Layer width:192, height:96, 
+button = new Layer width:192, height:96, clip: true, backgroundColor: null
 backgroundColor: "none", borderRadius: "12px"
 
 # Layer Mask (same dimensions)

@@ -5,7 +5,7 @@
 bg = new BackgroundLayer backgroundColor: "#313D4D"
 
 # Set up mask layer
-mask = new Layer width:390, height:410, backgroundColor:"null"
+mask = new Layer width:390, height:410, backgroundColor:"null", clip: true
 mask.center()
 
 window.onresize = ->
