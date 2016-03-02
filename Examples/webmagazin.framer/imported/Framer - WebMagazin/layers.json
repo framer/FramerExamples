@@ -47,7 +47,7 @@
                       "width" : 32,
                       "height" : 24
                     },
-                    "name" : "2"
+                    "name" : "layer2"
                   },
                   {
                     "maskFrame" : null,
@@ -72,7 +72,7 @@
                       "width" : 32,
                       "height" : 24
                     },
-                    "name" : "1"
+                    "name" : "layer1"
                   }
                 ],
                 "image" : {
@@ -91,7 +91,7 @@
                   "width" : 60,
                   "height" : 24
                 },
-                "name" : "1__2"
+                "name" : "layer1__2"
               }
             ],
             "image" : {
@@ -393,7 +393,7 @@
                       "width" : 68,
                       "height" : 50
                     },
-                    "name" : "2"
+                    "name" : "layer2"
                   },
                   {
                     "maskFrame" : null,
@@ -418,7 +418,7 @@
                       "width" : 68,
                       "height" : 50
                     },
-                    "name" : "1"
+                    "name" : "layer12"
                   }
                 ],
                 "image" : {
@@ -437,7 +437,7 @@
                   "width" : 128,
                   "height" : 50
                 },
-                "name" : "1__2"
+                "name" : "layer1__22"
               }
             ],
             "image" : {

@@ -1,8 +1,11 @@
 {
-  "updateDelay" : 0.3,
-  "deviceScale" : 1,
   "deviceOrientation" : 0,
-  "contentScale" : 1,
   "sharedPrototype" : 0,
-  "deviceType" : "applewatchsport-38-aluminum-sportband-white"
+  "contentScale" : 1,
+  "deviceType" : "apple-watch-38mm-sport-aluminum-white-closed",
+  "selectedHand" : "",
+  "updateDelay" : 0.3,
+  "deviceScale" : "fit",
+  "orientation" : 0,
+  "fullScreen" : false
 }

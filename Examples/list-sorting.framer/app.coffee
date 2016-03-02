@@ -56,7 +56,7 @@ for i in [0..3]
 	# Push into array for us to loop over all layers (like in layerAtIndex)
 	Layers.push(layer)
 
-	layer.on Events.DragMove, (event, layer) ->
+	layer.on Events.DragMove, (event, draggable, layer) ->
 		# Get the index of the layer being dragged
 		currentIndex = getIndexByFrame(layer.frame)
 		
@@ -81,8 +81,8 @@ for i in [0..3]
 				curve: "spring(300,40,0)"
 			
 	# On DragStart		
-	layer.on Events.DragStart, (event, layer) ->
-		currentIndex = getIndexByFrame(layer.frame)
+	layer.on Events.DragStart, (event, draggable, layer) ->
+		currentIndex = getIndexByFrame(layer)
 		layer.bringToFront()
 		layer.shadowColor = "rgba(0,0,0,0.2)"
 		
@@ -99,7 +99,7 @@ for i in [0..3]
 			curve: "spring(600,50,0)"
 				
 	# On DragEnd		
-	layer.on Events.DragEnd, (event, layer) ->
+	layer.on Events.DragEnd, (event, draggable, layer) ->
 		layer.animateStop()
 		layer.animate 
 			properties:

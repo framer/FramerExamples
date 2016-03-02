@@ -1,10 +1,13 @@
 {
   "device" : "iPhone 5S Space Gray",
-  "sharedPrototype" : 0,
   "deviceOrientation" : 0,
+  "sharedPrototype" : 0,
   "contentScale" : 1,
-  "deviceType" : "iphone-6-spacegray-hand",
+  "deviceType" : "apple-iphone-6s-space-gray",
+  "selectedHand" : "",
   "updateDelay" : 0.3,
-  "deviceScale" : -1,
-  "delay" : 0.3
+  "deviceScale" : "fit",
+  "delay" : 0.3,
+  "orientation" : 0,
+  "fullScreen" : false
 }
