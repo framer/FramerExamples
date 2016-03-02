@@ -68,7 +68,7 @@ window.__imported__["lockscreen/layers.json.js"] = [
                       "width" : 63,
                       "height" : 77
                     },
-                    "name" : "9"
+                    "name" : "layer9"
                   },
                   {
                     "maskFrame" : null,
@@ -93,7 +93,7 @@ window.__imported__["lockscreen/layers.json.js"] = [
                       "width" : 43,
                       "height" : 78
                     },
-                    "name" : "8"
+                    "name" : "layer8"
                   },
                   {
                     "maskFrame" : null,
@@ -118,7 +118,7 @@ window.__imported__["lockscreen/layers.json.js"] = [
                       "width" : 61,
                       "height" : 78
                     },
-                    "name" : "7"
+                    "name" : "layer7"
                   },
                   {
                     "maskFrame" : null,
@@ -143,7 +143,7 @@ window.__imported__["lockscreen/layers.json.js"] = [
                       "width" : 49,
                       "height" : 78
                     },
-                    "name" : "6"
+                    "name" : "layer6"
                   },
                   {
                     "maskFrame" : null,
@@ -168,7 +168,7 @@ window.__imported__["lockscreen/layers.json.js"] = [
                       "width" : 40,
                       "height" : 77
                     },
-                    "name" : "5"
+                    "name" : "layer5"
                   },
                   {
                     "maskFrame" : null,
@@ -193,7 +193,7 @@ window.__imported__["lockscreen/layers.json.js"] = [
                       "width" : 39,
                       "height" : 77
                     },
-                    "name" : "4"
+                    "name" : "layer4"
                   },
                   {
                     "maskFrame" : null,
@@ -218,7 +218,7 @@ window.__imported__["lockscreen/layers.json.js"] = [
                       "width" : 41,
                       "height" : 77
                     },
-                    "name" : "3"
+                    "name" : "layer3"
                   },
                   {
                     "maskFrame" : null,
@@ -243,7 +243,7 @@ window.__imported__["lockscreen/layers.json.js"] = [
                       "width" : 45,
                       "height" : 78
                     },
-                    "name" : "2"
+                    "name" : "layer2"
                   },
                   {
                     "maskFrame" : null,
@@ -268,7 +268,7 @@ window.__imported__["lockscreen/layers.json.js"] = [
                       "width" : 17,
                       "height" : 50
                     },
-                    "name" : "1"
+                    "name" : "layer1"
                   },
                   {
                     "maskFrame" : null,
@@ -293,7 +293,7 @@ window.__imported__["lockscreen/layers.json.js"] = [
                       "width" : 36,
                       "height" : 52
                     },
-                    "name" : "0"
+                    "name" : "layer0"
                   }
                 ],
                 "image" : {

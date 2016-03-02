@@ -48,7 +48,7 @@ window.__imported__["Framer - WebMagazin/layers.json.js"] = [
                       "width" : 32,
                       "height" : 24
                     },
-                    "name" : "2"
+                    "name" : "layer2"
                   },
                   {
                     "maskFrame" : null,
@@ -73,7 +73,7 @@ window.__imported__["Framer - WebMagazin/layers.json.js"] = [
                       "width" : 32,
                       "height" : 24
                     },
-                    "name" : "1"
+                    "name" : "layer1"
                   }
                 ],
                 "image" : {
@@ -92,7 +92,7 @@ window.__imported__["Framer - WebMagazin/layers.json.js"] = [
                   "width" : 60,
                   "height" : 24
                 },
-                "name" : "1__2"
+                "name" : "layer1__2"
               }
             ],
             "image" : {
@@ -394,7 +394,7 @@ window.__imported__["Framer - WebMagazin/layers.json.js"] = [
                       "width" : 68,
                       "height" : 50
                     },
-                    "name" : "2"
+                    "name" : "layer2"
                   },
                   {
                     "maskFrame" : null,
@@ -419,7 +419,7 @@ window.__imported__["Framer - WebMagazin/layers.json.js"] = [
                       "width" : 68,
                       "height" : 50
                     },
-                    "name" : "1"
+                    "name" : "layer12"
                   }
                 ],
                 "image" : {
@@ -438,7 +438,7 @@ window.__imported__["Framer - WebMagazin/layers.json.js"] = [
                   "width" : 128,
                   "height" : 50
                 },
-                "name" : "1__2"
+                "name" : "layer1__22"
               }
             ],
             "image" : {

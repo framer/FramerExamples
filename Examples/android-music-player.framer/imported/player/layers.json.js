@@ -508,7 +508,7 @@ window.__imported__["player/layers.json.js"] = [
                   "width" : 360,
                   "height" : 360
                 },
-                "name" : "441367"
+                "name" : "layerX"
               }
             ],
             "image" : {

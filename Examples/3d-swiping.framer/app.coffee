@@ -33,8 +33,8 @@ for pageIndex in [0...6]
 			fontWeight: "100"
 			fontFamily: "Helvetica Neue"
 	page.index = pageIndex
-	pages.push page
-	pageComponent.addPage pageWrapper
+	pages.push(page)
+	pageComponent.addPage(pageWrapper)
 
 pageComponent.on Events.Move, (scrollOffset) ->
 	currentXOffset = -scrollOffset.x
@@ -42,16 +42,21 @@ pageComponent.on Events.Move, (scrollOffset) ->
 	# we don't want to rotate any layers when the pageComponent is dragged outside of its bounds
 	currentXOffset = Math.min(Math.max(0, currentXOffset), (pages.length - 1) * Screen.width)
 	
-	for page in pages
-		pageXPosition = page.index * Screen.width
-		pageOffset = currentXOffset - pageXPosition
-		page.rotationY = Utils.modulate(pageOffset, [-halfScreen, halfScreen], [113, -113], true)
+	console.log pages
+	
+	for p in pages
+	
+		console.log p, pages
+	
+# 		pageXPosition = page.index * Screen.width
+# 		pageOffset = currentXOffset - pageXPosition
+# 		page.rotationY = Utils.modulate(pageOffset, [-halfScreen, halfScreen], [113, -113], true)
 		
-		# we change the opacity of the leftside of the cube
-		page.opacity = Utils.modulate(pageOffset, [-halfScreen, halfScreen], [2, .3], true)
+# 		we change the opacity of the leftside of the cube
+# 		page.opacity = Utils.modulate(pageOffset, [-halfScreen, halfScreen], [2, .3], true)
 		
-		# depending on the relative offset each page is either rotated around its left or right side
-		if pageOffset > 0
-			page.originX = 1
-		else
-			page.originX = 0
+# 		depending on the relative offset each page is either rotated around its left or right side
+# 		if pageOffset > 0
+# 			page.originX = 1
+# 		else
+# 			page.originX = 0
