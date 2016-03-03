@@ -168,7 +168,7 @@
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
 	 * @license
-	 * lodash 3.10.1 (Custom Build) <https://lodash.com/>
+	 * lodash 3.10.0 (Custom Build) <https://lodash.com/>
 	 * Build: `lodash modern -d -o ./index.js`
 	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
 	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -181,7 +181,7 @@
 	  var undefined;
 	
 	  /** Used as the semantic version number. */
-	  var VERSION = '3.10.1';
+	  var VERSION = '3.10.0';
 	
 	  /** Used to compose bitmasks for wrapper metadata. */
 	  var BIND_FLAG = 1,
@@ -12805,12 +12805,11 @@
 	};
 	
 	Utils.stringify = function(obj) {
-	  var error;
 	  try {
 	    if (_.isObject(obj)) {
 	      return JSON.stringify(obj);
 	    }
-	  } catch (error) {
+	  } catch (_error) {
 	    "";
 	  }
 	  if (obj === null) {
@@ -13222,13 +13221,13 @@
 	};
 	
 	Utils.domLoadDataSync = function(path) {
-	  var e, error, handleError, ref, request;
+	  var e, handleError, ref, request;
 	  request = new XMLHttpRequest();
 	  request.open("GET", path, false);
 	  try {
 	    request.send(null);
-	  } catch (error) {
-	    e = error;
+	  } catch (_error) {
+	    e = _error;
 	    console.debug("XMLHttpRequest.error", e);
 	  }
 	  handleError = function() {
@@ -19251,6 +19250,8 @@
 	
 	Events.DragAnimationDidEnd = Events.DragAnimationEnd;
 	
+	Events.DirectionLockDidStart = Events.DirectionLockStart;
+	
 	"\n┌──────┐                   │\n│      │\n│      │  ───────────────▶ │ ◀────▶\n│      │\n└──────┘                   │\n\n════════  ═════════════════ ═══════\n\n  Drag         Momentum      Bounce\n";
 	
 	exports.LayerDraggable = (function(superClass) {
@@ -21648,7 +21649,7 @@
 	    this._contentInset = options.contentInset || Utils.rectZero();
 	    this.setContentLayer(new Layer);
 	    this._applyOptionsAndDefaults(options);
-	    this._enableMouseWheelHandling();
+	    this._enableMouseWheelHandling(options.mouseWheelEnabled);
 	    if (options.hasOwnProperty("wrap")) {
 	      wrapComponent(this, options.wrap);
 	    }
@@ -23289,12 +23290,13 @@
 	  };
 	
 	  DeviceComponent.prototype._orientationChange = function() {
+	    this._orientation = window.orientation;
 	    this._update();
 	    return this.emit("change:orientation", window.orientation);
 	  };
 	
 	  DeviceComponent.prototype.isPortrait = function() {
-	    return Math.abs(this._orientation) === 0;
+	    return Math.abs(this.orientation) === 0;
 	  };
 	
 	  DeviceComponent.prototype.isLandscape = function() {
@@ -24630,7 +24632,8 @@
 	  if (!touchEmulator) {
 	    return;
 	  }
-	  return touchEmulator.destroy();
+	  touchEmulator.destroy();
+	  return touchEmulator = null;
 	};
 
 
@@ -24729,7 +24732,7 @@
 /* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var DOMEventManager, GestureInputDoubleTapTime, GestureInputEdgeSwipeDistance, GestureInputForceTapDesktop, GestureInputForceTapMobile, GestureInputForceTapMobilePollTime, GestureInputLongPressTime, GestureInputMinimumFingerDistance, GestureInputSwipeThreshold, GestureInputVelocityTime, Utils,
+	var DOMEventManager, GestureInputDoubleTapTime, GestureInputEdgeSwipeDistance, GestureInputForceTapDesktop, GestureInputForceTapMobile, GestureInputForceTapMobilePollTime, GestureInputLongPressTime, GestureInputMinimumFingerDistance, GestureInputSwipeThreshold, GestureInputVelocityTime, TouchEnd, TouchMove, TouchStart, Utils,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 	
 	Utils = __webpack_require__(4);
@@ -24754,16 +24757,17 @@
 	
 	DOMEventManager = __webpack_require__(41).DOMEventManager;
 	
-	Utils.sanitizeRotation = function() {
-	  var previous, sanitize;
-	  previous = null;
-	  return sanitize = function(value) {
-	    if (previous == null) {
-	      previous = value;
-	    }
-	    return value;
-	  };
-	};
+	TouchStart = "touchstart";
+	
+	TouchMove = "touchmove";
+	
+	TouchEnd = "touchend";
+	
+	if (!Utils.isTouch()) {
+	  TouchStart = "mousedown";
+	  TouchMove = "mousemove";
+	  TouchEnd = "mouseup";
+	}
 	
 	exports.GestureInputRecognizer = (function() {
 	  function GestureInputRecognizer() {
@@ -24808,7 +24812,7 @@
 	    this.touchmove = bind(this.touchmove, this);
 	    this.touchstart = bind(this.touchstart, this);
 	    this.em = new DOMEventManager();
-	    this.em.wrap(window).addEventListener("touchstart", this.touchstart);
+	    this.em.wrap(window).addEventListener(TouchStart, this.touchstart);
 	  }
 	
 	  GestureInputRecognizer.prototype.destroy = function() {
@@ -24824,8 +24828,8 @@
 	    if (this.session) {
 	      return;
 	    }
-	    this.em.wrap(window).addEventListener("touchmove", this.touchmove);
-	    this.em.wrap(window).addEventListener("touchend", this.touchend);
+	    this.em.wrap(window).addEventListener(TouchMove, this.touchmove);
+	    this.em.wrap(window).addEventListener(TouchEnd, this.touchend);
 	    this.em.wrap(window).addEventListener("webkitmouseforcechanged", this._updateMacForce);
 	    this.session = {
 	      startEvent: this._getGestureEvent(event),
@@ -24835,7 +24839,6 @@
 	      pressTimer: window.setTimeout(this.longpressstart, GestureInputLongPressTime * 1000),
 	      started: {},
 	      events: [],
-	      sanitizeRotation: Utils.sanitizeRotation(),
 	      eventCount: 0
 	    };
 	    event = this._getGestureEvent(event);
@@ -24856,18 +24859,20 @@
 	  };
 	
 	  GestureInputRecognizer.prototype.touchend = function(event) {
-	    var eventName, ref, value;
-	    if (Utils.isTouch()) {
-	      if (!(event.touches.length === 0)) {
-	        return;
-	      }
-	    } else {
-	      if (!(event.touches.length === event.changedTouches.length)) {
-	        return;
+	    var eventName, ref, ref1, value;
+	    if (event.touches != null) {
+	      if (Utils.isTouch()) {
+	        if (!(event.touches.length === 0)) {
+	          return;
+	        }
+	      } else {
+	        if (!(event.touches.length === event.changedTouches.length)) {
+	          return;
+	        }
 	      }
 	    }
-	    this.em.wrap(window).removeEventListener("touchmove", this.touchmove);
-	    this.em.wrap(window).removeEventListener("touchend", this.touchend);
+	    this.em.wrap(window).removeEventListener(TouchMove, this.touchmove);
+	    this.em.wrap(window).removeEventListener(TouchEnd, this.touchend);
 	    this.em.wrap(window).removeEventListener("webkitmouseforcechanged", this._updateMacForce);
 	    event = this._getGestureEvent(event);
 	    ref = this.session.started;
@@ -24877,7 +24882,11 @@
 	        this[eventName + "end"](event);
 	      }
 	    }
-	    this.tap(event);
+	    if (!((ref1 = this.session) != null ? ref1.startEvent : void 0)) {
+	      this.tap(event);
+	    } else if (this.session.startEvent.target === event.target) {
+	      this.tap(event);
+	    }
 	    this.tapend(event);
 	    return this.cancel();
 	  };
@@ -25349,8 +25358,11 @@
 	  };
 	
 	  GestureInputRecognizer.prototype._dispatchEvent = function(type, event, target) {
-	    var touchEvent;
+	    var ref, ref1, touchEvent;
 	    touchEvent = this._createEvent(type, event);
+	    if (target == null) {
+	      target = (ref = this.session) != null ? (ref1 = ref.startEvent) != null ? ref1.target : void 0 : void 0;
+	    }
 	    if (target == null) {
 	      target = event.target;
 	    }
@@ -25390,13 +25402,13 @@
 /* 53 */
 /***/ function(module, exports) {
 
-	exports.date = 1456221232;
+	exports.date = 1456873918;
 	
 	exports.branch = "master";
 	
-	exports.hash = "13042bc";
+	exports.hash = "35a1e52";
 	
-	exports.build = 1586;
+	exports.build = 1596;
 	
 	exports.version = exports.branch + "/" + exports.hash;
 

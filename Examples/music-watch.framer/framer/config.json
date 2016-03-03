@@ -1,11 +1,17 @@
 {
+  "propertyPanelToggleStates" : {
+
+  },
   "deviceOrientation" : 0,
   "sharedPrototype" : 0,
   "contentScale" : 1,
-  "deviceType" : "apple-watch-38mm-sport-aluminum-white-closed",
+  "deviceType" : "apple-watch-38mm-stainless-steel-black-leather-closed",
   "selectedHand" : "",
   "updateDelay" : 0.3,
   "deviceScale" : "fit",
+  "codeFolds" : [
+
+  ],
   "orientation" : 0,
   "fullScreen" : false
 }

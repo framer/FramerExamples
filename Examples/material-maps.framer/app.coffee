@@ -101,7 +101,8 @@ searchbg = new Layer x:0, y:0, width:640, height:1136,backgroundColor:'#eee',opa
 buttonhome = new Layer x:20, y:20, width:600, height:100, backgroundColor:'#fff', shadowY:4, shadowBlur:8, shadowColor:'rgba(0,0,0,0.3)'
 buttonhome.style = borderRadius:'3px'
 searchfield = new Layer x:buttonhome.width*0.1, y:30, width:buttonhome.width*0.7, backgroundColor:'transparent'
-searchfield.style = color:'#7D7D7D', fontFamily:'Roboto'	
+searchfield.style = 
+	color:'#7D7D7D', fontFamily:'Roboto', outline: "none"	
 searchicn = new Layer x:20, y:0, width:34, height:34, image:"images/searchicon.png"
 overflowicn = new Layer x:530, y:0, width:44, height:44, image:"images/overflow.png"
 cancelicn = new Layer x:570, y:0, width:44, height:44, image:"images/btncancel.png",scale:0	
