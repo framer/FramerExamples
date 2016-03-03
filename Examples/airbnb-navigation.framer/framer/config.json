@@ -1,8 +1,8 @@
 {
   "deviceOrientation" : 0,
-  "sharedPrototype" : 0,
+  "sharedPrototype" : 1,
   "contentScale" : 1,
-  "deviceType" : "apple-iphone-5s-space-gray",
+  "deviceType" : "apple-iphone-5s-silver",
   "selectedHand" : "",
   "updateDelay" : 0.3,
   "deviceScale" : "fit",
