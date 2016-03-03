@@ -10,7 +10,7 @@ new BackgroundLayer backgroundColor: "#fff"
 # Create ScrollComponent
 scroll = ScrollComponent.wrap(sketch.content)
 scroll.scrollHorizontal = false
-scroll.contentInset =  {bottom: 320}
+scroll.contentInset =  {bottom: 200}
 	
 # Require the module
 contacts = require "contacts"
@@ -66,7 +66,7 @@ for name, i in allNames
 	
 	# Avatar images
 	avatar = new Layer 
-		x: -148, y: -100 + 20
+		x: -148, y: -40 + 20
 		width: 120, height: 120
 		borderRadius: 120
 		backgroundColor: "#BDBDBD"
@@ -81,6 +81,7 @@ for name, i in allNames
 	if i >= 24 and i < 28 then nameLayer.y += (48 * 6)
 	
 	allAvatars.push(avatar)
+	scroll.updateContent()
 	
 # Match the avatar with the name
 for i in [0...allNames.length]
@@ -154,14 +155,17 @@ showSections = ->
 	if slider.value > 92 then indicator.html = "F"
 	if slider.value > 97 then indicator.html = "G"
 
+
 # Connect scrolling to the slider
-slider.on "change:value", ->
-	
-	# Scroll to the correct sections
+activeSlider = false
+slider.onTapStart -> activeSlider = true
+slider.onTapEnd -> activeSlider = false
+
+slider.on "change:value", ->			
 	scrollValue = Utils.modulate(this.value, [0, 100], [0, scroll.content.height - scroll.height + 320], true)
-	scroll.scrollY = round(scrollValue, nearest)
+	if activeSlider then scroll.scrollY = round(scrollValue, nearest)
 	showSections()
-	
+
 	# When sliding all the way to the top
 	if slider.knob.y < 0 then indicator.y = - slider.knob.y - 150
 	else indicator.y = - 150

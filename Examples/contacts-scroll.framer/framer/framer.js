@@ -46,39 +46,47 @@
 
 	var Defaults, Framer, _;
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
+	
+	if (window.ontouchstart === void 0) {
+	  window.ontouchstart = null;
+	}
 	
 	Framer = {};
 	
 	Framer._ = _;
 	
-	Framer.Utils = __webpack_require__(2);
+	Framer.Utils = __webpack_require__(4);
 	
-	Framer.Layer = (__webpack_require__(12)).Layer;
+	Framer.Color = (__webpack_require__(10)).Color;
 	
-	Framer.BackgroundLayer = (__webpack_require__(31)).BackgroundLayer;
+	Framer.Layer = (__webpack_require__(13)).Layer;
 	
-	Framer.VideoLayer = (__webpack_require__(32)).VideoLayer;
+	Framer.BackgroundLayer = (__webpack_require__(35)).BackgroundLayer;
 	
-	Framer.Events = (__webpack_require__(23)).Events;
+	Framer.VideoLayer = (__webpack_require__(36)).VideoLayer;
 	
-	Framer.Animation = (__webpack_require__(14)).Animation;
+	Framer.Events = (__webpack_require__(15)).Events;
 	
-	Framer.AnimationGroup = (__webpack_require__(33)).AnimationGroup;
+	Framer.Gestures = (__webpack_require__(16)).Gestures;
 	
-	Framer.Screen = (__webpack_require__(6)).Screen;
+	Framer.Animation = (__webpack_require__(18)).Animation;
 	
-	Framer.Canvas = (__webpack_require__(34)).Canvas;
+	Framer.AnimationGroup = (__webpack_require__(37)).AnimationGroup;
 	
-	Framer.print = (__webpack_require__(35)).print;
+	Framer.Screen = (__webpack_require__(5)).Screen;
 	
-	Framer.ScrollComponent = (__webpack_require__(36)).ScrollComponent;
+	Framer.Canvas = (__webpack_require__(38)).Canvas;
 	
-	Framer.PageComponent = (__webpack_require__(37)).PageComponent;
+	Framer.print = (__webpack_require__(39)).print;
 	
-	Framer.SliderComponent = (__webpack_require__(38)).SliderComponent;
+	Framer.ScrollComponent = (__webpack_require__(42)).ScrollComponent;
 	
-	Framer.DeviceComponent = (__webpack_require__(39)).DeviceComponent;
+	Framer.PageComponent = (__webpack_require__(43)).PageComponent;
+	
+	Framer.SliderComponent = (__webpack_require__(44)).SliderComponent;
+	
+	Framer.DeviceComponent = (__webpack_require__(45)).DeviceComponent;
 	
 	Framer.DeviceView = Framer.DeviceComponent;
 	
@@ -86,33 +94,35 @@
 	  _.extend(window, Framer);
 	}
 	
-	Framer.Context = (__webpack_require__(1)).Context;
+	Framer.Context = (__webpack_require__(40)).Context;
 	
-	Framer.Config = (__webpack_require__(10)).Config;
+	Framer.Config = (__webpack_require__(14)).Config;
 	
-	Framer.EventEmitter = (__webpack_require__(8)).EventEmitter;
+	Framer.EventEmitter = (__webpack_require__(7)).EventEmitter;
 	
-	Framer.BaseClass = (__webpack_require__(7)).BaseClass;
+	Framer.BaseClass = (__webpack_require__(6)).BaseClass;
 	
-	Framer.LayerStyle = (__webpack_require__(21)).LayerStyle;
+	Framer.LayerStyle = (__webpack_require__(25)).LayerStyle;
 	
-	Framer.AnimationLoop = (__webpack_require__(40)).AnimationLoop;
+	Framer.AnimationLoop = (__webpack_require__(46)).AnimationLoop;
 	
-	Framer.LinearAnimator = (__webpack_require__(15)).LinearAnimator;
+	Framer.LinearAnimator = (__webpack_require__(19)).LinearAnimator;
 	
-	Framer.BezierCurveAnimator = (__webpack_require__(17)).BezierCurveAnimator;
+	Framer.BezierCurveAnimator = (__webpack_require__(21)).BezierCurveAnimator;
 	
-	Framer.SpringDHOAnimator = (__webpack_require__(20)).SpringDHOAnimator;
+	Framer.SpringDHOAnimator = (__webpack_require__(24)).SpringDHOAnimator;
 	
-	Framer.SpringRK4Animator = (__webpack_require__(18)).SpringRK4Animator;
+	Framer.SpringRK4Animator = (__webpack_require__(22)).SpringRK4Animator;
 	
-	Framer.LayerDraggable = (__webpack_require__(24)).LayerDraggable;
+	Framer.LayerDraggable = (__webpack_require__(27)).LayerDraggable;
 	
-	Framer.Importer = (__webpack_require__(41)).Importer;
+	Framer.Importer = (__webpack_require__(47)).Importer;
 	
-	Framer.Debug = (__webpack_require__(42)).Debug;
+	Framer.Extras = __webpack_require__(48);
 	
-	Framer.Extras = __webpack_require__(43);
+	Framer.GestureInputRecognizer = new (__webpack_require__(52)).GestureInputRecognizer;
+	
+	Framer.Version = __webpack_require__(53);
 	
 	Framer.Loop = new Framer.AnimationLoop();
 	
@@ -122,9 +132,17 @@
 	  window.Framer = Framer;
 	}
 	
+	Defaults = (__webpack_require__(17)).Defaults;
+	
+	Defaults.setup();
+	
+	Framer.resetDefaults = Defaults.reset;
+	
 	Framer.DefaultContext = new Framer.Context({
 	  name: "Default"
 	});
+	
+	Framer.DefaultContext.backgroundColor = "white";
 	
 	Framer.CurrentContext = Framer.DefaultContext;
 	
@@ -132,1286 +150,25 @@
 	  Framer.Extras.MobileScrollFix.enable();
 	}
 	
-	Defaults = (__webpack_require__(13)).Defaults;
-	
-	Defaults.setup();
-	
-	Framer.resetDefaults = Defaults.reset;
+	if (!Utils.isTouch()) {
+	  Framer.Extras.TouchEmulator.enable();
+	}
 
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var BaseClass, Config, Counter, EventManager, Utils, _,
-	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty,
-	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-	
-	Utils = __webpack_require__(2);
-	
-	_ = __webpack_require__(3)._;
-	
-	BaseClass = __webpack_require__(7).BaseClass;
-	
-	Config = __webpack_require__(10).Config;
-	
-	EventManager = __webpack_require__(11).EventManager;
-	
-	Counter = 1;
-	
-	exports.Context = (function(superClass) {
-	  extend(Context, superClass);
-	
-	  function Context(options) {
-	    if (options == null) {
-	      options = {};
-	    }
-	    Context.__super__.constructor.apply(this, arguments);
-	    Counter++;
-	    options = _.defaults(options, {
-	      contextName: null,
-	      parentLayer: null,
-	      name: null
-	    });
-	    if (!options.name) {
-	      throw Error("Contexts need a name");
-	    }
-	    this._parentLayer = options.parentLayer;
-	    this._name = options.name;
-	    this.reset();
-	  }
-	
-	  Context.prototype.reset = function() {
-	    var animation, i, len, ref, ref1, ref2, ref3;
-	    if ((ref = this.eventManager) != null) {
-	      ref.reset();
-	    }
-	    this.eventManager = new EventManager;
-	    if (this._rootElement) {
-	      if (this._rootElement.parentNode) {
-	        this._rootElement.parentNode.removeChild(this._rootElement);
-	      } else {
-	        this._rootElement.__cancelAppendChild = true;
-	      }
-	    }
-	    this._rootElement = this._createRootElement();
-	    if ((ref1 = this._delayTimers) != null) {
-	      ref1.map(function(timer) {
-	        return window.clearTimeout(timer);
-	      });
-	    }
-	    if ((ref2 = this._delayIntervals) != null) {
-	      ref2.map(function(timer) {
-	        return window.clearInterval(timer);
-	      });
-	    }
-	    if (this._animationList) {
-	      ref3 = this._animationList;
-	      for (i = 0, len = ref3.length; i < len; i++) {
-	        animation = ref3[i];
-	        animation.stop(false);
-	      }
-	    }
-	    this._layerList = [];
-	    this._animationList = [];
-	    this._delayTimers = [];
-	    this._delayIntervals = [];
-	    this._layerIdCounter = 1;
-	    return this.emit("reset", this);
-	  };
-	
-	  Context.prototype.destroy = function() {
-	    this.reset();
-	    if (this._rootElement.parentNode) {
-	      this._rootElement.parentNode.removeChild(this._rootElement);
-	    }
-	    return this._rootElement.__cancelAppendChild = true;
-	  };
-	
-	  Context.prototype.getRootElement = function() {
-	    return this._rootElement;
-	  };
-	
-	  Context.prototype.getLayers = function() {
-	    return _.clone(this._layerList);
-	  };
-	
-	  Context.prototype.addLayer = function(layer) {
-	    if (indexOf.call(this._layerList, layer) >= 0) {
-	      return;
-	    }
-	    this._layerList.push(layer);
-	    return null;
-	  };
-	
-	  Context.prototype.removeLayer = function(layer) {
-	    this._layerList = _.without(this._layerList, layer);
-	    return null;
-	  };
-	
-	  Context.prototype.layerCount = function() {
-	    return this._layerList.length;
-	  };
-	
-	  Context.prototype.nextLayerId = function() {
-	    return this._layerIdCounter++;
-	  };
-	
-	  Context.prototype._createRootElement = function() {
-	    var element, parentElement, ref;
-	    element = document.createElement("div");
-	    element.id = "FramerContextRoot-" + this._name;
-	    element.classList.add("framerContext");
-	    parentElement = (ref = this._parentLayer) != null ? ref._element : void 0;
-	    Framer.Loop.once("render", function() {
-	      if (parentElement == null) {
-	        parentElement = document.body;
-	      }
-	      if (!element.__cancelAppendChild) {
-	        return parentElement.appendChild(element);
-	      }
-	    });
-	    return element;
-	  };
-	
-	  Context.prototype.run = function(f) {
-	    var previousContext;
-	    previousContext = Framer.CurrentContext;
-	    Framer.CurrentContext = this;
-	    f();
-	    return Framer.CurrentContext = previousContext;
-	  };
-	
-	  Context.define("width", {
-	    get: function() {
-	      if (this._parentLayer) {
-	        return this._parentLayer.width;
-	      }
-	      return window.innerWidth;
-	    }
-	  });
-	
-	  Context.define("height", {
-	    get: function() {
-	      if (this._parentLayer) {
-	        return this._parentLayer.height;
-	      }
-	      return window.innerHeight;
-	    }
-	  });
-	
-	  return Context;
-	
-	})(BaseClass);
+	exports._ = __webpack_require__(2);
 
 
 /***/ },
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Screen, Utils, _, __domComplete, __domReady, _textSizeNode,
-	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
-	  slice = [].slice;
-	
-	_ = __webpack_require__(3)._;
-	
-	Screen = __webpack_require__(6).Screen;
-	
-	Utils = {};
-	
-	Utils.reset = function() {
-	  return Framer.CurrentContext.reset();
-	};
-	
-	Utils.getValue = function(value) {
-	  if (_.isFunction(value)) {
-	    return value();
-	  }
-	  return value;
-	};
-	
-	Utils.getValueForKeyPath = function(obj, key) {
-	  var len, m, ref, ref1, result;
-	  result = obj;
-	  if (ref = !".", indexOf.call(key, ref) >= 0) {
-	    return obj[key];
-	  }
-	  ref1 = key.split(".");
-	  for (m = 0, len = ref1.length; m < len; m++) {
-	    key = ref1[m];
-	    result = result[key];
-	  }
-	  return result;
-	};
-	
-	Utils.setValueForKeyPath = function(obj, path, val) {
-	  var field, fields, i, n, result;
-	  fields = path.split('.');
-	  result = obj;
-	  i = 0;
-	  n = fields.length;
-	  while (i < n && result !== void 0) {
-	    field = fields[i];
-	    if (i === n - 1) {
-	      result[field] = val;
-	    } else {
-	      if (typeof result[field] === 'undefined' || !_.isObject(result[field])) {
-	        result[field] = {};
-	      }
-	      result = result[field];
-	    }
-	    i++;
-	  }
-	};
-	
-	Utils.valueOrDefault = function(value, defaultValue) {
-	  if (value === (void 0) || value === null) {
-	    value = defaultValue;
-	  }
-	  return value;
-	};
-	
-	Utils.arrayNext = function(arr, item) {
-	  return arr[arr.indexOf(item) + 1] || _.first(arr);
-	};
-	
-	Utils.arrayPrev = function(arr, item) {
-	  return arr[arr.indexOf(item) - 1] || _.last(arr);
-	};
-	
-	Utils.sum = function(arr) {
-	  return _.reduce(arr, function(a, b) {
-	    return a + b;
-	  });
-	};
-	
-	Utils.average = function(arr) {
-	  return Utils.sum(arr) / arr.length;
-	};
-	
-	Utils.mean = Utils.average;
-	
-	Utils.median = function(x) {
-	  var sorted;
-	  if (x.length === 0) {
-	    return null;
-	  }
-	  sorted = x.slice().sort(function(a, b) {
-	    return a - b;
-	  });
-	  if (sorted.length % 2 === 1) {
-	    return sorted[(sorted.length - 1) / 2];
-	  } else {
-	    return (sorted[(sorted.length / 2) - 1] + sorted[sorted.length / 2]) / 2;
-	  }
-	};
-	
-	if (window.requestAnimationFrame == null) {
-	  window.requestAnimationFrame = window.webkitRequestAnimationFrame;
-	}
-	
-	if (window.requestAnimationFrame == null) {
-	  window.requestAnimationFrame = function(f) {
-	    return Utils.delay(1 / 60, f);
-	  };
-	}
-	
-	if (window.performance) {
-	  Utils.getTime = function() {
-	    return window.performance.now() / 1000;
-	  };
-	} else {
-	  Utils.getTime = function() {
-	    return Date.now() / 1000;
-	  };
-	}
-	
-	Utils.delay = function(time, f) {
-	  var timer;
-	  timer = setTimeout(f, time * 1000);
-	  Framer.CurrentContext._delayTimers.push(timer);
-	  return timer;
-	};
-	
-	Utils.interval = function(time, f) {
-	  var timer;
-	  timer = setInterval(f, time * 1000);
-	  Framer.CurrentContext._delayIntervals.push(timer);
-	  return timer;
-	};
-	
-	Utils.debounce = function(threshold, fn, immediate) {
-	  var timeout;
-	  if (threshold == null) {
-	    threshold = 0.1;
-	  }
-	  timeout = null;
-	  threshold *= 1000;
-	  return function() {
-	    var args, delayed, obj;
-	    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-	    obj = this;
-	    delayed = function() {
-	      if (!immediate) {
-	        fn.apply(obj, args);
-	      }
-	      return timeout = null;
-	    };
-	    if (timeout) {
-	      clearTimeout(timeout);
-	    } else if (immediate) {
-	      fn.apply(obj, args);
-	    }
-	    return timeout = setTimeout(delayed, threshold);
-	  };
-	};
-	
-	Utils.throttle = function(delay, fn) {
-	  var timer;
-	  if (delay === 0) {
-	    return fn;
-	  }
-	  delay *= 1000;
-	  timer = false;
-	  return function() {
-	    if (timer) {
-	      return;
-	    }
-	    timer = true;
-	    if (delay !== -1) {
-	      setTimeout((function() {
-	        return timer = false;
-	      }), delay);
-	    }
-	    return fn.apply(null, arguments);
-	  };
-	};
-	
-	Utils.memoize = function(fn) {
-	  return function() {
-	    var args, currentArg, hash, i;
-	    args = Array.prototype.slice.call(arguments);
-	    hash = "";
-	    i = args.length;
-	    currentArg = null;
-	    while (i--) {
-	      currentArg = args[i];
-	      hash += (currentArg === Object(currentArg) ? JSON.stringify(currentArg) : currentArg);
-	      fn.memoize || (fn.memoize = {});
-	    }
-	    if (hash in fn.memoize) {
-	      return fn.memoize[hash];
-	    } else {
-	      return fn.memoize[hash] = fn.apply(this, args);
-	    }
-	  };
-	};
-	
-	Utils.randomColor = function(alpha) {
-	  var c;
-	  if (alpha == null) {
-	    alpha = 1.0;
-	  }
-	  c = function() {
-	    return parseInt(Math.random() * 255);
-	  };
-	  return "rgba(" + (c()) + ", " + (c()) + ", " + (c()) + ", " + alpha + ")";
-	};
-	
-	Utils.randomChoice = function(arr) {
-	  return arr[Math.floor(Math.random() * arr.length)];
-	};
-	
-	Utils.randomNumber = function(a, b) {
-	  if (a == null) {
-	    a = 0;
-	  }
-	  if (b == null) {
-	    b = 1;
-	  }
-	  return Utils.mapRange(Math.random(), 0, 1, a, b);
-	};
-	
-	Utils.defineEnum = function(names, offset, geometric) {
-	  var Enum, i, j, len, m, name;
-	  if (names == null) {
-	    names = [];
-	  }
-	  if (offset == null) {
-	    offset = 0;
-	  }
-	  if (geometric == null) {
-	    geometric = 0;
-	  }
-	  Enum = {};
-	  for (i = m = 0, len = names.length; m < len; i = ++m) {
-	    name = names[i];
-	    j = i;
-	    j = !offset ? j : j + offset;
-	    j = !geometric ? j : Math.pow(geometric, j);
-	    Enum[Enum[name] = j] = name;
-	  }
-	  return Enum;
-	};
-	
-	Utils.labelLayer = function(layer, text, style) {
-	  if (style == null) {
-	    style = {};
-	  }
-	  style = _.extend({
-	    font: "10px/1em Menlo",
-	    lineHeight: layer.height + "px",
-	    textAlign: "center",
-	    color: "#fff"
-	  }, style);
-	  layer.style = style;
-	  return layer.html = text;
-	};
-	
-	Utils.stringify = function(obj) {
-	  try {
-	    if (_.isObject(obj)) {
-	      return JSON.stringify(obj);
-	    }
-	  } catch (_error) {
-	    "";
-	  }
-	  if (obj === null) {
-	    return "null";
-	  }
-	  if (obj === void 0) {
-	    return "undefined";
-	  }
-	  if (obj.toString) {
-	    return obj.toString();
-	  }
-	  return obj;
-	};
-	
-	Utils.inspectObjectType = function(item) {
-	  var className, extract, ref, ref1, ref2;
-	  if ((((ref = item.constructor) != null ? ref.name : void 0) != null) && ((ref1 = item.constructor) != null ? ref1.name : void 0) !== "Object") {
-	    return item.constructor.name;
-	  }
-	  extract = function(str) {
-	    var match, regex;
-	    if (!str) {
-	      return null;
-	    }
-	    regex = /\[object (\w+)\]/;
-	    match = regex.exec(str);
-	    if (match) {
-	      return match[1];
-	    }
-	    return null;
-	  };
-	  className = extract(item.toString());
-	  if (className) {
-	    return className;
-	  }
-	  className = extract((ref2 = item.constructor) != null ? ref2.toString() : void 0);
-	  if (className) {
-	    return className.replace("Constructor", "");
-	  }
-	  return item;
-	};
-	
-	Utils.inspect = function(item, max, l) {
-	  var code, limit, objectInfo, objectType;
-	  if (max == null) {
-	    max = 5;
-	  }
-	  if (l == null) {
-	    l = 0;
-	  }
-	  if (item === null) {
-	    return "null";
-	  }
-	  if (item === void 0) {
-	    return "undefined";
-	  }
-	  if (_.isFunction(item.toInspect)) {
-	    return item.toInspect();
-	  }
-	  if (_.isString(item)) {
-	    return "\"" + item + "\"";
-	  }
-	  if (_.isNumber(item)) {
-	    return "" + item;
-	  }
-	  if (_.isFunction(item)) {
-	    code = item.toString().slice("function ".length).replace(/\n/g, "").replace(/\s+/g, " ");
-	    limit = 50;
-	    if (code.length > limit && l > 0) {
-	      code = (_.trimRight(code.slice(0, +limit + 1 || 9e9))) + "… }";
-	    }
-	    return "<Function " + code + ">";
-	  }
-	  if (_.isArray(item)) {
-	    if (l > max) {
-	      return "[...]";
-	    }
-	    return "[" + _.map(item, function(i) {
-	      return Utils.inspect(i, max, l + 1);
-	    }).join(", ") + "]";
-	  }
-	  if (_.isObject(item)) {
-	    objectType = Utils.inspectObjectType(item);
-	    if (/HTML\w+?Element/.test(objectType)) {
-	      return "<" + objectType + ">";
-	    }
-	    if (l > max) {
-	      objectInfo = "{...}";
-	    } else {
-	      objectInfo = "{" + _.map(item, function(v, k) {
-	        return k + ":" + (Utils.inspect(v, max, l + 1));
-	      }).join(", ") + "}";
-	    }
-	    if (objectType === "Object") {
-	      return objectInfo;
-	    }
-	    return "<" + objectType + " " + objectInfo + ">";
-	  }
-	  return "" + item;
-	};
-	
-	Utils.uuid = function() {
-	  var chars, digit, m, output, r, random;
-	  chars = "0123456789abcdefghijklmnopqrstuvwxyz".split("");
-	  output = new Array(36);
-	  random = 0;
-	  for (digit = m = 1; m <= 32; digit = ++m) {
-	    if (random <= 0x02) {
-	      random = 0x2000000 + (Math.random() * 0x1000000) | 0;
-	    }
-	    r = random & 0xf;
-	    random = random >> 4;
-	    output[digit] = chars[digit === 19 ? (r & 0x3) | 0x8 : r];
-	  }
-	  return output.join("");
-	};
-	
-	Utils.arrayFromArguments = function(args) {
-	  if (_.isArray(args[0])) {
-	    return args[0];
-	  }
-	  return Array.prototype.slice.call(args);
-	};
-	
-	Utils.cycle = function() {
-	  var args, curr;
-	  args = Utils.arrayFromArguments(arguments);
-	  curr = -1;
-	  return function() {
-	    curr++;
-	    if (curr >= args.length) {
-	      curr = 0;
-	    }
-	    return args[curr];
-	  };
-	};
-	
-	Utils.toggle = Utils.cycle;
-	
-	Utils.isWebKit = function() {
-	  return window.WebKitCSSMatrix !== void 0;
-	};
-	
-	Utils.webkitVersion = function() {
-	  var regexp, result, version;
-	  version = -1;
-	  regexp = /AppleWebKit\/([\d.]+)/;
-	  result = regexp.exec(navigator.userAgent);
-	  if (result) {
-	    version = parseFloat(result[1]);
-	  }
-	  return version;
-	};
-	
-	Utils.isChrome = function() {
-	  return /chrome/.test(navigator.userAgent.toLowerCase());
-	};
-	
-	Utils.isSafari = function() {
-	  return /safari/.test(navigator.userAgent.toLowerCase());
-	};
-	
-	Utils.isTouch = function() {
-	  return window.ontouchstart === null;
-	};
-	
-	Utils.isDesktop = function() {
-	  return Utils.deviceType() === "desktop";
-	};
-	
-	Utils.isPhone = function() {
-	  return Utils.deviceType() === "phone";
-	};
-	
-	Utils.isTablet = function() {
-	  return Utils.deviceType() === "tablet";
-	};
-	
-	Utils.isMobile = function() {
-	  return Utils.isPhone() || Utils.isTablet();
-	};
-	
-	Utils.isLocal = function() {
-	  return Utils.isLocalUrl(window.location.href);
-	};
-	
-	Utils.isLocalUrl = function(url) {
-	  return url.slice(0, 7) === "file://";
-	};
-	
-	Utils.isFramerStudio = function() {
-	  return navigator.userAgent.indexOf("FramerStudio") !== -1;
-	};
-	
-	Utils.devicePixelRatio = function() {
-	  return window.devicePixelRatio;
-	};
-	
-	Utils.isJP2Supported = function() {
-	  return Utils.isWebKit() && !Utils.isChrome();
-	};
-	
-	Utils.deviceType = function() {
-	  if (/(tablet)|(iPad)|(Nexus 9)/i.test(navigator.userAgent)) {
-	    return "tablet";
-	  }
-	  if (/(mobi)/i.test(navigator.userAgent)) {
-	    return "phone";
-	  }
-	  return "desktop";
-	};
-	
-	Utils.pathJoin = function() {
-	  return Utils.arrayFromArguments(arguments).join("/");
-	};
-	
-	Utils.round = function(value, decimals) {
-	  var d;
-	  if (decimals == null) {
-	    decimals = 0;
-	  }
-	  d = Math.pow(10, decimals);
-	  return Math.round(value * d) / d;
-	};
-	
-	Utils.clamp = function(value, min, max) {
-	  if (value < min) {
-	    value = min;
-	  }
-	  if (value > max) {
-	    value = max;
-	  }
-	  return value;
-	};
-	
-	Utils.mapRange = function(value, fromLow, fromHigh, toLow, toHigh) {
-	  return toLow + (((value - fromLow) / (fromHigh - fromLow)) * (toHigh - toLow));
-	};
-	
-	Utils.modulate = function(value, rangeA, rangeB, limit) {
-	  var fromHigh, fromLow, result, toHigh, toLow;
-	  if (limit == null) {
-	    limit = false;
-	  }
-	  fromLow = rangeA[0], fromHigh = rangeA[1];
-	  toLow = rangeB[0], toHigh = rangeB[1];
-	  result = toLow + (((value - fromLow) / (fromHigh - fromLow)) * (toHigh - toLow));
-	  if (limit === true) {
-	    if (toLow < toHigh) {
-	      if (result < toLow) {
-	        return toLow;
-	      }
-	      if (result > toHigh) {
-	        return toHigh;
-	      }
-	    } else {
-	      if (result > toLow) {
-	        return toLow;
-	      }
-	      if (result < toHigh) {
-	        return toHigh;
-	      }
-	    }
-	  }
-	  return result;
-	};
-	
-	Utils.parseFunction = function(str) {
-	  var result;
-	  result = {
-	    name: "",
-	    args: []
-	  };
-	  if (_.endsWith(str, ")")) {
-	    result.name = str.split("(")[0];
-	    result.args = str.split("(")[1].split(",").map(function(a) {
-	      return _.trim(_.trimRight(a, ")"));
-	    });
-	  } else {
-	    result.name = str;
-	  }
-	  return result;
-	};
-	
-	__domComplete = [];
-	
-	__domReady = false;
-	
-	if (typeof document !== "undefined" && document !== null) {
-	  document.onreadystatechange = (function(_this) {
-	    return function(event) {
-	      var f, results;
-	      if (document.readyState === "complete") {
-	        __domReady = true;
-	        results = [];
-	        while (__domComplete.length) {
-	          results.push(f = __domComplete.shift()());
-	        }
-	        return results;
-	      }
-	    };
-	  })(this);
-	}
-	
-	Utils.domComplete = function(f) {
-	  if (document.readyState === "complete") {
-	    return f();
-	  } else {
-	    return __domComplete.push(f);
-	  }
-	};
-	
-	Utils.domCompleteCancel = function(f) {
-	  return __domComplete = _.without(__domComplete, f);
-	};
-	
-	Utils.domLoadScript = function(url, callback) {
-	  var head, script;
-	  script = document.createElement("script");
-	  script.type = "text/javascript";
-	  script.src = url;
-	  script.onload = callback;
-	  head = document.getElementsByTagName("head")[0];
-	  head.appendChild(script);
-	  return script;
-	};
-	
-	Utils.domLoadData = function(path, callback) {
-	  var request;
-	  request = new XMLHttpRequest();
-	  request.addEventListener("load", function() {
-	    return callback(null, request.responseText);
-	  }, false);
-	  request.addEventListener("error", function() {
-	    return callback(true, null);
-	  }, false);
-	  request.open("GET", path, true);
-	  return request.send(null);
-	};
-	
-	Utils.domLoadJSON = function(path, callback) {
-	  return Utils.domLoadData(path, function(err, data) {
-	    return callback(err, JSON.parse(data));
-	  });
-	};
-	
-	Utils.domLoadDataSync = function(path) {
-	  var e, handleError, ref, request;
-	  request = new XMLHttpRequest();
-	  request.open("GET", path, false);
-	  try {
-	    request.send(null);
-	  } catch (_error) {
-	    e = _error;
-	    console.debug("XMLHttpRequest.error", e);
-	  }
-	  handleError = function() {
-	    throw Error("Utils.domLoadDataSync: " + path + " -> [" + request.status + " " + request.statusText + "]");
-	  };
-	  request.onerror = handleError;
-	  if ((ref = request.status) !== 200 && ref !== 0) {
-	    handleError();
-	  }
-	  if (!request.responseText) {
-	    handleError();
-	  }
-	  return request.responseText;
-	};
-	
-	Utils.domLoadJSONSync = function(path) {
-	  return JSON.parse(Utils.domLoadDataSync(path));
-	};
-	
-	Utils.domLoadScriptSync = function(path) {
-	  var scriptData;
-	  scriptData = Utils.domLoadDataSync(path);
-	  eval(scriptData);
-	  return scriptData;
-	};
-	
-	Utils.insertCSS = function(css) {
-	  var styleElement;
-	  styleElement = document.createElement("style");
-	  styleElement.type = "text/css";
-	  styleElement.innerHTML = css;
-	  return Utils.domComplete(function() {
-	    return document.body.appendChild(styleElement);
-	  });
-	};
-	
-	Utils.loadImage = function(url, callback, context) {
-	  var element;
-	  element = new Image;
-	  if (context == null) {
-	    context = Framer.CurrentContext;
-	  }
-	  context.eventManager.wrap(element).addEventListener("load", function(event) {
-	    return callback();
-	  });
-	  context.eventManager.wrap(element).addEventListener("error", function(event) {
-	    return callback(true);
-	  });
-	  return element.src = url;
-	};
-	
-	Utils.pointZero = function(args) {
-	  if (args == null) {
-	    args = {};
-	  }
-	  return _.defaults(args, {
-	    x: 0,
-	    y: 0
-	  });
-	};
-	
-	Utils.pointMin = function() {
-	  var point, points;
-	  points = Utils.arrayFromArguments(arguments);
-	  return point = {
-	    x: _.min(points.map(function(size) {
-	      return size.x;
-	    })),
-	    y: _.min(points.map(function(size) {
-	      return size.y;
-	    }))
-	  };
-	};
-	
-	Utils.pointMax = function() {
-	  var point, points;
-	  points = Utils.arrayFromArguments(arguments);
-	  return point = {
-	    x: _.max(points.map(function(size) {
-	      return size.x;
-	    })),
-	    y: _.max(points.map(function(size) {
-	      return size.y;
-	    }))
-	  };
-	};
-	
-	Utils.pointDistance = function(pointA, pointB) {
-	  var distance;
-	  return distance = {
-	    x: Math.abs(pointB.x - pointA.x),
-	    y: Math.abs(pointB.y - pointA.y)
-	  };
-	};
-	
-	Utils.pointInvert = function(point) {
-	  return point = {
-	    x: 0 - point.x,
-	    y: 0 - point.y
-	  };
-	};
-	
-	Utils.pointTotal = function(point) {
-	  return point.x + point.y;
-	};
-	
-	Utils.pointAbs = function(point) {
-	  return point = {
-	    x: Math.abs(point.x),
-	    y: Math.abs(point.y)
-	  };
-	};
-	
-	Utils.pointInFrame = function(point, frame) {
-	  if (point.x < Utils.frameGetMinX(frame) || point.x > Utils.frameGetMaxX(frame)) {
-	    return false;
-	  }
-	  if (point.y < Utils.frameGetMinY(frame) || point.y > Utils.frameGetMaxY(frame)) {
-	    return false;
-	  }
-	  return true;
-	};
-	
-	Utils.sizeZero = function(args) {
-	  if (args == null) {
-	    args = {};
-	  }
-	  return _.defaults(args, {
-	    width: 0,
-	    height: 0
-	  });
-	};
-	
-	Utils.sizeMin = function() {
-	  var size, sizes;
-	  sizes = Utils.arrayFromArguments(arguments);
-	  return size = {
-	    width: _.min(sizes.map(function(size) {
-	      return size.width;
-	    })),
-	    height: _.min(sizes.map(function(size) {
-	      return size.height;
-	    }))
-	  };
-	};
-	
-	Utils.sizeMax = function() {
-	  var size, sizes;
-	  sizes = Utils.arrayFromArguments(arguments);
-	  return size = {
-	    width: _.max(sizes.map(function(size) {
-	      return size.width;
-	    })),
-	    height: _.max(sizes.map(function(size) {
-	      return size.height;
-	    }))
-	  };
-	};
-	
-	Utils.rectZero = function(args) {
-	  if (args == null) {
-	    args = {};
-	  }
-	  return _.defaults(args, {
-	    top: 0,
-	    right: 0,
-	    bottom: 0,
-	    left: 0
-	  });
-	};
-	
-	Utils.parseRect = function(args) {
-	  if (_.isArray(args) && _.isNumber(args[0])) {
-	    if (args.length === 1) {
-	      return Utils.parseRect({
-	        top: args[0]
-	      });
-	    }
-	    if (args.length === 2) {
-	      return Utils.parseRect({
-	        top: args[0],
-	        right: args[1]
-	      });
-	    }
-	    if (args.length === 3) {
-	      return Utils.parseRect({
-	        top: args[0],
-	        right: args[1],
-	        bottom: args[2]
-	      });
-	    }
-	    if (args.length === 4) {
-	      return Utils.parseRect({
-	        top: args[0],
-	        right: args[1],
-	        bottom: args[2],
-	        left: args[3]
-	      });
-	    }
-	  }
-	  if (_.isArray(args) && _.isObject(args[0])) {
-	    return args[0];
-	  }
-	  if (_.isObject(args)) {
-	    return args;
-	  }
-	  return {};
-	};
-	
-	Utils.frameGetMinX = function(frame) {
-	  return frame.x;
-	};
-	
-	Utils.frameSetMinX = function(frame, value) {
-	  return frame.x = value;
-	};
-	
-	Utils.frameGetMidX = function(frame) {
-	  if (frame.width === 0) {
-	    return 0;
-	  } else {
-	    return frame.x + (frame.width / 2.0);
-	  }
-	};
-	
-	Utils.frameSetMidX = function(frame, value) {
-	  return frame.x = frame.width === 0 ? 0 : value - (frame.width / 2.0);
-	};
-	
-	Utils.frameGetMaxX = function(frame) {
-	  if (frame.width === 0) {
-	    return 0;
-	  } else {
-	    return frame.x + frame.width;
-	  }
-	};
-	
-	Utils.frameSetMaxX = function(frame, value) {
-	  return frame.x = frame.width === 0 ? 0 : value - frame.width;
-	};
-	
-	Utils.frameGetMinY = function(frame) {
-	  return frame.y;
-	};
-	
-	Utils.frameSetMinY = function(frame, value) {
-	  return frame.y = value;
-	};
-	
-	Utils.frameGetMidY = function(frame) {
-	  if (frame.height === 0) {
-	    return 0;
-	  } else {
-	    return frame.y + (frame.height / 2.0);
-	  }
-	};
-	
-	Utils.frameSetMidY = function(frame, value) {
-	  return frame.y = frame.height === 0 ? 0 : value - (frame.height / 2.0);
-	};
-	
-	Utils.frameGetMaxY = function(frame) {
-	  if (frame.height === 0) {
-	    return 0;
-	  } else {
-	    return frame.y + frame.height;
-	  }
-	};
-	
-	Utils.frameSetMaxY = function(frame, value) {
-	  return frame.y = frame.height === 0 ? 0 : value - frame.height;
-	};
-	
-	Utils.frameZero = function(args) {
-	  if (args == null) {
-	    args = {};
-	  }
-	  return _.defaults(args, {
-	    top: 0,
-	    right: 0,
-	    bottom: 0,
-	    left: 0
-	  });
-	};
-	
-	Utils.frameSize = function(frame) {
-	  var size;
-	  return size = {
-	    width: frame.width,
-	    height: frame.height
-	  };
-	};
-	
-	Utils.framePoint = function(frame) {
-	  var point;
-	  return point = {
-	    x: frame.x,
-	    y: frame.y
-	  };
-	};
-	
-	Utils.frameMerge = function() {
-	  var frame, frames;
-	  frames = Utils.arrayFromArguments(arguments);
-	  frame = {
-	    x: _.min(frames.map(Utils.frameGetMinX)),
-	    y: _.min(frames.map(Utils.frameGetMinY))
-	  };
-	  frame.width = _.max(frames.map(Utils.frameGetMaxX)) - frame.x;
-	  frame.height = _.max(frames.map(Utils.frameGetMaxY)) - frame.y;
-	  return frame;
-	};
-	
-	Utils.framePointForOrigin = function(frame, originX, originY) {
-	  return frame = {
-	    x: frame.x + (originX * frame.width),
-	    y: frame.y + (originY * frame.height),
-	    width: frame.width,
-	    height: frame.height
-	  };
-	};
-	
-	Utils.frameInset = function(frame, inset) {
-	  return frame = {
-	    x: frame.x + inset.left,
-	    y: frame.y + inset.top,
-	    width: frame.width - inset.left - inset.right,
-	    height: frame.height - inset.top - inset.bottom
-	  };
-	};
-	
-	Utils.frameSortByAbsoluteDistance = function(point, frames, originX, originY) {
-	  var distance;
-	  if (originX == null) {
-	    originX = 0;
-	  }
-	  if (originY == null) {
-	    originY = 0;
-	  }
-	  distance = function(frame) {
-	    var result;
-	    result = Utils.pointDistance(point, Utils.framePointForOrigin(frame, originX, originY));
-	    result = Utils.pointAbs(result);
-	    result = Utils.pointTotal(result);
-	    return result;
-	  };
-	  return frames.sort(function(a, b) {
-	    return distance(a) - distance(b);
-	  });
-	};
-	
-	Utils.pointInPolygon = function(point, vs) {
-	  var i, inside, intersect, j, x, xi, xj, y, yi, yj;
-	  x = point[0];
-	  y = point[1];
-	  inside = false;
-	  i = 0;
-	  j = vs.length - 1;
-	  while (i < vs.length) {
-	    xi = vs[i][0];
-	    yi = vs[i][1];
-	    xj = vs[j][0];
-	    yj = vs[j][1];
-	    intersect = ((yi > y && y !== yj) && yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi;
-	    if (intersect) {
-	      inside = !inside;
-	    }
-	    j = i++;
-	  }
-	  return inside;
-	};
-	
-	Utils.pointAngle = function(p1, p2) {
-	  return Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
-	};
-	
-	Utils.convertPoint = function(input, layerA, layerB, context) {
-	  var layer, len, len1, m, o, point, superLayersA, superLayersB;
-	  if (context == null) {
-	    context = false;
-	  }
-	  point = _.defaults(input, {
-	    x: 0,
-	    y: 0
-	  });
-	  superLayersA = (layerA != null ? layerA.superLayers(context) : void 0) || [];
-	  superLayersB = (layerB != null ? layerB.superLayers(context) : void 0) || [];
-	  if (layerB) {
-	    superLayersB.push(layerB);
-	  }
-	  for (m = 0, len = superLayersA.length; m < len; m++) {
-	    layer = superLayersA[m];
-	    point.x += layer.x;
-	    point.y += layer.y;
-	  }
-	  for (o = 0, len1 = superLayersB.length; o < len1; o++) {
-	    layer = superLayersB[o];
-	    point.x -= layer.x;
-	    point.y -= layer.y;
-	  }
-	  return point;
-	};
-	
-	Utils.globalLayers = function(importedLayers) {
-	  var layer, layerName;
-	  for (layerName in importedLayers) {
-	    layer = importedLayers[layerName];
-	    layerName = layerName.replace(/\s/g, "");
-	    if (window.hasOwnProperty(layerName) && !window.Framer._globalWarningGiven) {
-	      print("Warning: Cannot make layer '" + layerName + "' a global, a variable with that name already exists");
-	    } else {
-	      window[layerName] = layer;
-	    }
-	  }
-	  return window.Framer._globalWarningGiven = true;
-	};
-	
-	_textSizeNode = null;
-	
-	Utils.textSize = function(text, style, constraints) {
-	  var frame, rect, shouldCreateNode;
-	  if (style == null) {
-	    style = {};
-	  }
-	  if (constraints == null) {
-	    constraints = {};
-	  }
-	  shouldCreateNode = !_textSizeNode;
-	  if (shouldCreateNode) {
-	    _textSizeNode = document.createElement("div");
-	    _textSizeNode.id = "_textSizeNode";
-	  }
-	  _textSizeNode.innerHTML = text;
-	  style = _.extend(style, {
-	    position: "fixed",
-	    display: "inline",
-	    visibility: "hidden",
-	    top: "-10000px",
-	    left: "-10000px"
-	  });
-	  delete style.width;
-	  delete style.height;
-	  delete style.bottom;
-	  delete style.right;
-	  if (constraints.width) {
-	    style.width = constraints.width + "px";
-	  }
-	  if (constraints.height) {
-	    style.height = constraints.height + "px";
-	  }
-	  _.extend(_textSizeNode.style, style);
-	  if (shouldCreateNode) {
-	    if (!window.document.body) {
-	      document.write(_textSizeNode.outerHTML);
-	      _textSizeNode = document.getElementById("_textSizeNode");
-	    } else {
-	      window.document.body.appendChild(_textSizeNode);
-	    }
-	  }
-	  rect = _textSizeNode.getBoundingClientRect();
-	  return frame = {
-	    width: rect.right - rect.left,
-	    height: rect.bottom - rect.top
-	  };
-	};
-	
-	_.extend(exports, Utils);
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports._ = __webpack_require__(4);
-
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
 	 * @license
-	 * lodash 3.9.3 (Custom Build) <https://lodash.com/>
+	 * lodash 3.10.0 (Custom Build) <https://lodash.com/>
 	 * Build: `lodash modern -d -o ./index.js`
 	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
 	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -1424,7 +181,7 @@
 	  var undefined;
 	
 	  /** Used as the semantic version number. */
-	  var VERSION = '3.9.3';
+	  var VERSION = '3.10.0';
 	
 	  /** Used to compose bitmasks for wrapper metadata. */
 	  var BIND_FLAG = 1,
@@ -1445,9 +202,11 @@
 	  var HOT_COUNT = 150,
 	      HOT_SPAN = 16;
 	
+	  /** Used as the size to enable large array optimizations. */
+	  var LARGE_ARRAY_SIZE = 200;
+	
 	  /** Used to indicate the type of lazy iteratees. */
-	  var LAZY_DROP_WHILE_FLAG = 0,
-	      LAZY_FILTER_FLAG = 1,
+	  var LAZY_FILTER_FLAG = 1,
 	      LAZY_MAP_FLAG = 2;
 	
 	  /** Used as the `TypeError` message for "Functions" methods. */
@@ -1504,11 +263,10 @@
 	      rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g;
 	
 	  /**
-	   * Used to match `RegExp` [special characters](http://www.regular-expressions.info/characters.html#special).
-	   * In addition to special characters the forward slash is escaped to allow for
-	   * easier `eval` use and `Function` compilation.
+	   * Used to match `RegExp` [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns)
+	   * and those outlined by [`EscapeRegExpPattern`](http://ecma-international.org/ecma-262/6.0/#sec-escaperegexppattern).
 	   */
-	  var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g,
+	  var reRegExpChars = /^[:!,]|[\\^$.*+?()[\]{}|\/]|(^[0-9a-fA-Fnrtuvx])|([\n\r\u2028\u2029])/g,
 	      reHasRegExpChars = RegExp(reRegExpChars.source);
 	
 	  /** Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks). */
@@ -1517,7 +275,7 @@
 	  /** Used to match backslashes in property paths. */
 	  var reEscapeChar = /\\(\\)?/g;
 	
-	  /** Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components). */
+	  /** Used to match [ES template delimiters](http://ecma-international.org/ecma-262/6.0/#sec-template-literal-lexical-components). */
 	  var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 	
 	  /** Used to match `RegExp` flags from their coerced string values. */
@@ -1549,25 +307,13 @@
 	    return RegExp(upper + '+(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
 	  }());
 	
-	  /** Used to detect and test for whitespace. */
-	  var whitespace = (
-	    // Basic whitespace characters.
-	    ' \t\x0b\f\xa0\ufeff' +
-	
-	    // Line terminators.
-	    '\n\r\u2028\u2029' +
-	
-	    // Unicode category "Zs" space separators.
-	    '\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000'
-	  );
-	
 	  /** Used to assign default `context` object properties. */
 	  var contextProps = [
 	    'Array', 'ArrayBuffer', 'Date', 'Error', 'Float32Array', 'Float64Array',
 	    'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Math', 'Number',
-	    'Object', 'RegExp', 'Set', 'String', '_', 'clearTimeout', 'document',
-	    'isFinite', 'parseFloat', 'parseInt', 'setTimeout', 'TypeError', 'Uint8Array',
-	    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap', 'window'
+	    'Object', 'RegExp', 'Set', 'String', '_', 'clearTimeout', 'isFinite',
+	    'parseFloat', 'parseInt', 'setTimeout', 'TypeError', 'Uint8Array',
+	    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap'
 	  ];
 	
 	  /** Used to make template sourceURLs easier to identify. */
@@ -1602,13 +348,6 @@
 	  cloneableTags[errorTag] = cloneableTags[funcTag] =
 	  cloneableTags[mapTag] = cloneableTags[setTag] =
 	  cloneableTags[weakMapTag] = false;
-	
-	  /** Used as an internal `_.debounce` options object by `_.throttle`. */
-	  var debounceOptions = {
-	    'leading': false,
-	    'maxWait': 0,
-	    'trailing': false
-	  };
 	
 	  /** Used to map latin-1 supplementary letters to basic latin letters. */
 	  var deburredLetters = {
@@ -1655,6 +394,15 @@
 	  var objectTypes = {
 	    'function': true,
 	    'object': true
+	  };
+	
+	  /** Used to escape characters for inclusion in compiled regexes. */
+	  var regexpEscapes = {
+	    '0': 'x30', '1': 'x31', '2': 'x32', '3': 'x33', '4': 'x34',
+	    '5': 'x35', '6': 'x36', '7': 'x37', '8': 'x38', '9': 'x39',
+	    'A': 'x41', 'B': 'x42', 'C': 'x43', 'D': 'x44', 'E': 'x45', 'F': 'x46',
+	    'a': 'x61', 'b': 'x62', 'c': 'x63', 'd': 'x64', 'e': 'x65', 'f': 'x66',
+	    'n': 'x6e', 'r': 'x72', 't': 'x74', 'u': 'x75', 'v': 'x76', 'x': 'x78'
 	  };
 	
 	  /** Used to escape characters for inclusion in compiled string literals. */
@@ -1797,9 +545,6 @@
 	   * @returns {string} Returns the string.
 	   */
 	  function baseToString(value) {
-	    if (typeof value == 'string') {
-	      return value;
-	    }
 	    return value == null ? '' : (value + '');
 	  }
 	
@@ -1841,8 +586,8 @@
 	   * sort them in ascending order.
 	   *
 	   * @private
-	   * @param {Object} object The object to compare to `other`.
-	   * @param {Object} other The object to compare to `object`.
+	   * @param {Object} object The object to compare.
+	   * @param {Object} other The other object to compare.
 	   * @returns {number} Returns the sort order indicator for `object`.
 	   */
 	  function compareAscending(object, other) {
@@ -1850,16 +595,16 @@
 	  }
 	
 	  /**
-	   * Used by `_.sortByOrder` to compare multiple properties of each element
-	   * in a collection and stable sort them in the following order:
+	   * Used by `_.sortByOrder` to compare multiple properties of a value to another
+	   * and stable sort them.
 	   *
-	   * If `orders` is unspecified, sort in ascending order for all properties.
-	   * Otherwise, for each property, sort in ascending order if its corresponding value in
-	   * orders is true, and descending order if false.
+	   * If `orders` is unspecified, all valuess are sorted in ascending order. Otherwise,
+	   * a value is sorted in ascending order if its corresponding order is "asc", and
+	   * descending if "desc".
 	   *
 	   * @private
-	   * @param {Object} object The object to compare to `other`.
-	   * @param {Object} other The object to compare to `object`.
+	   * @param {Object} object The object to compare.
+	   * @param {Object} other The other object to compare.
 	   * @param {boolean[]} orders The order to sort by for each property.
 	   * @returns {number} Returns the sort order indicator for `object`.
 	   */
@@ -1876,7 +621,8 @@
 	        if (index >= ordersLength) {
 	          return result;
 	        }
-	        return result * (orders[index] ? 1 : -1);
+	        var order = orders[index];
+	        return result * ((order === 'asc' || order === true) ? 1 : -1);
 	      }
 	    }
 	    // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
@@ -1912,8 +658,25 @@
 	  }
 	
 	  /**
-	   * Used by `_.template` to escape characters for inclusion in compiled
-	   * string literals.
+	   * Used by `_.escapeRegExp` to escape characters for inclusion in compiled regexes.
+	   *
+	   * @private
+	   * @param {string} chr The matched character to escape.
+	   * @param {string} leadingChar The capture group for a leading character.
+	   * @param {string} whitespaceChar The capture group for a whitespace character.
+	   * @returns {string} Returns the escaped character.
+	   */
+	  function escapeRegExpChar(chr, leadingChar, whitespaceChar) {
+	    if (leadingChar) {
+	      chr = regexpEscapes[chr];
+	    } else if (whitespaceChar) {
+	      chr = stringEscapes[chr];
+	    }
+	    return '\\' + chr;
+	  }
+	
+	  /**
+	   * Used by `_.template` to escape characters for inclusion in compiled string literals.
 	   *
 	   * @private
 	   * @param {string} chr The matched character to escape.
@@ -2124,9 +887,6 @@
 	        objectProto = Object.prototype,
 	        stringProto = String.prototype;
 	
-	    /** Used to detect DOM support. */
-	    var document = (document = context.window) ? document.document : null;
-	
 	    /** Used to resolve the decompiled source of functions. */
 	    var fnToString = Function.prototype.toString;
 	
@@ -2137,56 +897,42 @@
 	    var idCounter = 0;
 	
 	    /**
-	     * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+	     * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
 	     * of values.
 	     */
 	    var objToString = objectProto.toString;
 	
 	    /** Used to restore the original `_` reference in `_.noConflict`. */
-	    var oldDash = context._;
+	    var oldDash = root._;
 	
 	    /** Used to detect if a method is native. */
 	    var reIsNative = RegExp('^' +
-	      escapeRegExp(fnToString.call(hasOwnProperty))
+	      fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
 	      .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
 	    );
 	
 	    /** Native method references. */
-	    var ArrayBuffer = getNative(context, 'ArrayBuffer'),
-	        bufferSlice = getNative(ArrayBuffer && new ArrayBuffer(0), 'slice'),
-	        ceil = Math.ceil,
+	    var ArrayBuffer = context.ArrayBuffer,
 	        clearTimeout = context.clearTimeout,
-	        floor = Math.floor,
-	        getPrototypeOf = getNative(Object, 'getPrototypeOf'),
 	        parseFloat = context.parseFloat,
-	        push = arrayProto.push,
+	        pow = Math.pow,
+	        propertyIsEnumerable = objectProto.propertyIsEnumerable,
 	        Set = getNative(context, 'Set'),
 	        setTimeout = context.setTimeout,
 	        splice = arrayProto.splice,
-	        Uint8Array = getNative(context, 'Uint8Array'),
+	        Uint8Array = context.Uint8Array,
 	        WeakMap = getNative(context, 'WeakMap');
 	
-	    /** Used to clone array buffers. */
-	    var Float64Array = (function() {
-	      // Safari 5 errors when using an array buffer to initialize a typed array
-	      // where the array buffer's `byteLength` is not a multiple of the typed
-	      // array's `BYTES_PER_ELEMENT`.
-	      try {
-	        var func = getNative(context, 'Float64Array'),
-	            result = new func(new ArrayBuffer(10), 0, 1) && func;
-	      } catch(e) {}
-	      return result || null;
-	    }());
-	
 	    /* Native method references for those with the same name as other `lodash` methods. */
-	    var nativeCreate = getNative(Object, 'create'),
+	    var nativeCeil = Math.ceil,
+	        nativeCreate = getNative(Object, 'create'),
+	        nativeFloor = Math.floor,
 	        nativeIsArray = getNative(Array, 'isArray'),
 	        nativeIsFinite = context.isFinite,
 	        nativeKeys = getNative(Object, 'keys'),
 	        nativeMax = Math.max,
 	        nativeMin = Math.min,
 	        nativeNow = getNative(Date, 'now'),
-	        nativeNumIsFinite = getNative(Number, 'isFinite'),
 	        nativeParseInt = context.parseInt,
 	        nativeRandom = Math.random;
 	
@@ -2199,11 +945,8 @@
 	        MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1,
 	        HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 	
-	    /** Used as the size, in bytes, of each `Float64Array` element. */
-	    var FLOAT64_BYTES_PER_ELEMENT = Float64Array ? Float64Array.BYTES_PER_ELEMENT : 0;
-	
 	    /**
-	     * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+	     * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
 	     * of an array-like value.
 	     */
 	    var MAX_SAFE_INTEGER = 9007199254740991;
@@ -2219,15 +962,16 @@
 	    /**
 	     * Creates a `lodash` object which wraps `value` to enable implicit chaining.
 	     * Methods that operate on and return arrays, collections, and functions can
-	     * be chained together. Methods that return a boolean or single value will
-	     * automatically end the chain returning the unwrapped value. Explicit chaining
-	     * may be enabled using `_.chain`. The execution of chained methods is lazy,
-	     * that is, execution is deferred until `_#value` is implicitly or explicitly
-	     * called.
+	     * be chained together. Methods that retrieve a single value or may return a
+	     * primitive value will automatically end the chain returning the unwrapped
+	     * value. Explicit chaining may be enabled using `_.chain`. The execution of
+	     * chained methods is lazy, that is, execution is deferred until `_#value`
+	     * is implicitly or explicitly called.
 	     *
 	     * Lazy evaluation allows several methods to support shortcut fusion. Shortcut
-	     * fusion is an optimization that merges iteratees to avoid creating intermediate
-	     * arrays and reduce the number of iteratee executions.
+	     * fusion is an optimization strategy which merge iteratee calls; this can help
+	     * to avoid the creation of intermediate data structures and greatly reduce the
+	     * number of iteratee executions.
 	     *
 	     * Chaining is supported in custom builds as long as the `_#value` method is
 	     * directly or indirectly included in the build.
@@ -2250,36 +994,37 @@
 	     * The chainable wrapper methods are:
 	     * `after`, `ary`, `assign`, `at`, `before`, `bind`, `bindAll`, `bindKey`,
 	     * `callback`, `chain`, `chunk`, `commit`, `compact`, `concat`, `constant`,
-	     * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defer`, `delay`,
-	     * `difference`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `fill`,
-	     * `filter`, `flatten`, `flattenDeep`, `flow`, `flowRight`, `forEach`,
-	     * `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `functions`,
-	     * `groupBy`, `indexBy`, `initial`, `intersection`, `invert`, `invoke`, `keys`,
-	     * `keysIn`, `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`,
-	     * `memoize`, `merge`, `method`, `methodOf`, `mixin`, `negate`, `omit`, `once`,
-	     * `pairs`, `partial`, `partialRight`, `partition`, `pick`, `plant`, `pluck`,
-	     * `property`, `propertyOf`, `pull`, `pullAt`, `push`, `range`, `rearg`,
-	     * `reject`, `remove`, `rest`, `restParam`, `reverse`, `set`, `shuffle`,
-	     * `slice`, `sort`, `sortBy`, `sortByAll`, `sortByOrder`, `splice`, `spread`,
-	     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
-	     * `thru`, `times`, `toArray`, `toPlainObject`, `transform`, `union`, `uniq`,
-	     * `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `where`, `without`,
-	     * `wrap`, `xor`, `zip`, `zipObject`, `zipWith`
+	     * `countBy`, `create`, `curry`, `debounce`, `defaults`, `defaultsDeep`,
+	     * `defer`, `delay`, `difference`, `drop`, `dropRight`, `dropRightWhile`,
+	     * `dropWhile`, `fill`, `filter`, `flatten`, `flattenDeep`, `flow`, `flowRight`,
+	     * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
+	     * `functions`, `groupBy`, `indexBy`, `initial`, `intersection`, `invert`,
+	     * `invoke`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`, `matches`,
+	     * `matchesProperty`, `memoize`, `merge`, `method`, `methodOf`, `mixin`,
+	     * `modArgs`, `negate`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
+	     * `partition`, `pick`, `plant`, `pluck`, `property`, `propertyOf`, `pull`,
+	     * `pullAt`, `push`, `range`, `rearg`, `reject`, `remove`, `rest`, `restParam`,
+	     * `reverse`, `set`, `shuffle`, `slice`, `sort`, `sortBy`, `sortByAll`,
+	     * `sortByOrder`, `splice`, `spread`, `take`, `takeRight`, `takeRightWhile`,
+	     * `takeWhile`, `tap`, `throttle`, `thru`, `times`, `toArray`, `toPlainObject`,
+	     * `transform`, `union`, `uniq`, `unshift`, `unzip`, `unzipWith`, `values`,
+	     * `valuesIn`, `where`, `without`, `wrap`, `xor`, `zip`, `zipObject`, `zipWith`
 	     *
 	     * The wrapper methods that are **not** chainable by default are:
-	     * `add`, `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `deburr`,
-	     * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
-	     * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `get`,
-	     * `gt`, `gte`, `has`, `identity`, `includes`, `indexOf`, `inRange`, `isArguments`,
-	     * `isArray`, `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isError`,
-	     * `isFinite` `isFunction`, `isMatch`, `isNative`, `isNaN`, `isNull`, `isNumber`,
-	     * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`,
-	     * `isTypedArray`, `join`, `kebabCase`, `last`, `lastIndexOf`, `lt`, `lte`,
-	     * `max`, `min`, `noConflict`, `noop`, `now`, `pad`, `padLeft`, `padRight`,
-	     * `parseInt`, `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`,
-	     * `runInContext`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
-	     * `sortedLastIndex`, `startCase`, `startsWith`, `sum`, `template`, `trim`,
-	     * `trimLeft`, `trimRight`, `trunc`, `unescape`, `uniqueId`, `value`, and `words`
+	     * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clone`, `cloneDeep`,
+	     * `deburr`, `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`,
+	     * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`,
+	     * `floor`, `get`, `gt`, `gte`, `has`, `identity`, `includes`, `indexOf`,
+	     * `inRange`, `isArguments`, `isArray`, `isBoolean`, `isDate`, `isElement`,
+	     * `isEmpty`, `isEqual`, `isError`, `isFinite` `isFunction`, `isMatch`,
+	     * `isNative`, `isNaN`, `isNull`, `isNumber`, `isObject`, `isPlainObject`,
+	     * `isRegExp`, `isString`, `isUndefined`, `isTypedArray`, `join`, `kebabCase`,
+	     * `last`, `lastIndexOf`, `lt`, `lte`, `max`, `min`, `noConflict`, `noop`,
+	     * `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`, `random`, `reduce`,
+	     * `reduceRight`, `repeat`, `result`, `round`, `runInContext`, `shift`, `size`,
+	     * `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`, `startCase`,
+	     * `startsWith`, `sum`, `template`, `trim`, `trimLeft`, `trimRight`, `trunc`,
+	     * `unescape`, `uniqueId`, `value`, and `words`
 	     *
 	     * The wrapper method `sample` will return a wrapped value when `n` is provided,
 	     * otherwise an unwrapped value is returned.
@@ -2354,27 +1099,6 @@
 	     */
 	    var support = lodash.support = {};
 	
-	    (function(x) {
-	      var Ctor = function() { this.x = x; },
-	          object = { '0': x, 'length': x },
-	          props = [];
-	
-	      Ctor.prototype = { 'valueOf': x, 'y': x };
-	      for (var key in new Ctor) { props.push(key); }
-	
-	      /**
-	       * Detect if the DOM is supported.
-	       *
-	       * @memberOf _.support
-	       * @type boolean
-	       */
-	      try {
-	        support.dom = document.createDocumentFragment().nodeType === 11;
-	      } catch(e) {
-	        support.dom = false;
-	      }
-	    }(1, 0));
-	
 	    /**
 	     * By default, the template delimiters used by lodash are like those in
 	     * embedded Ruby (ERB). Change the following template settings to use
@@ -2446,13 +1170,12 @@
 	     */
 	    function LazyWrapper(value) {
 	      this.__wrapped__ = value;
-	      this.__actions__ = null;
+	      this.__actions__ = [];
 	      this.__dir__ = 1;
-	      this.__dropCount__ = 0;
 	      this.__filtered__ = false;
-	      this.__iteratees__ = null;
+	      this.__iteratees__ = [];
 	      this.__takeCount__ = POSITIVE_INFINITY;
-	      this.__views__ = null;
+	      this.__views__ = [];
 	    }
 	
 	    /**
@@ -2464,17 +1187,13 @@
 	     * @returns {Object} Returns the cloned `LazyWrapper` object.
 	     */
 	    function lazyClone() {
-	      var actions = this.__actions__,
-	          iteratees = this.__iteratees__,
-	          views = this.__views__,
-	          result = new LazyWrapper(this.__wrapped__);
-	
-	      result.__actions__ = actions ? arrayCopy(actions) : null;
+	      var result = new LazyWrapper(this.__wrapped__);
+	      result.__actions__ = arrayCopy(this.__actions__);
 	      result.__dir__ = this.__dir__;
 	      result.__filtered__ = this.__filtered__;
-	      result.__iteratees__ = iteratees ? arrayCopy(iteratees) : null;
+	      result.__iteratees__ = arrayCopy(this.__iteratees__);
 	      result.__takeCount__ = this.__takeCount__;
-	      result.__views__ = views ? arrayCopy(views) : null;
+	      result.__views__ = arrayCopy(this.__views__);
 	      return result;
 	    }
 	
@@ -2507,22 +1226,25 @@
 	     * @returns {*} Returns the unwrapped value.
 	     */
 	    function lazyValue() {
-	      var array = this.__wrapped__.value();
-	      if (!isArray(array)) {
-	        return baseWrapperValue(array, this.__actions__);
-	      }
-	      var dir = this.__dir__,
+	      var array = this.__wrapped__.value(),
+	          dir = this.__dir__,
+	          isArr = isArray(array),
 	          isRight = dir < 0,
-	          view = getView(0, array.length, this.__views__),
+	          arrLength = isArr ? array.length : 0,
+	          view = getView(0, arrLength, this.__views__),
 	          start = view.start,
 	          end = view.end,
 	          length = end - start,
 	          index = isRight ? end : (start - 1),
-	          takeCount = nativeMin(length, this.__takeCount__),
 	          iteratees = this.__iteratees__,
-	          iterLength = iteratees ? iteratees.length : 0,
+	          iterLength = iteratees.length,
 	          resIndex = 0,
-	          result = [];
+	          takeCount = nativeMin(length, this.__takeCount__);
+	
+	      if (!isArr || arrLength < LARGE_ARRAY_SIZE || (arrLength == length && takeCount == length)) {
+	        return baseWrapperValue((isRight && isArr) ? array.reverse() : array, this.__actions__);
+	      }
+	      var result = [];
 	
 	      outer:
 	      while (length-- && resIndex < takeCount) {
@@ -2534,30 +1256,16 @@
 	        while (++iterIndex < iterLength) {
 	          var data = iteratees[iterIndex],
 	              iteratee = data.iteratee,
-	              type = data.type;
+	              type = data.type,
+	              computed = iteratee(value);
 	
-	          if (type == LAZY_DROP_WHILE_FLAG) {
-	            if (data.done && (isRight ? (index > data.index) : (index < data.index))) {
-	              data.count = 0;
-	              data.done = false;
-	            }
-	            data.index = index;
-	            if (!data.done) {
-	              var limit = data.limit;
-	              if (!(data.done = limit > -1 ? (data.count++ >= limit) : !iteratee(value))) {
-	                continue outer;
-	              }
-	            }
-	          } else {
-	            var computed = iteratee(value);
-	            if (type == LAZY_MAP_FLAG) {
-	              value = computed;
-	            } else if (!computed) {
-	              if (type == LAZY_FILTER_FLAG) {
-	                continue outer;
-	              } else {
-	                break outer;
-	              }
+	          if (type == LAZY_MAP_FLAG) {
+	            value = computed;
+	          } else if (!computed) {
+	            if (type == LAZY_FILTER_FLAG) {
+	              continue outer;
+	            } else {
+	              break outer;
 	            }
 	          }
 	        }
@@ -2688,6 +1396,30 @@
 	    }
 	
 	    /*------------------------------------------------------------------------*/
+	
+	    /**
+	     * Creates a new array joining `array` with `other`.
+	     *
+	     * @private
+	     * @param {Array} array The array to join.
+	     * @param {Array} other The other array to join.
+	     * @returns {Array} Returns the new concatenated array.
+	     */
+	    function arrayConcat(array, other) {
+	      var index = -1,
+	          length = array.length,
+	          othIndex = -1,
+	          othLength = other.length,
+	          result = Array(length + othLength);
+	
+	      while (++index < length) {
+	        result[index] = array[index];
+	      }
+	      while (++othIndex < othLength) {
+	        result[index++] = other[othIndex];
+	      }
+	      return result;
+	    }
 	
 	    /**
 	     * Copies the values of `source` to `array`.
@@ -2845,6 +1577,25 @@
 	    }
 	
 	    /**
+	     * Appends the elements of `values` to `array`.
+	     *
+	     * @private
+	     * @param {Array} array The array to modify.
+	     * @param {Array} values The values to append.
+	     * @returns {Array} Returns `array`.
+	     */
+	    function arrayPush(array, values) {
+	      var index = -1,
+	          length = values.length,
+	          offset = array.length;
+	
+	      while (++index < length) {
+	        array[offset + index] = values[index];
+	      }
+	      return array;
+	    }
+	
+	    /**
 	     * A specialized version of `_.reduce` for arrays without support for callback
 	     * shorthands and `this` binding.
 	     *
@@ -2915,18 +1666,20 @@
 	    }
 	
 	    /**
-	     * A specialized version of `_.sum` for arrays without support for iteratees.
+	     * A specialized version of `_.sum` for arrays without support for callback
+	     * shorthands and `this` binding..
 	     *
 	     * @private
 	     * @param {Array} array The array to iterate over.
+	     * @param {Function} iteratee The function invoked per iteration.
 	     * @returns {number} Returns the sum.
 	     */
-	    function arraySum(array) {
+	    function arraySum(array, iteratee) {
 	      var length = array.length,
 	          result = 0;
 	
 	      while (length--) {
-	        result += +array[length] || 0;
+	        result += +iteratee(array[length]) || 0;
 	      }
 	      return result;
 	    }
@@ -3130,7 +1883,7 @@
 	            : (object ? value : {});
 	        }
 	      }
-	      // Check for circular references and return corresponding clone.
+	      // Check for circular references and return its corresponding clone.
 	      stackA || (stackA = []);
 	      stackB || (stackB = []);
 	
@@ -3165,7 +1918,7 @@
 	        if (isObject(prototype)) {
 	          object.prototype = prototype;
 	          var result = new object;
-	          object.prototype = null;
+	          object.prototype = undefined;
 	        }
 	        return result || {};
 	      };
@@ -3207,7 +1960,7 @@
 	      var index = -1,
 	          indexOf = getIndexOf(),
 	          isCommon = indexOf == baseIndexOf,
-	          cache = (isCommon && values.length >= 200) ? createCache(values) : null,
+	          cache = (isCommon && values.length >= LARGE_ARRAY_SIZE) ? createCache(values) : null,
 	          valuesLength = values.length;
 	
 	      if (cache) {
@@ -3383,13 +2136,14 @@
 	     * @param {Array} array The array to flatten.
 	     * @param {boolean} [isDeep] Specify a deep flatten.
 	     * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+	     * @param {Array} [result=[]] The initial result value.
 	     * @returns {Array} Returns the new flattened array.
 	     */
-	    function baseFlatten(array, isDeep, isStrict) {
+	    function baseFlatten(array, isDeep, isStrict, result) {
+	      result || (result = []);
+	
 	      var index = -1,
-	          length = array.length,
-	          resIndex = -1,
-	          result = [];
+	          length = array.length;
 	
 	      while (++index < length) {
 	        var value = array[index];
@@ -3397,16 +2151,12 @@
 	            (isStrict || isArray(value) || isArguments(value))) {
 	          if (isDeep) {
 	            // Recursively flatten arrays (susceptible to call stack limits).
-	            value = baseFlatten(value, isDeep, isStrict);
-	          }
-	          var valIndex = -1,
-	              valLength = value.length;
-	
-	          while (++valIndex < valLength) {
-	            result[++resIndex] = value[valIndex];
+	            baseFlatten(value, isDeep, isStrict, result);
+	          } else {
+	            arrayPush(result, value);
 	          }
 	        } else if (!isStrict) {
-	          result[++resIndex] = value;
+	          result[result.length] = value;
 	        }
 	      }
 	      return result;
@@ -3761,7 +2511,7 @@
 	     * @private
 	     * @param {Object} object The destination object.
 	     * @param {Object} source The source object.
-	     * @param {Function} [customizer] The function to customize merging properties.
+	     * @param {Function} [customizer] The function to customize merged values.
 	     * @param {Array} [stackA=[]] Tracks traversed source objects.
 	     * @param {Array} [stackB=[]] Associates values with source counterparts.
 	     * @returns {Object} Returns `object`.
@@ -3771,7 +2521,7 @@
 	        return object;
 	      }
 	      var isSrcArr = isArrayLike(source) && (isArray(source) || isTypedArray(source)),
-	          props = isSrcArr ? null : keys(source);
+	          props = isSrcArr ? undefined : keys(source);
 	
 	      arrayEach(props || source, function(srcValue, key) {
 	        if (props) {
@@ -3810,7 +2560,7 @@
 	     * @param {Object} source The source object.
 	     * @param {string} key The key of the value to merge.
 	     * @param {Function} mergeFunc The function to merge values.
-	     * @param {Function} [customizer] The function to customize merging properties.
+	     * @param {Function} [customizer] The function to customize merged values.
 	     * @param {Array} [stackA=[]] Tracks traversed source objects.
 	     * @param {Array} [stackB=[]] Associates values with source counterparts.
 	     * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
@@ -3917,7 +2667,7 @@
 	     * @returns {number} Returns the random number.
 	     */
 	    function baseRandom(min, max) {
-	      return min + floor(nativeRandom() * (max - min + 1));
+	      return min + nativeFloor(nativeRandom() * (max - min + 1));
 	    }
 	
 	    /**
@@ -4083,7 +2833,7 @@
 	          indexOf = getIndexOf(),
 	          length = array.length,
 	          isCommon = indexOf == baseIndexOf,
-	          isLarge = isCommon && length >= 200,
+	          isLarge = isCommon && length >= LARGE_ARRAY_SIZE,
 	          seen = isLarge ? createCache() : null,
 	          result = [];
 	
@@ -4182,11 +2932,8 @@
 	          length = actions.length;
 	
 	      while (++index < length) {
-	        var args = [result],
-	            action = actions[index];
-	
-	        push.apply(args, action.args);
-	        result = action.func.apply(action.thisArg, args);
+	        var action = actions[index];
+	        result = action.func.apply(action.thisArg, arrayPush([result], action.args));
 	      }
 	      return result;
 	    }
@@ -4245,7 +2992,7 @@
 	          valIsUndef = value === undefined;
 	
 	      while (low < high) {
-	        var mid = floor((low + high) / 2),
+	        var mid = nativeFloor((low + high) / 2),
 	            computed = iteratee(array[mid]),
 	            isDef = computed !== undefined,
 	            isReflexive = computed === computed;
@@ -4314,26 +3061,11 @@
 	     * @returns {ArrayBuffer} Returns the cloned array buffer.
 	     */
 	    function bufferClone(buffer) {
-	      return bufferSlice.call(buffer, 0);
-	    }
-	    if (!bufferSlice) {
-	      // PhantomJS has `ArrayBuffer` and `Uint8Array` but not `Float64Array`.
-	      bufferClone = !(ArrayBuffer && Uint8Array) ? constant(null) : function(buffer) {
-	        var byteLength = buffer.byteLength,
-	            floatLength = Float64Array ? floor(byteLength / FLOAT64_BYTES_PER_ELEMENT) : 0,
-	            offset = floatLength * FLOAT64_BYTES_PER_ELEMENT,
-	            result = new ArrayBuffer(byteLength);
+	      var result = new ArrayBuffer(buffer.byteLength),
+	          view = new Uint8Array(result);
 	
-	        if (floatLength) {
-	          var view = new Float64Array(result, 0, floatLength);
-	          view.set(new Float64Array(buffer, 0, floatLength));
-	        }
-	        if (byteLength != offset) {
-	          view = new Uint8Array(result, offset);
-	          view.set(new Uint8Array(buffer, offset));
-	        }
-	        return result;
-	      };
+	      view.set(new Uint8Array(buffer));
+	      return result;
 	    }
 	
 	    /**
@@ -4352,7 +3084,7 @@
 	          argsLength = nativeMax(args.length - holdersLength, 0),
 	          leftIndex = -1,
 	          leftLength = partials.length,
-	          result = Array(argsLength + leftLength);
+	          result = Array(leftLength + argsLength);
 	
 	      while (++leftIndex < leftLength) {
 	        result[leftIndex] = partials[leftIndex];
@@ -4399,12 +3131,7 @@
 	    }
 	
 	    /**
-	     * Creates a function that aggregates a collection, creating an accumulator
-	     * object composed from the results of running each element in the collection
-	     * through an iteratee.
-	     *
-	     * **Note:** This function is used to create `_.countBy`, `_.groupBy`, `_.indexBy`,
-	     * and `_.partition`.
+	     * Creates a `_.countBy`, `_.groupBy`, `_.indexBy`, or `_.partition` function.
 	     *
 	     * @private
 	     * @param {Function} setter The function to set keys and values of the accumulator object.
@@ -4434,10 +3161,7 @@
 	    }
 	
 	    /**
-	     * Creates a function that assigns properties of source object(s) to a given
-	     * destination object.
-	     *
-	     * **Note:** This function is used to create `_.assign`, `_.defaults`, and `_.merge`.
+	     * Creates a `_.assign`, `_.defaults`, or `_.merge` function.
 	     *
 	     * @private
 	     * @param {Function} assigner The function to assign values.
@@ -4548,9 +3272,9 @@
 	     * @param {Array} [values] The values to cache.
 	     * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
 	     */
-	    var createCache = !(nativeCreate && Set) ? constant(null) : function(values) {
-	      return new SetCache(values);
-	    };
+	    function createCache(values) {
+	      return (nativeCreate && Set) ? new SetCache(values) : null;
+	    }
 	
 	    /**
 	     * Creates a function that produces compound words out of the words in a
@@ -4585,7 +3309,7 @@
 	    function createCtorWrapper(Ctor) {
 	      return function() {
 	        // Use a `switch` statement to work with class constructors.
-	        // See https://people.mozilla.org/~jorendorff/es6-draft.html#sec-ecmascript-function-objects-call-thisargument-argumentslist
+	        // See http://ecma-international.org/ecma-262/6.0/#sec-ecmascript-function-objects-call-thisargument-argumentslist
 	        // for more details.
 	        var args = arguments;
 	        switch (args.length) {
@@ -4595,6 +3319,8 @@
 	          case 3: return new Ctor(args[0], args[1], args[2]);
 	          case 4: return new Ctor(args[0], args[1], args[2], args[3]);
 	          case 5: return new Ctor(args[0], args[1], args[2], args[3], args[4]);
+	          case 6: return new Ctor(args[0], args[1], args[2], args[3], args[4], args[5]);
+	          case 7: return new Ctor(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
 	        }
 	        var thisBinding = baseCreate(Ctor.prototype),
 	            result = Ctor.apply(thisBinding, args);
@@ -4615,13 +3341,32 @@
 	    function createCurry(flag) {
 	      function curryFunc(func, arity, guard) {
 	        if (guard && isIterateeCall(func, arity, guard)) {
-	          arity = null;
+	          arity = undefined;
 	        }
-	        var result = createWrapper(func, flag, null, null, null, null, null, arity);
+	        var result = createWrapper(func, flag, undefined, undefined, undefined, undefined, undefined, arity);
 	        result.placeholder = curryFunc.placeholder;
 	        return result;
 	      }
 	      return curryFunc;
+	    }
+	
+	    /**
+	     * Creates a `_.defaults` or `_.defaultsDeep` function.
+	     *
+	     * @private
+	     * @param {Function} assigner The function to assign values.
+	     * @param {Function} customizer The function to customize assigned values.
+	     * @returns {Function} Returns the new defaults function.
+	     */
+	    function createDefaults(assigner, customizer) {
+	      return restParam(function(args) {
+	        var object = args[0];
+	        if (object == null) {
+	          return object;
+	        }
+	        args.push(customizer);
+	        return assigner.apply(undefined, args);
+	      });
 	    }
 	
 	    /**
@@ -4635,11 +3380,11 @@
 	    function createExtremum(comparator, exValue) {
 	      return function(collection, iteratee, thisArg) {
 	        if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-	          iteratee = null;
+	          iteratee = undefined;
 	        }
 	        iteratee = getCallback(iteratee, thisArg, 3);
 	        if (iteratee.length == 1) {
-	          collection = toIterable(collection);
+	          collection = isArray(collection) ? collection : toIterable(collection);
 	          var result = arrayExtremum(collection, iteratee, comparator, exValue);
 	          if (!(collection.length && result === exValue)) {
 	            return result;
@@ -4720,7 +3465,7 @@
 	            throw new TypeError(FUNC_ERROR_TEXT);
 	          }
 	          if (!wrapper && LodashWrapper.prototype.thru && getFuncName(func) == 'wrapper') {
-	            wrapper = new LodashWrapper([]);
+	            wrapper = new LodashWrapper([], true);
 	          }
 	        }
 	        index = wrapper ? -1 : length;
@@ -4728,7 +3473,7 @@
 	          func = funcs[index];
 	
 	          var funcName = getFuncName(func),
-	              data = funcName == 'wrapper' ? getData(func) : null;
+	              data = funcName == 'wrapper' ? getData(func) : undefined;
 	
 	          if (data && isLaziable(data[0]) && data[1] == (ARY_FLAG | CURRY_FLAG | PARTIAL_FLAG | REARG_FLAG) && !data[4].length && data[9] == 1) {
 	            wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
@@ -4737,12 +3482,14 @@
 	          }
 	        }
 	        return function() {
-	          var args = arguments;
-	          if (wrapper && args.length == 1 && isArray(args[0])) {
-	            return wrapper.plant(args[0]).value();
+	          var args = arguments,
+	              value = args[0];
+	
+	          if (wrapper && args.length == 1 && isArray(value) && value.length >= LARGE_ARRAY_SIZE) {
+	            return wrapper.plant(value).value();
 	          }
 	          var index = 0,
-	              result = length ? funcs[index].apply(this, args) : args[0];
+	              result = length ? funcs[index].apply(this, args) : value;
 	
 	          while (++index < length) {
 	            result = funcs[index].call(this, result);
@@ -4846,7 +3593,7 @@
 	    function createPartial(flag) {
 	      var partialFunc = restParam(function(func, partials) {
 	        var holders = replaceHolders(partials, partialFunc.placeholder);
-	        return createWrapper(func, flag, null, partials, holders);
+	        return createWrapper(func, flag, undefined, partials, holders);
 	      });
 	      return partialFunc;
 	    }
@@ -4892,7 +3639,7 @@
 	          isCurry = bitmask & CURRY_FLAG,
 	          isCurryBound = bitmask & CURRY_BOUND_FLAG,
 	          isCurryRight = bitmask & CURRY_RIGHT_FLAG,
-	          Ctor = isBindKey ? null : createCtorWrapper(func);
+	          Ctor = isBindKey ? undefined : createCtorWrapper(func);
 	
 	      function wrapper() {
 	        // Avoid `arguments` object use disqualifying optimizations by
@@ -4916,12 +3663,12 @@
 	
 	          length -= argsHolders.length;
 	          if (length < arity) {
-	            var newArgPos = argPos ? arrayCopy(argPos) : null,
+	            var newArgPos = argPos ? arrayCopy(argPos) : undefined,
 	                newArity = nativeMax(arity - length, 0),
-	                newsHolders = isCurry ? argsHolders : null,
-	                newHoldersRight = isCurry ? null : argsHolders,
-	                newPartials = isCurry ? args : null,
-	                newPartialsRight = isCurry ? null : args;
+	                newsHolders = isCurry ? argsHolders : undefined,
+	                newHoldersRight = isCurry ? undefined : argsHolders,
+	                newPartials = isCurry ? args : undefined,
+	                newPartialsRight = isCurry ? undefined : args;
 	
 	            bitmask |= (isCurry ? PARTIAL_FLAG : PARTIAL_RIGHT_FLAG);
 	            bitmask &= ~(isCurry ? PARTIAL_RIGHT_FLAG : PARTIAL_FLAG);
@@ -4975,7 +3722,7 @@
 	      }
 	      var padLength = length - strLength;
 	      chars = chars == null ? ' ' : (chars + '');
-	      return repeat(chars, ceil(padLength / chars.length)).slice(0, padLength);
+	      return repeat(chars, nativeCeil(padLength / chars.length)).slice(0, padLength);
 	    }
 	
 	    /**
@@ -5001,7 +3748,7 @@
 	            argsLength = arguments.length,
 	            leftIndex = -1,
 	            leftLength = partials.length,
-	            args = Array(argsLength + leftLength);
+	            args = Array(leftLength + argsLength);
 	
 	        while (++leftIndex < leftLength) {
 	          args[leftIndex] = partials[leftIndex];
@@ -5013,6 +3760,25 @@
 	        return fn.apply(isBind ? thisArg : this, args);
 	      }
 	      return wrapper;
+	    }
+	
+	    /**
+	     * Creates a `_.ceil`, `_.floor`, or `_.round` function.
+	     *
+	     * @private
+	     * @param {string} methodName The name of the `Math` method to use when rounding.
+	     * @returns {Function} Returns the new round function.
+	     */
+	    function createRound(methodName) {
+	      var func = Math[methodName];
+	      return function(number, precision) {
+	        precision = precision === undefined ? 0 : (+precision || 0);
+	        if (precision) {
+	          precision = pow(10, precision);
+	          return func(number * precision) / precision;
+	        }
+	        return func(number);
+	      };
 	    }
 	
 	    /**
@@ -5064,16 +3830,16 @@
 	      var length = partials ? partials.length : 0;
 	      if (!length) {
 	        bitmask &= ~(PARTIAL_FLAG | PARTIAL_RIGHT_FLAG);
-	        partials = holders = null;
+	        partials = holders = undefined;
 	      }
 	      length -= (holders ? holders.length : 0);
 	      if (bitmask & PARTIAL_RIGHT_FLAG) {
 	        var partialsRight = partials,
 	            holdersRight = holders;
 	
-	        partials = holders = null;
+	        partials = holders = undefined;
 	      }
-	      var data = isBindKey ? null : getData(func),
+	      var data = isBindKey ? undefined : getData(func),
 	          newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity];
 	
 	      if (data) {
@@ -5152,7 +3918,7 @@
 	     * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
 	     *
 	     * @private
-	     * @param {Object} value The object to compare.
+	     * @param {Object} object The object to compare.
 	     * @param {Object} other The other object to compare.
 	     * @param {string} tag The `toStringTag` of the objects to compare.
 	     * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
@@ -5352,13 +4118,13 @@
 	     * @private
 	     * @param {number} start The start of the view.
 	     * @param {number} end The end of the view.
-	     * @param {Array} [transforms] The transformations to apply to the view.
+	     * @param {Array} transforms The transformations to apply to the view.
 	     * @returns {Object} Returns an object containing the `start` and `end`
 	     *  positions of the view.
 	     */
 	    function getView(start, end, transforms) {
 	      var index = -1,
-	          length = transforms ? transforms.length : 0;
+	          length = transforms.length;
 	
 	      while (++index < length) {
 	        var data = transforms[index],
@@ -5557,7 +4323,7 @@
 	    /**
 	     * Checks if `value` is a valid array-like length.
 	     *
-	     * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+	     * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
 	     *
 	     * @private
 	     * @param {*} value The value to check.
@@ -5647,6 +4413,18 @@
 	      data[1] = newBitmask;
 	
 	      return data;
+	    }
+	
+	    /**
+	     * Used by `_.defaultsDeep` to customize its `_.merge` use.
+	     *
+	     * @private
+	     * @param {*} objectValue The destination object property value.
+	     * @param {*} sourceValue The source object property value.
+	     * @returns {*} Returns the value to assign to the destination object.
+	     */
+	    function mergeDefaults(objectValue, sourceValue) {
+	      return objectValue === undefined ? sourceValue : merge(objectValue, sourceValue, mergeDefaults);
 	    }
 	
 	    /**
@@ -5747,38 +4525,6 @@
 	        return baseSetData(key, value);
 	      };
 	    }());
-	
-	    /**
-	     * A fallback implementation of `_.isPlainObject` which checks if `value`
-	     * is an object created by the `Object` constructor or has a `[[Prototype]]`
-	     * of `null`.
-	     *
-	     * @private
-	     * @param {*} value The value to check.
-	     * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
-	     */
-	    function shimIsPlainObject(value) {
-	      var Ctor,
-	          support = lodash.support;
-	
-	      // Exit early for non `Object` objects.
-	      if (!(isObjectLike(value) && objToString.call(value) == objectTag) ||
-	          (!hasOwnProperty.call(value, 'constructor') &&
-	            (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor)))) {
-	        return false;
-	      }
-	      // IE < 9 iterates inherited properties before own properties. If the first
-	      // iterated property is an object's own property then there are no inherited
-	      // enumerable properties.
-	      var result;
-	      // In most environments an object's own properties are iterated before
-	      // its inherited properties. If the last iterated property is an object's
-	      // own property then there are no inherited enumerable properties.
-	      baseForIn(value, function(subValue, key) {
-	        result = key;
-	      });
-	      return result === undefined || hasOwnProperty.call(value, result);
-	    }
 	
 	    /**
 	     * A fallback implementation of `Object.keys` which creates an array of the
@@ -5893,12 +4639,12 @@
 	      if (guard ? isIterateeCall(array, size, guard) : size == null) {
 	        size = 1;
 	      } else {
-	        size = nativeMax(+size || 1, 1);
+	        size = nativeMax(nativeFloor(size) || 1, 1);
 	      }
 	      var index = 0,
 	          length = array ? array.length : 0,
 	          resIndex = -1,
-	          result = Array(ceil(length / size));
+	          result = Array(nativeCeil(length / size));
 	
 	      while (index < length) {
 	        result[++resIndex] = baseSlice(array, index, (index += size));
@@ -5937,7 +4683,7 @@
 	
 	    /**
 	     * Creates an array of unique `array` values not included in the other
-	     * provided arrays using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+	     * provided arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
 	     * for equality comparisons.
 	     *
 	     * @static
@@ -5952,7 +4698,7 @@
 	     * // => [1, 3]
 	     */
 	    var difference = restParam(function(array, values) {
-	      return isArrayLike(array)
+	      return (isObjectLike(array) && isArrayLike(array))
 	        ? baseDifference(array, baseFlatten(values, false, true))
 	        : [];
 	    });
@@ -6347,7 +5093,7 @@
 	
 	    /**
 	     * Gets the index at which the first occurrence of `value` is found in `array`
-	     * using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+	     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
 	     * for equality comparisons. If `fromIndex` is negative, it is used as the offset
 	     * from the end of `array`. If `array` is sorted providing `true` for `fromIndex`
 	     * performs a faster binary search.
@@ -6381,10 +5127,9 @@
 	      if (typeof fromIndex == 'number') {
 	        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
 	      } else if (fromIndex) {
-	        var index = binaryIndex(array, value),
-	            other = array[index];
-	
-	        if (value === value ? (value === other) : (other !== other)) {
+	        var index = binaryIndex(array, value);
+	        if (index < length &&
+	            (value === value ? (value === array[index]) : (array[index] !== array[index]))) {
 	          return index;
 	        }
 	        return -1;
@@ -6411,7 +5156,7 @@
 	
 	    /**
 	     * Creates an array of unique values that are included in all of the provided
-	     * arrays using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+	     * arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
 	     * for equality comparisons.
 	     *
 	     * @static
@@ -6532,7 +5277,7 @@
 	
 	    /**
 	     * Removes all provided values from `array` using
-	     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+	     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
 	     * for equality comparisons.
 	     *
 	     * **Note:** Unlike `_.without`, this method mutates `array`.
@@ -6965,7 +5710,7 @@
 	
 	    /**
 	     * Creates an array of unique values, in order, from all of the provided arrays
-	     * using [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+	     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
 	     * for equality comparisons.
 	     *
 	     * @static
@@ -6984,7 +5729,7 @@
 	
 	    /**
 	     * Creates a duplicate-free version of an array, using
-	     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+	     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
 	     * for equality comparisons, in which only the first occurence of each element
 	     * is kept. Providing `true` for `isSorted` performs a faster search algorithm
 	     * for sorted arrays. If an iteratee function is provided it is invoked for
@@ -7038,7 +5783,7 @@
 	      }
 	      if (isSorted != null && typeof isSorted != 'boolean') {
 	        thisArg = iteratee;
-	        iteratee = isIterateeCall(array, isSorted, thisArg) ? null : isSorted;
+	        iteratee = isIterateeCall(array, isSorted, thisArg) ? undefined : isSorted;
 	        isSorted = false;
 	      }
 	      var callback = getCallback();
@@ -7125,7 +5870,7 @@
 	
 	    /**
 	     * Creates an array excluding all provided values using
-	     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+	     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
 	     * for equality comparisons.
 	     *
 	     * @static
@@ -7167,7 +5912,7 @@
 	        var array = arguments[index];
 	        if (isArrayLike(array)) {
 	          var result = result
-	            ? baseDifference(result, array).concat(baseDifference(array, result))
+	            ? arrayPush(baseDifference(result, array), baseDifference(array, result))
 	            : array;
 	        }
 	      }
@@ -7389,16 +6134,16 @@
 	     * @example
 	     *
 	     * var array = [1, 2];
-	     * var wrapper = _(array).push(3);
+	     * var wrapped = _(array).push(3);
 	     *
 	     * console.log(array);
 	     * // => [1, 2]
 	     *
-	     * wrapper = wrapper.commit();
+	     * wrapped = wrapped.commit();
 	     * console.log(array);
 	     * // => [1, 2, 3]
 	     *
-	     * wrapper.last();
+	     * wrapped.last();
 	     * // => 3
 	     *
 	     * console.log(array);
@@ -7407,6 +6152,33 @@
 	    function wrapperCommit() {
 	      return new LodashWrapper(this.value(), this.__chain__);
 	    }
+	
+	    /**
+	     * Creates a new array joining a wrapped array with any additional arrays
+	     * and/or values.
+	     *
+	     * @name concat
+	     * @memberOf _
+	     * @category Chain
+	     * @param {...*} [values] The values to concatenate.
+	     * @returns {Array} Returns the new concatenated array.
+	     * @example
+	     *
+	     * var array = [1];
+	     * var wrapped = _(array).concat(2, [3], [[4]]);
+	     *
+	     * console.log(wrapped.value());
+	     * // => [1, 2, 3, [4]]
+	     *
+	     * console.log(array);
+	     * // => [1]
+	     */
+	    var wrapperConcat = restParam(function(values) {
+	      values = baseFlatten(values);
+	      return this.thru(function(array) {
+	        return arrayConcat(isArray(array) ? array : [toObject(array)], values);
+	      });
+	    });
 	
 	    /**
 	     * Creates a clone of the chained sequence planting `value` as the wrapped value.
@@ -7418,17 +6190,17 @@
 	     * @example
 	     *
 	     * var array = [1, 2];
-	     * var wrapper = _(array).map(function(value) {
+	     * var wrapped = _(array).map(function(value) {
 	     *   return Math.pow(value, 2);
 	     * });
 	     *
 	     * var other = [3, 4];
-	     * var otherWrapper = wrapper.plant(other);
+	     * var otherWrapped = wrapped.plant(other);
 	     *
-	     * otherWrapper.value();
+	     * otherWrapped.value();
 	     * // => [9, 16]
 	     *
-	     * wrapper.value();
+	     * wrapped.value();
 	     * // => [1, 4]
 	     */
 	    function wrapperPlant(value) {
@@ -7471,15 +6243,20 @@
 	     */
 	    function wrapperReverse() {
 	      var value = this.__wrapped__;
+	
+	      var interceptor = function(value) {
+	        return (wrapped && wrapped.__dir__ < 0) ? value : value.reverse();
+	      };
 	      if (value instanceof LazyWrapper) {
+	        var wrapped = value;
 	        if (this.__actions__.length) {
-	          value = new LazyWrapper(this);
+	          wrapped = new LazyWrapper(this);
 	        }
-	        return new LodashWrapper(value.reverse(), this.__chain__);
+	        wrapped = wrapped.reverse();
+	        wrapped.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
+	        return new LodashWrapper(wrapped, this.__chain__);
 	      }
-	      return this.thru(function(value) {
-	        return value.reverse();
-	      });
+	      return this.thru(interceptor);
 	    }
 	
 	    /**
@@ -7637,7 +6414,7 @@
 	    function every(collection, predicate, thisArg) {
 	      var func = isArray(collection) ? arrayEvery : baseEvery;
 	      if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
-	        predicate = null;
+	        predicate = undefined;
 	      }
 	      if (typeof predicate != 'function' || thisArg !== undefined) {
 	        predicate = getCallback(predicate, thisArg, 3);
@@ -7911,7 +6688,7 @@
 	
 	    /**
 	     * Checks if `value` is in `collection` using
-	     * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+	     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
 	     * for equality comparisons. If `fromIndex` is negative, it is used as the offset
 	     * from the end of `collection`.
 	     *
@@ -7944,17 +6721,14 @@
 	        collection = values(collection);
 	        length = collection.length;
 	      }
-	      if (!length) {
-	        return false;
-	      }
 	      if (typeof fromIndex != 'number' || (guard && isIterateeCall(target, fromIndex, guard))) {
 	        fromIndex = 0;
 	      } else {
 	        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
 	      }
 	      return (typeof collection == 'string' || !isArray(collection) && isString(collection))
-	        ? (fromIndex < length && collection.indexOf(target, fromIndex) > -1)
-	        : (getIndexOf(collection, target, fromIndex) > -1);
+	        ? (fromIndex <= length && collection.indexOf(target, fromIndex) > -1)
+	        : (!!length && getIndexOf(collection, target, fromIndex) > -1);
 	    }
 	
 	    /**
@@ -8036,7 +6810,7 @@
 	          result = isArrayLike(collection) ? Array(collection.length) : [];
 	
 	      baseEach(collection, function(value) {
-	        var func = isFunc ? path : ((isProp && value != null) ? value[path] : null);
+	        var func = isFunc ? path : ((isProp && value != null) ? value[path] : undefined);
 	        result[++index] = func ? func.apply(value, args) : invokePath(value, path, args);
 	      });
 	      return result;
@@ -8206,7 +6980,8 @@
 	     * `_.reduce`, `_.reduceRight`, and `_.transform`.
 	     *
 	     * The guarded methods are:
-	     * `assign`, `defaults`, `includes`, `merge`, `sortByAll`, and `sortByOrder`
+	     * `assign`, `defaults`, `defaultsDeep`, `includes`, `merge`, `sortByAll`,
+	     * and `sortByOrder`
 	     *
 	     * @static
 	     * @memberOf _
@@ -8436,7 +7211,7 @@
 	    function some(collection, predicate, thisArg) {
 	      var func = isArray(collection) ? arraySome : baseSome;
 	      if (thisArg && isIterateeCall(collection, predicate, thisArg)) {
-	        predicate = null;
+	        predicate = undefined;
 	      }
 	      if (typeof predicate != 'function' || thisArg !== undefined) {
 	        predicate = getCallback(predicate, thisArg, 3);
@@ -8497,7 +7272,7 @@
 	        return [];
 	      }
 	      if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-	        iteratee = null;
+	        iteratee = undefined;
 	      }
 	      var index = -1;
 	      iteratee = getCallback(iteratee, thisArg, 3);
@@ -8556,9 +7331,9 @@
 	
 	    /**
 	     * This method is like `_.sortByAll` except that it allows specifying the
-	     * sort orders of the iteratees to sort by. A truthy value in `orders` will
-	     * sort the corresponding property name in ascending order while a falsey
-	     * value will sort it in descending order.
+	     * sort orders of the iteratees to sort by. If `orders` is unspecified, all
+	     * values are sorted in ascending order. Otherwise, a value is sorted in
+	     * ascending order if its corresponding order is "asc", and descending if "desc".
 	     *
 	     * If a property name is provided for an iteratee the created `_.property`
 	     * style callback returns the property value of the given element.
@@ -8572,7 +7347,7 @@
 	     * @category Collection
 	     * @param {Array|Object|string} collection The collection to iterate over.
 	     * @param {Function[]|Object[]|string[]} iteratees The iteratees to sort by.
-	     * @param {boolean[]} orders The sort orders of `iteratees`.
+	     * @param {boolean[]} [orders] The sort orders of `iteratees`.
 	     * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
 	     * @returns {Array} Returns the new sorted array.
 	     * @example
@@ -8585,7 +7360,7 @@
 	     * ];
 	     *
 	     * // sort by `user` in ascending order and by `age` in descending order
-	     * _.map(_.sortByOrder(users, ['user', 'age'], [true, false]), _.values);
+	     * _.map(_.sortByOrder(users, ['user', 'age'], ['asc', 'desc']), _.values);
 	     * // => [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
 	     */
 	    function sortByOrder(collection, iteratees, orders, guard) {
@@ -8593,7 +7368,7 @@
 	        return [];
 	      }
 	      if (guard && isIterateeCall(iteratees, orders, guard)) {
-	        orders = null;
+	        orders = undefined;
 	      }
 	      if (!isArray(iteratees)) {
 	        iteratees = iteratees == null ? [] : [iteratees];
@@ -8718,10 +7493,10 @@
 	     */
 	    function ary(func, n, guard) {
 	      if (guard && isIterateeCall(func, n, guard)) {
-	        n = null;
+	        n = undefined;
 	      }
 	      n = (func && n == null) ? func.length : nativeMax(+n || 0, 0);
-	      return createWrapper(func, ARY_FLAG, null, null, null, null, n);
+	      return createWrapper(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
 	    }
 	
 	    /**
@@ -8756,7 +7531,7 @@
 	          result = func.apply(this, arguments);
 	        }
 	        if (n <= 1) {
-	          func = null;
+	          func = undefined;
 	        }
 	        return result;
 	      };
@@ -9064,9 +7839,9 @@
 	        var leading = true;
 	        trailing = false;
 	      } else if (isObject(options)) {
-	        leading = options.leading;
+	        leading = !!options.leading;
 	        maxWait = 'maxWait' in options && nativeMax(+options.maxWait || 0, wait);
-	        trailing = 'trailing' in options ? options.trailing : trailing;
+	        trailing = 'trailing' in options ? !!options.trailing : trailing;
 	      }
 	
 	      function cancel() {
@@ -9076,41 +7851,35 @@
 	        if (maxTimeoutId) {
 	          clearTimeout(maxTimeoutId);
 	        }
+	        lastCalled = 0;
 	        maxTimeoutId = timeoutId = trailingCall = undefined;
+	      }
+	
+	      function complete(isCalled, id) {
+	        if (id) {
+	          clearTimeout(id);
+	        }
+	        maxTimeoutId = timeoutId = trailingCall = undefined;
+	        if (isCalled) {
+	          lastCalled = now();
+	          result = func.apply(thisArg, args);
+	          if (!timeoutId && !maxTimeoutId) {
+	            args = thisArg = undefined;
+	          }
+	        }
 	      }
 	
 	      function delayed() {
 	        var remaining = wait - (now() - stamp);
 	        if (remaining <= 0 || remaining > wait) {
-	          if (maxTimeoutId) {
-	            clearTimeout(maxTimeoutId);
-	          }
-	          var isCalled = trailingCall;
-	          maxTimeoutId = timeoutId = trailingCall = undefined;
-	          if (isCalled) {
-	            lastCalled = now();
-	            result = func.apply(thisArg, args);
-	            if (!timeoutId && !maxTimeoutId) {
-	              args = thisArg = null;
-	            }
-	          }
+	          complete(trailingCall, maxTimeoutId);
 	        } else {
 	          timeoutId = setTimeout(delayed, remaining);
 	        }
 	      }
 	
 	      function maxDelayed() {
-	        if (timeoutId) {
-	          clearTimeout(timeoutId);
-	        }
-	        maxTimeoutId = timeoutId = trailingCall = undefined;
-	        if (trailing || (maxWait !== wait)) {
-	          lastCalled = now();
-	          result = func.apply(thisArg, args);
-	          if (!timeoutId && !maxTimeoutId) {
-	            args = thisArg = null;
-	          }
-	        }
+	        complete(trailing, timeoutId);
 	      }
 	
 	      function debounced() {
@@ -9150,7 +7919,7 @@
 	          result = func.apply(thisArg, args);
 	        }
 	        if (isCalled && !timeoutId && !maxTimeoutId) {
-	          args = thisArg = null;
+	          args = thisArg = undefined;
 	        }
 	        return result;
 	      }
@@ -9255,7 +8024,7 @@
 	     *
 	     * **Note:** The cache is exposed as the `cache` property on the memoized
 	     * function. Its creation may be customized by replacing the `_.memoize.Cache`
-	     * constructor with one whose instances implement the [`Map`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-properties-of-the-map-prototype-object)
+	     * constructor with one whose instances implement the [`Map`](http://ecma-international.org/ecma-262/6.0/#sec-properties-of-the-map-prototype-object)
 	     * method interface of `get`, `has`, and `set`.
 	     *
 	     * @static
@@ -9315,6 +8084,52 @@
 	      memoized.cache = new memoize.Cache;
 	      return memoized;
 	    }
+	
+	    /**
+	     * Creates a function that runs each argument through a corresponding
+	     * transform function.
+	     *
+	     * @static
+	     * @memberOf _
+	     * @category Function
+	     * @param {Function} func The function to wrap.
+	     * @param {...(Function|Function[])} [transforms] The functions to transform
+	     * arguments, specified as individual functions or arrays of functions.
+	     * @returns {Function} Returns the new function.
+	     * @example
+	     *
+	     * function doubled(n) {
+	     *   return n * 2;
+	     * }
+	     *
+	     * function square(n) {
+	     *   return n * n;
+	     * }
+	     *
+	     * var modded = _.modArgs(function(x, y) {
+	     *   return [x, y];
+	     * }, square, doubled);
+	     *
+	     * modded(1, 2);
+	     * // => [1, 4]
+	     *
+	     * modded(5, 10);
+	     * // => [25, 20]
+	     */
+	    var modArgs = restParam(function(func, transforms) {
+	      transforms = baseFlatten(transforms);
+	      if (typeof func != 'function' || !arrayEvery(transforms, baseIsFunction)) {
+	        throw new TypeError(FUNC_ERROR_TEXT);
+	      }
+	      var length = transforms.length;
+	      return restParam(function(args) {
+	        var index = nativeMin(args.length, length);
+	        while (index--) {
+	          args[index] = transforms[index](args[index]);
+	        }
+	        return func.apply(this, args);
+	      });
+	    });
 	
 	    /**
 	     * Creates a function that negates the result of the predicate `func`. The
@@ -9461,7 +8276,7 @@
 	     * // => [3, 6, 9]
 	     */
 	    var rearg = restParam(function(func, indexes) {
-	      return createWrapper(func, REARG_FLAG, null, null, null, baseFlatten(indexes));
+	      return createWrapper(func, REARG_FLAG, undefined, undefined, undefined, baseFlatten(indexes));
 	    });
 	
 	    /**
@@ -9607,10 +8422,7 @@
 	        leading = 'leading' in options ? !!options.leading : leading;
 	        trailing = 'trailing' in options ? !!options.trailing : trailing;
 	      }
-	      debounceOptions.leading = leading;
-	      debounceOptions.maxWait = +wait;
-	      debounceOptions.trailing = trailing;
-	      return debounce(func, wait, debounceOptions);
+	      return debounce(func, wait, { 'leading': leading, 'maxWait': +wait, 'trailing': trailing });
 	    }
 	
 	    /**
@@ -9636,7 +8448,7 @@
 	     */
 	    function wrap(value, wrapper) {
 	      wrapper = wrapper == null ? identity : wrapper;
-	      return createWrapper(wrapper, PARTIAL_FLAG, null, [value], []);
+	      return createWrapper(wrapper, PARTIAL_FLAG, undefined, [value], []);
 	    }
 	
 	    /*------------------------------------------------------------------------*/
@@ -9822,7 +8634,8 @@
 	     * // => false
 	     */
 	    function isArguments(value) {
-	      return isObjectLike(value) && isArrayLike(value) && objToString.call(value) == argsTag;
+	      return isObjectLike(value) && isArrayLike(value) &&
+	        hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
 	    }
 	
 	    /**
@@ -9902,14 +8715,7 @@
 	     * // => false
 	     */
 	    function isElement(value) {
-	      return !!value && value.nodeType === 1 && isObjectLike(value) &&
-	        (objToString.call(value).indexOf('Element') > -1);
-	    }
-	    // Fallback for environments without DOM support.
-	    if (!support.dom) {
-	      isElement = function(value) {
-	        return !!value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value);
-	      };
+	      return !!value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value);
 	    }
 	
 	    /**
@@ -10024,7 +8830,7 @@
 	    /**
 	     * Checks if `value` is a finite primitive number.
 	     *
-	     * **Note:** This method is based on [`Number.isFinite`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isfinite).
+	     * **Note:** This method is based on [`Number.isFinite`](http://ecma-international.org/ecma-262/6.0/#sec-number.isfinite).
 	     *
 	     * @static
 	     * @memberOf _
@@ -10048,9 +8854,9 @@
 	     * _.isFinite(Infinity);
 	     * // => false
 	     */
-	    var isFinite = nativeNumIsFinite || function(value) {
+	    function isFinite(value) {
 	      return typeof value == 'number' && nativeIsFinite(value);
-	    };
+	    }
 	
 	    /**
 	     * Checks if `value` is classified as a `Function` object.
@@ -10068,12 +8874,12 @@
 	     * _.isFunction(/abc/);
 	     * // => false
 	     */
-	    var isFunction = !(baseIsFunction(/x/) || (Uint8Array && !baseIsFunction(Uint8Array))) ? baseIsFunction : function(value) {
+	    function isFunction(value) {
 	      // The use of `Object#toString` avoids issues with the `typeof` operator
 	      // in older versions of Chrome and Safari which return 'function' for regexes
 	      // and Safari 8 equivalents which return 'object' for typed array constructors.
-	      return objToString.call(value) == funcTag;
-	    };
+	      return isObject(value) && objToString.call(value) == funcTag;
+	    }
 	
 	    /**
 	     * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
@@ -10197,7 +9003,7 @@
 	      if (value == null) {
 	        return false;
 	      }
-	      if (objToString.call(value) == funcTag) {
+	      if (isFunction(value)) {
 	        return reIsNative.test(fnToString.call(value));
 	      }
 	      return isObjectLike(value) && reIsHostCtor.test(value);
@@ -10279,17 +9085,26 @@
 	     * _.isPlainObject(Object.create(null));
 	     * // => true
 	     */
-	    var isPlainObject = !getPrototypeOf ? shimIsPlainObject : function(value) {
-	      if (!(value && objToString.call(value) == objectTag)) {
+	    function isPlainObject(value) {
+	      var Ctor;
+	
+	      // Exit early for non `Object` objects.
+	      if (!(isObjectLike(value) && objToString.call(value) == objectTag && !isArguments(value)) ||
+	          (!hasOwnProperty.call(value, 'constructor') && (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor)))) {
 	        return false;
 	      }
-	      var valueOf = getNative(value, 'valueOf'),
-	          objProto = valueOf && (objProto = getPrototypeOf(valueOf)) && getPrototypeOf(objProto);
-	
-	      return objProto
-	        ? (value == objProto || getPrototypeOf(value) == objProto)
-	        : shimIsPlainObject(value);
-	    };
+	      // IE < 9 iterates inherited properties before own properties. If the first
+	      // iterated property is an object's own property then there are no inherited
+	      // enumerable properties.
+	      var result;
+	      // In most environments an object's own properties are iterated before
+	      // its inherited properties. If the last iterated property is an object's
+	      // own property then there are no inherited enumerable properties.
+	      baseForIn(value, function(subValue, key) {
+	        result = key;
+	      });
+	      return result === undefined || hasOwnProperty.call(value, result);
+	    }
 	
 	    /**
 	     * Checks if `value` is classified as a `RegExp` object.
@@ -10308,7 +9123,7 @@
 	     * // => false
 	     */
 	    function isRegExp(value) {
-	      return isObjectLike(value) && objToString.call(value) == regexpTag;
+	      return isObject(value) && objToString.call(value) == regexpTag;
 	    }
 	
 	    /**
@@ -10475,6 +9290,56 @@
 	    /*------------------------------------------------------------------------*/
 	
 	    /**
+	     * Recursively merges own enumerable properties of the source object(s), that
+	     * don't resolve to `undefined` into the destination object. Subsequent sources
+	     * overwrite property assignments of previous sources. If `customizer` is
+	     * provided it is invoked to produce the merged values of the destination and
+	     * source properties. If `customizer` returns `undefined` merging is handled
+	     * by the method instead. The `customizer` is bound to `thisArg` and invoked
+	     * with five arguments: (objectValue, sourceValue, key, object, source).
+	     *
+	     * @static
+	     * @memberOf _
+	     * @category Object
+	     * @param {Object} object The destination object.
+	     * @param {...Object} [sources] The source objects.
+	     * @param {Function} [customizer] The function to customize assigned values.
+	     * @param {*} [thisArg] The `this` binding of `customizer`.
+	     * @returns {Object} Returns `object`.
+	     * @example
+	     *
+	     * var users = {
+	     *   'data': [{ 'user': 'barney' }, { 'user': 'fred' }]
+	     * };
+	     *
+	     * var ages = {
+	     *   'data': [{ 'age': 36 }, { 'age': 40 }]
+	     * };
+	     *
+	     * _.merge(users, ages);
+	     * // => { 'data': [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred', 'age': 40 }] }
+	     *
+	     * // using a customizer callback
+	     * var object = {
+	     *   'fruits': ['apple'],
+	     *   'vegetables': ['beet']
+	     * };
+	     *
+	     * var other = {
+	     *   'fruits': ['banana'],
+	     *   'vegetables': ['carrot']
+	     * };
+	     *
+	     * _.merge(object, other, function(a, b) {
+	     *   if (_.isArray(a)) {
+	     *     return a.concat(b);
+	     *   }
+	     * });
+	     * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
+	     */
+	    var merge = createAssigner(baseMerge);
+	
+	    /**
 	     * Assigns own enumerable properties of source object(s) to the destination
 	     * object. Subsequent sources overwrite property assignments of previous sources.
 	     * If `customizer` is provided it is invoked to produce the assigned values.
@@ -10482,7 +9347,7 @@
 	     * (objectValue, sourceValue, key, object, source).
 	     *
 	     * **Note:** This method mutates `object` and is based on
-	     * [`Object.assign`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign).
+	     * [`Object.assign`](http://ecma-international.org/ecma-262/6.0/#sec-object.assign).
 	     *
 	     * @static
 	     * @memberOf _
@@ -10549,7 +9414,7 @@
 	    function create(prototype, properties, guard) {
 	      var result = baseCreate(prototype);
 	      if (guard && isIterateeCall(prototype, properties, guard)) {
-	        properties = null;
+	        properties = undefined;
 	      }
 	      return properties ? baseAssign(result, properties) : result;
 	    }
@@ -10572,14 +9437,27 @@
 	     * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
 	     * // => { 'user': 'barney', 'age': 36 }
 	     */
-	    var defaults = restParam(function(args) {
-	      var object = args[0];
-	      if (object == null) {
-	        return object;
-	      }
-	      args.push(assignDefaults);
-	      return assign.apply(undefined, args);
-	    });
+	    var defaults = createDefaults(assign, assignDefaults);
+	
+	    /**
+	     * This method is like `_.defaults` except that it recursively assigns
+	     * default properties.
+	     *
+	     * **Note:** This method mutates `object`.
+	     *
+	     * @static
+	     * @memberOf _
+	     * @category Object
+	     * @param {Object} object The destination object.
+	     * @param {...Object} [sources] The source objects.
+	     * @returns {Object} Returns `object`.
+	     * @example
+	     *
+	     * _.defaultsDeep({ 'user': { 'name': 'barney' } }, { 'user': { 'name': 'fred', 'age': 36 } });
+	     * // => { 'user': { 'name': 'barney', 'age': 36 } }
+	     *
+	     */
+	    var defaultsDeep = createDefaults(merge, mergeDefaults);
 	
 	    /**
 	     * This method is like `_.find` except that it returns the key of the first
@@ -10906,7 +9784,7 @@
 	     */
 	    function invert(object, multiValue, guard) {
 	      if (guard && isIterateeCall(object, multiValue, guard)) {
-	        multiValue = null;
+	        multiValue = undefined;
 	      }
 	      var index = -1,
 	          props = keys(object),
@@ -10935,7 +9813,7 @@
 	     * Creates an array of the own enumerable property names of `object`.
 	     *
 	     * **Note:** Non-object values are coerced to objects. See the
-	     * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.keys)
+	     * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
 	     * for more details.
 	     *
 	     * @static
@@ -10959,7 +9837,7 @@
 	     * // => ['0', '1']
 	     */
 	    var keys = !nativeKeys ? shimKeys : function(object) {
-	      var Ctor = object == null ? null : object.constructor;
+	      var Ctor = object == null ? undefined : object.constructor;
 	      if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
 	          (typeof object != 'function' && isArrayLike(object))) {
 	        return shimKeys(object);
@@ -11082,56 +9960,6 @@
 	     * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
 	     */
 	    var mapValues = createObjectMapper();
-	
-	    /**
-	     * Recursively merges own enumerable properties of the source object(s), that
-	     * don't resolve to `undefined` into the destination object. Subsequent sources
-	     * overwrite property assignments of previous sources. If `customizer` is
-	     * provided it is invoked to produce the merged values of the destination and
-	     * source properties. If `customizer` returns `undefined` merging is handled
-	     * by the method instead. The `customizer` is bound to `thisArg` and invoked
-	     * with five arguments: (objectValue, sourceValue, key, object, source).
-	     *
-	     * @static
-	     * @memberOf _
-	     * @category Object
-	     * @param {Object} object The destination object.
-	     * @param {...Object} [sources] The source objects.
-	     * @param {Function} [customizer] The function to customize assigned values.
-	     * @param {*} [thisArg] The `this` binding of `customizer`.
-	     * @returns {Object} Returns `object`.
-	     * @example
-	     *
-	     * var users = {
-	     *   'data': [{ 'user': 'barney' }, { 'user': 'fred' }]
-	     * };
-	     *
-	     * var ages = {
-	     *   'data': [{ 'age': 36 }, { 'age': 40 }]
-	     * };
-	     *
-	     * _.merge(users, ages);
-	     * // => { 'data': [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred', 'age': 40 }] }
-	     *
-	     * // using a customizer callback
-	     * var object = {
-	     *   'fruits': ['apple'],
-	     *   'vegetables': ['beet']
-	     * };
-	     *
-	     * var other = {
-	     *   'fruits': ['banana'],
-	     *   'vegetables': ['carrot']
-	     * };
-	     *
-	     * _.merge(object, other, function(a, b) {
-	     *   if (_.isArray(a)) {
-	     *     return a.concat(b);
-	     *   }
-	     * });
-	     * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
-	     */
-	    var merge = createAssigner(baseMerge);
 	
 	    /**
 	     * The opposite of `_.pick`; this method creates an object composed of the
@@ -11363,7 +10191,7 @@
 	          if (isArr) {
 	            accumulator = isArray(object) ? new Ctor : [];
 	          } else {
-	            accumulator = baseCreate(isFunction(Ctor) ? Ctor.prototype : null);
+	            accumulator = baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
 	          }
 	        } else {
 	          accumulator = {};
@@ -11466,7 +10294,7 @@
 	     */
 	    function inRange(value, start, end) {
 	      start = +start || 0;
-	      if (typeof end === 'undefined') {
+	      if (end === undefined) {
 	        end = start;
 	        start = 0;
 	      } else {
@@ -11504,7 +10332,7 @@
 	     */
 	    function random(min, max, floating) {
 	      if (floating && isIterateeCall(min, max, floating)) {
-	        max = floating = null;
+	        max = floating = undefined;
 	      }
 	      var noMin = min == null,
 	          noMax = max == null;
@@ -11691,8 +10519,8 @@
 	    function escapeRegExp(string) {
 	      string = baseToString(string);
 	      return (string && reHasRegExpChars.test(string))
-	        ? string.replace(reRegExpChars, '\\$&')
-	        : string;
+	        ? string.replace(reRegExpChars, escapeRegExpChar)
+	        : (string || '(?:)');
 	    }
 	
 	    /**
@@ -11749,8 +10577,8 @@
 	        return string;
 	      }
 	      var mid = (length - strLength) / 2,
-	          leftLength = floor(mid),
-	          rightLength = ceil(mid);
+	          leftLength = nativeFloor(mid),
+	          rightLength = nativeCeil(mid);
 	
 	      chars = createPadding('', rightLength, chars);
 	      return chars.slice(0, leftLength) + string + chars;
@@ -11828,25 +10656,16 @@
 	     * // => [6, 8, 10]
 	     */
 	    function parseInt(string, radix, guard) {
-	      if (guard && isIterateeCall(string, radix, guard)) {
+	      // Firefox < 21 and Opera < 15 follow ES3 for `parseInt`.
+	      // Chrome fails to trim leading <BOM> whitespace characters.
+	      // See https://code.google.com/p/v8/issues/detail?id=3109 for more details.
+	      if (guard ? isIterateeCall(string, radix, guard) : radix == null) {
 	        radix = 0;
+	      } else if (radix) {
+	        radix = +radix;
 	      }
-	      return nativeParseInt(string, radix);
-	    }
-	    // Fallback for environments with pre-ES5 implementations.
-	    if (nativeParseInt(whitespace + '08') != 8) {
-	      parseInt = function(string, radix, guard) {
-	        // Firefox < 21 and Opera < 15 follow ES3 for `parseInt`.
-	        // Chrome fails to trim leading <BOM> whitespace characters.
-	        // See https://code.google.com/p/v8/issues/detail?id=3109 for more details.
-	        if (guard ? isIterateeCall(string, radix, guard) : radix == null) {
-	          radix = 0;
-	        } else if (radix) {
-	          radix = +radix;
-	        }
-	        string = trim(string);
-	        return nativeParseInt(string, radix || (reHasHexPrefix.test(string) ? 16 : 10));
-	      };
+	      string = trim(string);
+	      return nativeParseInt(string, radix || (reHasHexPrefix.test(string) ? 16 : 10));
 	    }
 	
 	    /**
@@ -11882,7 +10701,7 @@
 	        if (n % 2) {
 	          result += string;
 	        }
-	        n = floor(n / 2);
+	        n = nativeFloor(n / 2);
 	        string += string;
 	      } while (n);
 	
@@ -12067,7 +10886,7 @@
 	      var settings = lodash.templateSettings;
 	
 	      if (otherOptions && isIterateeCall(string, options, otherOptions)) {
-	        options = otherOptions = null;
+	        options = otherOptions = undefined;
 	      }
 	      string = baseToString(string);
 	      options = assignWith(baseAssign({}, otherOptions || options), settings, assignOwnDefaults);
@@ -12303,7 +11122,7 @@
 	     */
 	    function trunc(string, options, guard) {
 	      if (guard && isIterateeCall(string, options, guard)) {
-	        options = null;
+	        options = undefined;
 	      }
 	      var length = DEFAULT_TRUNC_LENGTH,
 	          omission = DEFAULT_TRUNC_OMISSION;
@@ -12398,7 +11217,7 @@
 	     */
 	    function words(string, pattern, guard) {
 	      if (guard && isIterateeCall(string, pattern, guard)) {
-	        pattern = null;
+	        pattern = undefined;
 	      }
 	      string = baseToString(string);
 	      return string.match(pattern || reWords) || [];
@@ -12474,7 +11293,7 @@
 	     */
 	    function callback(func, thisArg, guard) {
 	      if (guard && isIterateeCall(func, thisArg, guard)) {
-	        thisArg = null;
+	        thisArg = undefined;
 	      }
 	      return isObjectLike(func)
 	        ? matches(func)
@@ -12675,8 +11494,8 @@
 	    function mixin(object, source, options) {
 	      if (options == null) {
 	        var isObj = isObject(source),
-	            props = isObj ? keys(source) : null,
-	            methodNames = (props && props.length) ? baseFunctions(source, props) : null;
+	            props = isObj ? keys(source) : undefined,
+	            methodNames = (props && props.length) ? baseFunctions(source, props) : undefined;
 	
 	        if (!(methodNames ? methodNames.length : isObj)) {
 	          methodNames = false;
@@ -12715,9 +11534,7 @@
 	                result.__chain__ = chainAll;
 	                return result;
 	              }
-	              var args = [this.value()];
-	              push.apply(args, arguments);
-	              return func.apply(object, args);
+	              return func.apply(object, arrayPush([this.value()], arguments));
 	            };
 	          }(func));
 	        }
@@ -12738,7 +11555,7 @@
 	     * var lodash = _.noConflict();
 	     */
 	    function noConflict() {
-	      context._ = oldDash;
+	      root._ = oldDash;
 	      return this;
 	    }
 	
@@ -12847,7 +11664,7 @@
 	     */
 	    function range(start, end, step) {
 	      if (step && isIterateeCall(start, end, step)) {
-	        end = step = null;
+	        end = step = undefined;
 	      }
 	      start = +start || 0;
 	      step = step == null ? 1 : (+step || 0);
@@ -12861,7 +11678,7 @@
 	      // Use `Array(length)` so engines like Chakra and V8 avoid slower modes.
 	      // See https://youtu.be/XAqIpGU8ZZk#t=17m25s for more details.
 	      var index = -1,
-	          length = nativeMax(ceil((end - start) / (step || 1)), 0),
+	          length = nativeMax(nativeCeil((end - start) / (step || 1)), 0),
 	          result = Array(length);
 	
 	      while (++index < length) {
@@ -12899,7 +11716,7 @@
 	     * // => also invokes `mage.castSpell(n)` three times
 	     */
 	    function times(n, iteratee, thisArg) {
-	      n = floor(n);
+	      n = nativeFloor(n);
 	
 	      // Exit early to avoid a JSC JIT bug in Safari 8
 	      // where `Array(0)` is treated as `Array(1)`.
@@ -12960,6 +11777,50 @@
 	    function add(augend, addend) {
 	      return (+augend || 0) + (+addend || 0);
 	    }
+	
+	    /**
+	     * Calculates `n` rounded up to `precision`.
+	     *
+	     * @static
+	     * @memberOf _
+	     * @category Math
+	     * @param {number} n The number to round up.
+	     * @param {number} [precision=0] The precision to round up to.
+	     * @returns {number} Returns the rounded up number.
+	     * @example
+	     *
+	     * _.ceil(4.006);
+	     * // => 5
+	     *
+	     * _.ceil(6.004, 2);
+	     * // => 6.01
+	     *
+	     * _.ceil(6040, -2);
+	     * // => 6100
+	     */
+	    var ceil = createRound('ceil');
+	
+	    /**
+	     * Calculates `n` rounded down to `precision`.
+	     *
+	     * @static
+	     * @memberOf _
+	     * @category Math
+	     * @param {number} n The number to round down.
+	     * @param {number} [precision=0] The precision to round down to.
+	     * @returns {number} Returns the rounded down number.
+	     * @example
+	     *
+	     * _.floor(4.006);
+	     * // => 4
+	     *
+	     * _.floor(0.046, 2);
+	     * // => 0.04
+	     *
+	     * _.floor(4060, -2);
+	     * // => 4000
+	     */
+	    var floor = createRound('floor');
 	
 	    /**
 	     * Gets the maximum value of `collection`. If `collection` is empty or falsey
@@ -13060,6 +11921,28 @@
 	    var min = createExtremum(lt, POSITIVE_INFINITY);
 	
 	    /**
+	     * Calculates `n` rounded to `precision`.
+	     *
+	     * @static
+	     * @memberOf _
+	     * @category Math
+	     * @param {number} n The number to round.
+	     * @param {number} [precision=0] The precision to round to.
+	     * @returns {number} Returns the rounded number.
+	     * @example
+	     *
+	     * _.round(4.006);
+	     * // => 4
+	     *
+	     * _.round(4.006, 2);
+	     * // => 4.01
+	     *
+	     * _.round(4060, -2);
+	     * // => 4100
+	     */
+	    var round = createRound('round');
+	
+	    /**
 	     * Gets the sum of the values in `collection`.
 	     *
 	     * @static
@@ -13093,17 +11976,11 @@
 	     */
 	    function sum(collection, iteratee, thisArg) {
 	      if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-	        iteratee = null;
+	        iteratee = undefined;
 	      }
-	      var callback = getCallback(),
-	          noIteratee = iteratee == null;
-	
-	      if (!(noIteratee && callback === baseCallback)) {
-	        noIteratee = false;
-	        iteratee = callback(iteratee, thisArg, 3);
-	      }
-	      return noIteratee
-	        ? arraySum(isArray(collection) ? collection : toIterable(collection))
+	      iteratee = getCallback(iteratee, thisArg, 3);
+	      return iteratee.length == 1
+	        ? arraySum(isArray(collection) ? collection : toIterable(collection), iteratee)
 	        : baseSum(collection, iteratee);
 	    }
 	
@@ -13150,6 +12027,7 @@
 	    lodash.curryRight = curryRight;
 	    lodash.debounce = debounce;
 	    lodash.defaults = defaults;
+	    lodash.defaultsDeep = defaultsDeep;
 	    lodash.defer = defer;
 	    lodash.delay = delay;
 	    lodash.difference = difference;
@@ -13188,6 +12066,7 @@
 	    lodash.method = method;
 	    lodash.methodOf = methodOf;
 	    lodash.mixin = mixin;
+	    lodash.modArgs = modArgs;
 	    lodash.negate = negate;
 	    lodash.omit = omit;
 	    lodash.once = once;
@@ -13263,6 +12142,7 @@
 	    lodash.attempt = attempt;
 	    lodash.camelCase = camelCase;
 	    lodash.capitalize = capitalize;
+	    lodash.ceil = ceil;
 	    lodash.clone = clone;
 	    lodash.cloneDeep = cloneDeep;
 	    lodash.deburr = deburr;
@@ -13278,6 +12158,7 @@
 	    lodash.findLastKey = findLastKey;
 	    lodash.findWhere = findWhere;
 	    lodash.first = first;
+	    lodash.floor = floor;
 	    lodash.get = get;
 	    lodash.gt = gt;
 	    lodash.gte = gte;
@@ -13326,6 +12207,7 @@
 	    lodash.reduceRight = reduceRight;
 	    lodash.repeat = repeat;
 	    lodash.result = result;
+	    lodash.round = round;
 	    lodash.runInContext = runInContext;
 	    lodash.size = size;
 	    lodash.snakeCase = snakeCase;
@@ -13396,48 +12278,20 @@
 	      lodash[methodName].placeholder = lodash;
 	    });
 	
-	    // Add `LazyWrapper` methods that accept an `iteratee` value.
-	    arrayEach(['dropWhile', 'filter', 'map', 'takeWhile'], function(methodName, type) {
-	      var isFilter = type != LAZY_MAP_FLAG,
-	          isDropWhile = type == LAZY_DROP_WHILE_FLAG;
-	
-	      LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
-	        var filtered = this.__filtered__,
-	            result = (filtered && isDropWhile) ? new LazyWrapper(this) : this.clone(),
-	            iteratees = result.__iteratees__ || (result.__iteratees__ = []);
-	
-	        iteratees.push({
-	          'done': false,
-	          'count': 0,
-	          'index': 0,
-	          'iteratee': getCallback(iteratee, thisArg, 1),
-	          'limit': -1,
-	          'type': type
-	        });
-	
-	        result.__filtered__ = filtered || isFilter;
-	        return result;
-	      };
-	    });
-	
 	    // Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
 	    arrayEach(['drop', 'take'], function(methodName, index) {
-	      var whileName = methodName + 'While';
-	
 	      LazyWrapper.prototype[methodName] = function(n) {
-	        var filtered = this.__filtered__,
-	            result = (filtered && !index) ? this.dropWhile() : this.clone();
+	        var filtered = this.__filtered__;
+	        if (filtered && !index) {
+	          return new LazyWrapper(this);
+	        }
+	        n = n == null ? 1 : nativeMax(nativeFloor(n) || 0, 0);
 	
-	        n = n == null ? 1 : nativeMax(floor(n) || 0, 0);
+	        var result = this.clone();
 	        if (filtered) {
-	          if (index) {
-	            result.__takeCount__ = nativeMin(result.__takeCount__, n);
-	          } else {
-	            last(result.__iteratees__).limit = n;
-	          }
+	          result.__takeCount__ = nativeMin(result.__takeCount__, n);
 	        } else {
-	          var views = result.__views__ || (result.__views__ = []);
-	          views.push({ 'size': n, 'type': methodName + (result.__dir__ < 0 ? 'Right' : '') });
+	          result.__views__.push({ 'size': n, 'type': methodName + (result.__dir__ < 0 ? 'Right' : '') });
 	        }
 	        return result;
 	      };
@@ -13445,9 +12299,18 @@
 	      LazyWrapper.prototype[methodName + 'Right'] = function(n) {
 	        return this.reverse()[methodName](n).reverse();
 	      };
+	    });
 	
-	      LazyWrapper.prototype[methodName + 'RightWhile'] = function(predicate, thisArg) {
-	        return this.reverse()[whileName](predicate, thisArg).reverse();
+	    // Add `LazyWrapper` methods that accept an `iteratee` value.
+	    arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
+	      var type = index + 1,
+	          isFilter = type != LAZY_MAP_FLAG;
+	
+	      LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
+	        var result = this.clone();
+	        result.__iteratees__.push({ 'iteratee': getCallback(iteratee, thisArg, 1), 'type': type });
+	        result.__filtered__ = result.__filtered__ || isFilter;
+	        return result;
 	      };
 	    });
 	
@@ -13465,7 +12328,7 @@
 	      var dropName = 'drop' + (index ? '' : 'Right');
 	
 	      LazyWrapper.prototype[methodName] = function() {
-	        return this[dropName](1);
+	        return this.__filtered__ ? new LazyWrapper(this) : this[dropName](1);
 	      };
 	    });
 	
@@ -13494,10 +12357,13 @@
 	      start = start == null ? 0 : (+start || 0);
 	
 	      var result = this;
+	      if (result.__filtered__ && (start > 0 || end < 0)) {
+	        return new LazyWrapper(result);
+	      }
 	      if (start < 0) {
-	        result = this.takeRight(-start);
+	        result = result.takeRight(-start);
 	      } else if (start) {
-	        result = this.drop(start);
+	        result = result.drop(start);
 	      }
 	      if (end !== undefined) {
 	        end = (+end || 0);
@@ -13506,21 +12372,25 @@
 	      return result;
 	    };
 	
+	    LazyWrapper.prototype.takeRightWhile = function(predicate, thisArg) {
+	      return this.reverse().takeWhile(predicate, thisArg).reverse();
+	    };
+	
 	    LazyWrapper.prototype.toArray = function() {
-	      return this.drop(0);
+	      return this.take(POSITIVE_INFINITY);
 	    };
 	
 	    // Add `LazyWrapper` methods to `lodash.prototype`.
 	    baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-	      var lodashFunc = lodash[methodName];
+	      var checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
+	          retUnwrapped = /^(?:first|last)$/.test(methodName),
+	          lodashFunc = lodash[retUnwrapped ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName];
+	
 	      if (!lodashFunc) {
 	        return;
 	      }
-	      var checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
-	          retUnwrapped = /^(?:first|last)$/.test(methodName);
-	
 	      lodash.prototype[methodName] = function() {
-	        var args = arguments,
+	        var args = retUnwrapped ? [1] : arguments,
 	            chainAll = this.__chain__,
 	            value = this.__wrapped__,
 	            isHybrid = !!this.__actions__.length,
@@ -13529,28 +12399,30 @@
 	            useLazy = isLazy || isArray(value);
 	
 	        if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
-	          // avoid lazy use if the iteratee has a "length" value other than `1`
+	          // Avoid lazy use if the iteratee has a "length" value other than `1`.
 	          isLazy = useLazy = false;
 	        }
-	        var onlyLazy = isLazy && !isHybrid;
-	        if (retUnwrapped && !chainAll) {
-	          return onlyLazy
-	            ? func.call(value)
-	            : lodashFunc.call(lodash, this.value());
-	        }
 	        var interceptor = function(value) {
-	          var otherArgs = [value];
-	          push.apply(otherArgs, args);
-	          return lodashFunc.apply(lodash, otherArgs);
+	          return (retUnwrapped && chainAll)
+	            ? lodashFunc(value, 1)[0]
+	            : lodashFunc.apply(undefined, arrayPush([value], args));
 	        };
-	        if (useLazy) {
-	          var wrapper = onlyLazy ? value : new LazyWrapper(this),
-	              result = func.apply(wrapper, args);
 	
-	          if (!retUnwrapped && (isHybrid || result.__actions__)) {
-	            var actions = result.__actions__ || (result.__actions__ = []);
-	            actions.push({ 'func': thru, 'args': [interceptor], 'thisArg': lodash });
+	        var action = { 'func': thru, 'args': [interceptor], 'thisArg': undefined },
+	            onlyLazy = isLazy && !isHybrid;
+	
+	        if (retUnwrapped && !chainAll) {
+	          if (onlyLazy) {
+	            value = value.clone();
+	            value.__actions__.push(action);
+	            return func.call(value);
 	          }
+	          return lodashFunc.call(undefined, this.value())[0];
+	        }
+	        if (!retUnwrapped && useLazy) {
+	          value = onlyLazy ? value : new LazyWrapper(this);
+	          var result = func.apply(value, args);
+	          result.__actions__.push(action);
 	          return new LodashWrapper(result, chainAll);
 	        }
 	        return this.thru(interceptor);
@@ -13558,7 +12430,7 @@
 	    });
 	
 	    // Add `Array` and `String` methods to `lodash.prototype`.
-	    arrayEach(['concat', 'join', 'pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
+	    arrayEach(['join', 'pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
 	      var func = (/^(?:replace|split)$/.test(methodName) ? stringProto : arrayProto)[methodName],
 	          chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
 	          retUnwrapped = /^(?:join|pop|replace|shift)$/.test(methodName);
@@ -13585,7 +12457,7 @@
 	      }
 	    });
 	
-	    realNames[createHybridWrapper(null, BIND_KEY_FLAG).name] = [{ 'name': 'wrapper', 'func': null }];
+	    realNames[createHybridWrapper(undefined, BIND_KEY_FLAG).name] = [{ 'name': 'wrapper', 'func': undefined }];
 	
 	    // Add functions to the lazy wrapper.
 	    LazyWrapper.prototype.clone = lazyClone;
@@ -13595,6 +12467,7 @@
 	    // Add chaining functions to the `lodash` wrapper.
 	    lodash.prototype.chain = wrapperChain;
 	    lodash.prototype.commit = wrapperCommit;
+	    lodash.prototype.concat = wrapperConcat;
 	    lodash.prototype.plant = wrapperPlant;
 	    lodash.prototype.reverse = wrapperReverse;
 	    lodash.prototype.toString = wrapperToString;
@@ -13645,11 +12518,11 @@
 	  }
 	}.call(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)(module), (function() { return this; }())))
 
 /***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/* 3 */
+/***/ function(module, exports) {
 
 	module.exports = function(module) {
 		if(!module.webpackPolyfill) {
@@ -13664,14 +12537,1447 @@
 
 
 /***/ },
-/* 6 */
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Matrix, Screen, Utils, _, __domComplete, __domCompleteState, __domReady, _textSizeNode,
+	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+	  slice = [].slice;
+	
+	_ = __webpack_require__(1)._;
+	
+	Screen = __webpack_require__(5).Screen;
+	
+	Matrix = __webpack_require__(9).Matrix;
+	
+	Utils = {};
+	
+	Utils.reset = function() {
+	  return Framer.CurrentContext.reset();
+	};
+	
+	Utils.getValue = function(value) {
+	  if (_.isFunction(value)) {
+	    return value();
+	  }
+	  return value;
+	};
+	
+	Utils.getValueForKeyPath = function(obj, key) {
+	  var len, o, ref, ref1, result;
+	  result = obj;
+	  if (ref = !".", indexOf.call(key, ref) >= 0) {
+	    return obj[key];
+	  }
+	  ref1 = key.split(".");
+	  for (o = 0, len = ref1.length; o < len; o++) {
+	    key = ref1[o];
+	    result = result[key];
+	  }
+	  return result;
+	};
+	
+	Utils.setValueForKeyPath = function(obj, path, val) {
+	  var field, fields, i, n, result;
+	  fields = path.split('.');
+	  result = obj;
+	  i = 0;
+	  n = fields.length;
+	  while (i < n && result !== void 0) {
+	    field = fields[i];
+	    if (i === n - 1) {
+	      result[field] = val;
+	    } else {
+	      if (typeof result[field] === 'undefined' || !_.isObject(result[field])) {
+	        result[field] = {};
+	      }
+	      result = result[field];
+	    }
+	    i++;
+	  }
+	};
+	
+	Utils.valueOrDefault = function(value, defaultValue) {
+	  if (value === (void 0) || value === null) {
+	    value = defaultValue;
+	  }
+	  return value;
+	};
+	
+	Utils.arrayNext = function(arr, item) {
+	  return arr[arr.indexOf(item) + 1] || _.first(arr);
+	};
+	
+	Utils.arrayPrev = function(arr, item) {
+	  return arr[arr.indexOf(item) - 1] || _.last(arr);
+	};
+	
+	Utils.sum = function(arr) {
+	  return _.reduce(arr, function(a, b) {
+	    return a + b;
+	  });
+	};
+	
+	Utils.average = function(arr) {
+	  return Utils.sum(arr) / arr.length;
+	};
+	
+	Utils.mean = Utils.average;
+	
+	Utils.median = function(x) {
+	  var sorted;
+	  if (x.length === 0) {
+	    return null;
+	  }
+	  sorted = x.slice().sort(function(a, b) {
+	    return a - b;
+	  });
+	  if (sorted.length % 2 === 1) {
+	    return sorted[(sorted.length - 1) / 2];
+	  } else {
+	    return (sorted[(sorted.length / 2) - 1] + sorted[sorted.length / 2]) / 2;
+	  }
+	};
+	
+	Utils.nearestIncrement = function(x, increment) {
+	  if (!increment) {
+	    return x;
+	  }
+	  return Math.round(x * (1 / increment)) / (1 / increment);
+	};
+	
+	if (window.requestAnimationFrame == null) {
+	  window.requestAnimationFrame = window.webkitRequestAnimationFrame;
+	}
+	
+	if (window.requestAnimationFrame == null) {
+	  window.requestAnimationFrame = function(f) {
+	    return Utils.delay(1 / 60, f);
+	  };
+	}
+	
+	if (window.performance) {
+	  Utils.getTime = function() {
+	    return window.performance.now() / 1000;
+	  };
+	} else {
+	  Utils.getTime = function() {
+	    return Date.now() / 1000;
+	  };
+	}
+	
+	Utils.delay = function(time, f) {
+	  var timer;
+	  timer = setTimeout(f, time * 1000);
+	  Framer.CurrentContext.addTimer(timer);
+	  return timer;
+	};
+	
+	Utils.interval = function(time, f) {
+	  var timer;
+	  timer = setInterval(f, time * 1000);
+	  Framer.CurrentContext.addInterval(timer);
+	  return timer;
+	};
+	
+	Utils.debounce = function(threshold, fn, immediate) {
+	  var timeout;
+	  if (threshold == null) {
+	    threshold = 0.1;
+	  }
+	  timeout = null;
+	  threshold *= 1000;
+	  return function() {
+	    var args, delayed, obj;
+	    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+	    obj = this;
+	    delayed = function() {
+	      if (!immediate) {
+	        fn.apply(obj, args);
+	      }
+	      return timeout = null;
+	    };
+	    if (timeout) {
+	      clearTimeout(timeout);
+	    } else if (immediate) {
+	      fn.apply(obj, args);
+	    }
+	    return timeout = setTimeout(delayed, threshold);
+	  };
+	};
+	
+	Utils.throttle = function(delay, fn) {
+	  var timer;
+	  if (delay === 0) {
+	    return fn;
+	  }
+	  delay *= 1000;
+	  timer = false;
+	  return function() {
+	    if (timer) {
+	      return;
+	    }
+	    timer = true;
+	    if (delay !== -1) {
+	      setTimeout((function() {
+	        return timer = false;
+	      }), delay);
+	    }
+	    return fn.apply(null, arguments);
+	  };
+	};
+	
+	Utils.memoize = function(fn) {
+	  return function() {
+	    var args, currentArg, hash, i;
+	    args = Array.prototype.slice.call(arguments);
+	    hash = "";
+	    i = args.length;
+	    currentArg = null;
+	    while (i--) {
+	      currentArg = args[i];
+	      hash += (currentArg === Object(currentArg) ? JSON.stringify(currentArg) : currentArg);
+	      fn.memoize || (fn.memoize = {});
+	    }
+	    if (hash in fn.memoize) {
+	      return fn.memoize[hash];
+	    } else {
+	      return fn.memoize[hash] = fn.apply(this, args);
+	    }
+	  };
+	};
+	
+	Utils.randomColor = function(alpha) {
+	  if (alpha == null) {
+	    alpha = 1.0;
+	  }
+	  return Color.random(alpha);
+	};
+	
+	Utils.randomChoice = function(arr) {
+	  return arr[Math.floor(Math.random() * arr.length)];
+	};
+	
+	Utils.randomNumber = function(a, b) {
+	  if (a == null) {
+	    a = 0;
+	  }
+	  if (b == null) {
+	    b = 1;
+	  }
+	  return Utils.mapRange(Math.random(), 0, 1, a, b);
+	};
+	
+	Utils.defineEnum = function(names, offset, geometric) {
+	  var Enum, i, j, len, name, o;
+	  if (names == null) {
+	    names = [];
+	  }
+	  if (offset == null) {
+	    offset = 0;
+	  }
+	  if (geometric == null) {
+	    geometric = 0;
+	  }
+	  Enum = {};
+	  for (i = o = 0, len = names.length; o < len; i = ++o) {
+	    name = names[i];
+	    j = i;
+	    j = !offset ? j : j + offset;
+	    j = !geometric ? j : Math.pow(geometric, j);
+	    Enum[Enum[name] = j] = name;
+	  }
+	  return Enum;
+	};
+	
+	Utils.labelLayer = function(layer, text, style) {
+	  if (style == null) {
+	    style = {};
+	  }
+	  style = _.extend({
+	    font: "10px/1em Menlo",
+	    lineHeight: layer.height + "px",
+	    textAlign: "center",
+	    color: "#fff"
+	  }, style);
+	  layer.style = style;
+	  return layer.html = text;
+	};
+	
+	Utils.stringify = function(obj) {
+	  try {
+	    if (_.isObject(obj)) {
+	      return JSON.stringify(obj);
+	    }
+	  } catch (_error) {
+	    "";
+	  }
+	  if (obj === null) {
+	    return "null";
+	  }
+	  if (obj === void 0) {
+	    return "undefined";
+	  }
+	  if (obj.toString) {
+	    return obj.toString();
+	  }
+	  return obj;
+	};
+	
+	Utils.inspectObjectType = function(item) {
+	  var className, extract, ref, ref1, ref2, ref3;
+	  if ((((ref = item.constructor) != null ? ref.name : void 0) != null) && ((ref1 = item.constructor) != null ? ref1.name : void 0) !== "Object") {
+	    return item.constructor.name;
+	  }
+	  extract = function(str) {
+	    var match, regex;
+	    if (!str) {
+	      return null;
+	    }
+	    regex = /\[object (\w+)\]/;
+	    match = regex.exec(str);
+	    if (match) {
+	      return match[1];
+	    }
+	    return null;
+	  };
+	  if (item.toString) {
+	    className = extract(item.toString());
+	    if (className) {
+	      return className;
+	    }
+	  }
+	  if ((ref2 = item.constructor) != null ? ref2.toString : void 0) {
+	    className = extract((ref3 = item.constructor) != null ? ref3.toString() : void 0);
+	    if (className) {
+	      return className.replace("Constructor", "");
+	    }
+	  }
+	  return "Object";
+	};
+	
+	Utils.inspect = function(item, max, l) {
+	  var code, limit, objectInfo, objectType;
+	  if (max == null) {
+	    max = 5;
+	  }
+	  if (l == null) {
+	    l = 0;
+	  }
+	  if (item === null) {
+	    return "null";
+	  }
+	  if (item === void 0) {
+	    return "undefined";
+	  }
+	  if (_.isFunction(item.toInspect)) {
+	    return item.toInspect();
+	  }
+	  if (_.isString(item)) {
+	    return "\"" + item + "\"";
+	  }
+	  if (_.isNumber(item)) {
+	    return "" + item;
+	  }
+	  if (_.isFunction(item)) {
+	    code = item.toString().slice("function ".length).replace(/\n/g, "").replace(/\s+/g, " ");
+	    limit = 50;
+	    if (code.length > limit && l > 0) {
+	      code = (_.trimRight(code.slice(0, +limit + 1 || 9e9))) + "… }";
+	    }
+	    return "<Function " + code + ">";
+	  }
+	  if (_.isArray(item)) {
+	    if (l > max) {
+	      return "[...]";
+	    }
+	    return "[" + _.map(item, function(i) {
+	      return Utils.inspect(i, max, l + 1);
+	    }).join(", ") + "]";
+	  }
+	  if (_.isObject(item)) {
+	    objectType = Utils.inspectObjectType(item);
+	    if (/HTML\w+?Element/.test(objectType)) {
+	      return "<" + objectType + ">";
+	    }
+	    if (l > max) {
+	      objectInfo = "{...}";
+	    } else {
+	      objectInfo = "{" + _.map(item, function(v, k) {
+	        return k + ":" + (Utils.inspect(v, max, l + 1));
+	      }).join(", ") + "}";
+	    }
+	    if (objectType === "Object") {
+	      return objectInfo;
+	    }
+	    return "<" + objectType + " " + objectInfo + ">";
+	  }
+	  return "" + item;
+	};
+	
+	Utils.uuid = function() {
+	  var chars, digit, o, output, r, random;
+	  chars = "0123456789abcdefghijklmnopqrstuvwxyz".split("");
+	  output = new Array(36);
+	  random = 0;
+	  for (digit = o = 1; o <= 32; digit = ++o) {
+	    if (random <= 0x02) {
+	      random = 0x2000000 + (Math.random() * 0x1000000) | 0;
+	    }
+	    r = random & 0xf;
+	    random = random >> 4;
+	    output[digit] = chars[digit === 19 ? (r & 0x3) | 0x8 : r];
+	  }
+	  return output.join("");
+	};
+	
+	Utils.arrayFromArguments = function(args) {
+	  if (_.isArray(args[0])) {
+	    return args[0];
+	  }
+	  return Array.prototype.slice.call(args);
+	};
+	
+	Utils.cycle = function() {
+	  var args, curr;
+	  args = Utils.arrayFromArguments(arguments);
+	  curr = -1;
+	  return function() {
+	    curr++;
+	    if (curr >= args.length) {
+	      curr = 0;
+	    }
+	    return args[curr];
+	  };
+	};
+	
+	Utils.toggle = Utils.cycle;
+	
+	Utils.isWebKit = function() {
+	  return window.WebKitCSSMatrix !== void 0;
+	};
+	
+	Utils.webkitVersion = function() {
+	  var regexp, result, version;
+	  version = -1;
+	  regexp = /AppleWebKit\/([\d.]+)/;
+	  result = regexp.exec(navigator.userAgent);
+	  if (result) {
+	    version = parseFloat(result[1]);
+	  }
+	  return version;
+	};
+	
+	Utils.isChrome = function() {
+	  return /chrome/.test(navigator.userAgent.toLowerCase());
+	};
+	
+	Utils.isSafari = function() {
+	  return /safari/.test(navigator.userAgent.toLowerCase());
+	};
+	
+	Utils.isTouch = function() {
+	  return window.ontouchstart === null && window.ontouchmove === null && window.ontouchend === null;
+	};
+	
+	Utils.isDesktop = function() {
+	  return Utils.deviceType() === "desktop";
+	};
+	
+	Utils.isPhone = function() {
+	  return Utils.deviceType() === "phone";
+	};
+	
+	Utils.isTablet = function() {
+	  return Utils.deviceType() === "tablet";
+	};
+	
+	Utils.isMobile = function() {
+	  return Utils.isPhone() || Utils.isTablet();
+	};
+	
+	Utils.isFileUrl = function(url) {
+	  return _.startsWith(url, "file://");
+	};
+	
+	Utils.isRelativeUrl = function(url) {
+	  return !/^([a-zA-Z]{1,8}:\/\/).*$/.test(url);
+	};
+	
+	Utils.isLocalServerUrl = function(url) {
+	  return url.indexOf("127.0.0.1") !== -1 || url.indexOf("localhost") !== -1;
+	};
+	
+	Utils.isLocalUrl = function(url) {
+	  if (Utils.isFileUrl(url)) {
+	    return true;
+	  }
+	  if (Utils.isLocalServerUrl(url)) {
+	    return true;
+	  }
+	  return false;
+	};
+	
+	Utils.isLocalAssetUrl = function(url, baseUrl) {
+	  if (baseUrl == null) {
+	    baseUrl = window.location.href;
+	  }
+	  if (Utils.isLocalUrl(url)) {
+	    return true;
+	  }
+	  if (Utils.isRelativeUrl(url) && Utils.isLocalUrl(baseUrl)) {
+	    return true;
+	  }
+	  return false;
+	};
+	
+	Utils.isFramerStudio = function() {
+	  return navigator.userAgent.indexOf("FramerStudio") !== -1;
+	};
+	
+	Utils.framerStudioVersion = function() {
+	  var isBeta, isFuture, isLocal, matches, version;
+	  if (Utils.isFramerStudio()) {
+	    isBeta = navigator.userAgent.indexOf("FramerStudio/beta") >= 0;
+	    isLocal = navigator.userAgent.indexOf("FramerStudio/local") >= 0;
+	    isFuture = navigator.userAgent.indexOf("FramerStudio/future") >= 0;
+	    if (isBeta || isLocal || isFuture) {
+	      return Number.MAX_VALUE;
+	    }
+	    matches = navigator.userAgent.match(/\d+$/);
+	    if (matches && matches.length > 0) {
+	      version = parseInt(matches[0]);
+	    }
+	    if (_.isNumber(version)) {
+	      return version;
+	    }
+	  }
+	  return Number.MAX_VALUE;
+	};
+	
+	Utils.devicePixelRatio = function() {
+	  return window.devicePixelRatio;
+	};
+	
+	Utils.isJP2Supported = function() {
+	  return Utils.isWebKit() && !Utils.isChrome();
+	};
+	
+	Utils.deviceType = function() {
+	  if (/(tablet)|(iPad)|(Nexus 9)/i.test(navigator.userAgent)) {
+	    return "tablet";
+	  }
+	  if (/(mobi)/i.test(navigator.userAgent)) {
+	    return "phone";
+	  }
+	  return "desktop";
+	};
+	
+	Utils.pathJoin = function() {
+	  return Utils.arrayFromArguments(arguments).join("/");
+	};
+	
+	Utils.round = function(value, decimals) {
+	  var d;
+	  if (decimals == null) {
+	    decimals = 0;
+	  }
+	  d = Math.pow(10, decimals);
+	  return Math.round(value * d) / d;
+	};
+	
+	Utils.clamp = function(value, a, b) {
+	  var max, min;
+	  min = Math.min(a, b);
+	  max = Math.max(a, b);
+	  if (value < min) {
+	    value = min;
+	  }
+	  if (value > max) {
+	    value = max;
+	  }
+	  return value;
+	};
+	
+	Utils.mapRange = function(value, fromLow, fromHigh, toLow, toHigh) {
+	  return toLow + (((value - fromLow) / (fromHigh - fromLow)) * (toHigh - toLow));
+	};
+	
+	Utils.modulate = function(value, rangeA, rangeB, limit) {
+	  var fromHigh, fromLow, result, toHigh, toLow;
+	  if (limit == null) {
+	    limit = false;
+	  }
+	  fromLow = rangeA[0], fromHigh = rangeA[1];
+	  toLow = rangeB[0], toHigh = rangeB[1];
+	  result = toLow + (((value - fromLow) / (fromHigh - fromLow)) * (toHigh - toLow));
+	  if (limit === true) {
+	    if (toLow < toHigh) {
+	      if (result < toLow) {
+	        return toLow;
+	      }
+	      if (result > toHigh) {
+	        return toHigh;
+	      }
+	    } else {
+	      if (result > toLow) {
+	        return toLow;
+	      }
+	      if (result < toHigh) {
+	        return toHigh;
+	      }
+	    }
+	  }
+	  return result;
+	};
+	
+	Utils.parseFunction = function(str) {
+	  var result;
+	  result = {
+	    name: "",
+	    args: []
+	  };
+	  if (_.endsWith(str, ")")) {
+	    result.name = str.split("(")[0];
+	    result.args = str.split("(")[1].split(",").map(function(a) {
+	      return _.trim(_.trimRight(a, ")"));
+	    });
+	  } else {
+	    result.name = str;
+	  }
+	  return result;
+	};
+	
+	__domCompleteState = "interactive";
+	
+	__domComplete = [];
+	
+	__domReady = false;
+	
+	if (typeof document !== "undefined" && document !== null) {
+	  document.onreadystatechange = function(event) {
+	    var f, results;
+	    if (document.readyState === __domCompleteState) {
+	      __domReady = true;
+	      results = [];
+	      while (__domComplete.length) {
+	        results.push(f = __domComplete.shift()());
+	      }
+	      return results;
+	    }
+	  };
+	}
+	
+	Utils.domComplete = function(f) {
+	  if (__domReady) {
+	    return f();
+	  } else {
+	    return __domComplete.push(f);
+	  }
+	};
+	
+	Utils.domCompleteCancel = function(f) {
+	  return __domComplete = _.without(__domComplete, f);
+	};
+	
+	Utils.domValidEvent = function(element, eventName) {
+	  if (!eventName) {
+	    return;
+	  }
+	  if (eventName === "touchstart" || eventName === "touchmove" || eventName === "touchend") {
+	    return true;
+	  }
+	  return typeof element["on" + (eventName.toLowerCase())] !== "undefined";
+	};
+	
+	Utils.domLoadScript = function(url, callback) {
+	  var head, script;
+	  script = document.createElement("script");
+	  script.type = "text/javascript";
+	  script.src = url;
+	  script.onload = callback;
+	  head = document.getElementsByTagName("head")[0];
+	  head.appendChild(script);
+	  return script;
+	};
+	
+	Utils.domLoadData = function(path, callback) {
+	  var request;
+	  request = new XMLHttpRequest();
+	  request.addEventListener("load", function() {
+	    return callback(null, request.responseText);
+	  }, false);
+	  request.addEventListener("error", function() {
+	    return callback(true, null);
+	  }, false);
+	  request.open("GET", path, true);
+	  return request.send(null);
+	};
+	
+	Utils.domLoadJSON = function(path, callback) {
+	  return Utils.domLoadData(path, function(err, data) {
+	    return callback(err, JSON.parse(data));
+	  });
+	};
+	
+	Utils.domLoadDataSync = function(path) {
+	  var e, handleError, ref, request;
+	  request = new XMLHttpRequest();
+	  request.open("GET", path, false);
+	  try {
+	    request.send(null);
+	  } catch (_error) {
+	    e = _error;
+	    console.debug("XMLHttpRequest.error", e);
+	  }
+	  handleError = function() {
+	    throw Error("Utils.domLoadDataSync: " + path + " -> [" + request.status + " " + request.statusText + "]");
+	  };
+	  request.onerror = handleError;
+	  if ((ref = request.status) !== 200 && ref !== 0) {
+	    handleError();
+	  }
+	  if (!request.responseText) {
+	    handleError();
+	  }
+	  return request.responseText;
+	};
+	
+	Utils.domLoadJSONSync = function(path) {
+	  return JSON.parse(Utils.domLoadDataSync(path));
+	};
+	
+	Utils.domLoadScriptSync = function(path) {
+	  var scriptData;
+	  scriptData = Utils.domLoadDataSync(path);
+	  eval(scriptData);
+	  return scriptData;
+	};
+	
+	Utils.insertCSS = function(css) {
+	  var styleElement;
+	  styleElement = document.createElement("style");
+	  styleElement.type = "text/css";
+	  styleElement.innerHTML = css;
+	  return Utils.domComplete(function() {
+	    return document.body.appendChild(styleElement);
+	  });
+	};
+	
+	Utils.loadImage = function(url, callback, context) {
+	  var element;
+	  element = new Image;
+	  if (context == null) {
+	    context = Framer.CurrentContext;
+	  }
+	  context.domEventManager.wrap(element).addEventListener("load", function(event) {
+	    return callback();
+	  });
+	  context.domEventManager.wrap(element).addEventListener("error", function(event) {
+	    return callback(true);
+	  });
+	  return element.src = url;
+	};
+	
+	Utils.pointDivide = function(point, fraction) {
+	  return point = {
+	    x: point.x / fraction,
+	    y: point.y / fraction
+	  };
+	};
+	
+	Utils.pointAdd = function(pointA, pointB) {
+	  var point;
+	  return point = {
+	    x: pointA.x + pointB.x,
+	    y: pointA.y + pointB.y
+	  };
+	};
+	
+	Utils.pointSubtract = function(pointA, pointB) {
+	  var point;
+	  return point = {
+	    x: pointA.x - pointB.x,
+	    y: pointA.y - pointB.y
+	  };
+	};
+	
+	Utils.pointZero = function(args) {
+	  if (args == null) {
+	    args = {};
+	  }
+	  return _.defaults(args, {
+	    x: 0,
+	    y: 0
+	  });
+	};
+	
+	Utils.pointMin = function() {
+	  var point, points;
+	  points = Utils.arrayFromArguments(arguments);
+	  return point = {
+	    x: _.min(points.map(function(size) {
+	      return size.x;
+	    })),
+	    y: _.min(points.map(function(size) {
+	      return size.y;
+	    }))
+	  };
+	};
+	
+	Utils.pointMax = function() {
+	  var point, points;
+	  points = Utils.arrayFromArguments(arguments);
+	  return point = {
+	    x: _.max(points.map(function(size) {
+	      return size.x;
+	    })),
+	    y: _.max(points.map(function(size) {
+	      return size.y;
+	    }))
+	  };
+	};
+	
+	Utils.pointDelta = function(pointA, pointB) {
+	  var delta;
+	  return delta = {
+	    x: pointB.x - pointA.x,
+	    y: pointB.y - pointA.y
+	  };
+	};
+	
+	Utils.pointDistance = function(pointA, pointB) {
+	  var a, b;
+	  a = pointA.x - pointB.x;
+	  b = pointA.y - pointB.y;
+	  return Math.sqrt((a * a) + (b * b));
+	};
+	
+	Utils.pointInvert = function(point) {
+	  return point = {
+	    x: 0 - point.x,
+	    y: 0 - point.y
+	  };
+	};
+	
+	Utils.pointTotal = function(point) {
+	  return point.x + point.y;
+	};
+	
+	Utils.pointAbs = function(point) {
+	  return point = {
+	    x: Math.abs(point.x),
+	    y: Math.abs(point.y)
+	  };
+	};
+	
+	Utils.pointInFrame = function(point, frame) {
+	  if (point.x < Utils.frameGetMinX(frame) || point.x > Utils.frameGetMaxX(frame)) {
+	    return false;
+	  }
+	  if (point.y < Utils.frameGetMinY(frame) || point.y > Utils.frameGetMaxY(frame)) {
+	    return false;
+	  }
+	  return true;
+	};
+	
+	Utils.pointCenter = function(pointA, pointB) {
+	  var point;
+	  return point = {
+	    x: (pointA.x + pointB.x) / 2,
+	    y: (pointA.y + pointB.y) / 2
+	  };
+	};
+	
+	Utils.pointAngle = function(pointA, pointB) {
+	  return Math.atan2(pointB.y - pointA.y, pointB.x - pointA.x) * 180 / Math.PI;
+	};
+	
+	Utils.sizeZero = function(args) {
+	  if (args == null) {
+	    args = {};
+	  }
+	  return _.defaults(args, {
+	    width: 0,
+	    height: 0
+	  });
+	};
+	
+	Utils.sizeMin = function() {
+	  var size, sizes;
+	  sizes = Utils.arrayFromArguments(arguments);
+	  return size = {
+	    width: _.min(sizes.map(function(size) {
+	      return size.width;
+	    })),
+	    height: _.min(sizes.map(function(size) {
+	      return size.height;
+	    }))
+	  };
+	};
+	
+	Utils.sizeMax = function() {
+	  var size, sizes;
+	  sizes = Utils.arrayFromArguments(arguments);
+	  return size = {
+	    width: _.max(sizes.map(function(size) {
+	      return size.width;
+	    })),
+	    height: _.max(sizes.map(function(size) {
+	      return size.height;
+	    }))
+	  };
+	};
+	
+	Utils.rectZero = function(args) {
+	  if (args == null) {
+	    args = {};
+	  }
+	  return _.defaults(args, {
+	    top: 0,
+	    right: 0,
+	    bottom: 0,
+	    left: 0
+	  });
+	};
+	
+	Utils.parseRect = function(args) {
+	  if (_.isArray(args) && _.isNumber(args[0])) {
+	    if (args.length === 1) {
+	      return Utils.parseRect({
+	        top: args[0]
+	      });
+	    }
+	    if (args.length === 2) {
+	      return Utils.parseRect({
+	        top: args[0],
+	        right: args[1]
+	      });
+	    }
+	    if (args.length === 3) {
+	      return Utils.parseRect({
+	        top: args[0],
+	        right: args[1],
+	        bottom: args[2]
+	      });
+	    }
+	    if (args.length === 4) {
+	      return Utils.parseRect({
+	        top: args[0],
+	        right: args[1],
+	        bottom: args[2],
+	        left: args[3]
+	      });
+	    }
+	  }
+	  if (_.isArray(args) && _.isObject(args[0])) {
+	    return args[0];
+	  }
+	  if (_.isObject(args)) {
+	    return args;
+	  }
+	  return {};
+	};
+	
+	Utils.frameGetMinX = function(frame) {
+	  return frame.x;
+	};
+	
+	Utils.frameSetMinX = function(frame, value) {
+	  return frame.x = value;
+	};
+	
+	Utils.frameGetMidX = function(frame) {
+	  if (frame.width === 0) {
+	    return 0;
+	  } else {
+	    return frame.x + (frame.width / 2.0);
+	  }
+	};
+	
+	Utils.frameSetMidX = function(frame, value) {
+	  return frame.x = frame.width === 0 ? 0 : value - (frame.width / 2.0);
+	};
+	
+	Utils.frameGetMaxX = function(frame) {
+	  if (frame.width === 0) {
+	    return 0;
+	  } else {
+	    return frame.x + frame.width;
+	  }
+	};
+	
+	Utils.frameSetMaxX = function(frame, value) {
+	  return frame.x = frame.width === 0 ? 0 : value - frame.width;
+	};
+	
+	Utils.frameGetMinY = function(frame) {
+	  return frame.y;
+	};
+	
+	Utils.frameSetMinY = function(frame, value) {
+	  return frame.y = value;
+	};
+	
+	Utils.frameGetMidY = function(frame) {
+	  if (frame.height === 0) {
+	    return 0;
+	  } else {
+	    return frame.y + (frame.height / 2.0);
+	  }
+	};
+	
+	Utils.frameSetMidY = function(frame, value) {
+	  return frame.y = frame.height === 0 ? 0 : value - (frame.height / 2.0);
+	};
+	
+	Utils.frameGetMaxY = function(frame) {
+	  if (frame.height === 0) {
+	    return 0;
+	  } else {
+	    return frame.y + frame.height;
+	  }
+	};
+	
+	Utils.frameSetMaxY = function(frame, value) {
+	  return frame.y = frame.height === 0 ? 0 : value - frame.height;
+	};
+	
+	Utils.frameZero = function(args) {
+	  if (args == null) {
+	    args = {};
+	  }
+	  return _.defaults(args, {
+	    top: 0,
+	    right: 0,
+	    bottom: 0,
+	    left: 0
+	  });
+	};
+	
+	Utils.frameSize = function(frame) {
+	  var size;
+	  return size = {
+	    width: frame.width,
+	    height: frame.height
+	  };
+	};
+	
+	Utils.framePoint = function(frame) {
+	  var point;
+	  return point = {
+	    x: frame.x,
+	    y: frame.y
+	  };
+	};
+	
+	Utils.pointsFromFrame = function(frame) {
+	  var corner1, corner2, corner3, corner4, maxX, maxY, minX, minY;
+	  minX = Utils.frameGetMinX(frame);
+	  maxX = Utils.frameGetMaxX(frame);
+	  minY = Utils.frameGetMinY(frame);
+	  maxY = Utils.frameGetMaxY(frame);
+	  corner1 = {
+	    x: minX,
+	    y: minY
+	  };
+	  corner2 = {
+	    x: minX,
+	    y: maxY
+	  };
+	  corner3 = {
+	    x: maxX,
+	    y: maxY
+	  };
+	  corner4 = {
+	    x: maxX,
+	    y: minY
+	  };
+	  return [corner1, corner2, corner3, corner4];
+	};
+	
+	Utils.frameFromPoints = function(points) {
+	  var frame, maxX, maxY, minX, minY, xValues, yValues;
+	  xValues = _.pluck(points, "x");
+	  yValues = _.pluck(points, "y");
+	  minX = _.min(xValues);
+	  maxX = _.max(xValues);
+	  minY = _.min(yValues);
+	  maxY = _.max(yValues);
+	  return frame = {
+	    x: minX,
+	    y: minY,
+	    width: maxX - minX,
+	    height: maxY - minY
+	  };
+	};
+	
+	Utils.pixelAlignedFrame = function(frame) {
+	  var result;
+	  return result = {
+	    width: Math.round(frame.width + (frame.x % 1)),
+	    height: Math.round(frame.height + (frame.y % 1)),
+	    x: Math.round(frame.x),
+	    y: Math.round(frame.y)
+	  };
+	};
+	
+	Utils.frameMerge = function() {
+	  var frame, frames;
+	  frames = Utils.arrayFromArguments(arguments);
+	  frame = {
+	    x: _.min(frames.map(Utils.frameGetMinX)),
+	    y: _.min(frames.map(Utils.frameGetMinY))
+	  };
+	  frame.width = _.max(frames.map(Utils.frameGetMaxX)) - frame.x;
+	  frame.height = _.max(frames.map(Utils.frameGetMaxY)) - frame.y;
+	  return frame;
+	};
+	
+	Utils.framePointForOrigin = function(frame, originX, originY) {
+	  return frame = {
+	    x: frame.x + (originX * frame.width),
+	    y: frame.y + (originY * frame.height),
+	    width: frame.width,
+	    height: frame.height
+	  };
+	};
+	
+	Utils.frameInset = function(frame, inset) {
+	  if (_.isNumber(inset)) {
+	    inset = {
+	      top: inset,
+	      right: inset,
+	      bottom: inset,
+	      left: inset
+	    };
+	  }
+	  return frame = {
+	    x: frame.x + inset.left,
+	    y: frame.y + inset.top,
+	    width: frame.width - inset.left - inset.right,
+	    height: frame.height - inset.top - inset.bottom
+	  };
+	};
+	
+	Utils.frameSortByAbsoluteDistance = function(point, frames, originX, originY) {
+	  var distance;
+	  if (originX == null) {
+	    originX = 0;
+	  }
+	  if (originY == null) {
+	    originY = 0;
+	  }
+	  distance = function(frame) {
+	    var result;
+	    result = Utils.pointDelta(point, Utils.framePointForOrigin(frame, originX, originY));
+	    result = Utils.pointAbs(result);
+	    result = Utils.pointTotal(result);
+	    return result;
+	  };
+	  return frames.sort(function(a, b) {
+	    return distance(a) - distance(b);
+	  });
+	};
+	
+	Utils.pointInPolygon = function(point, vs) {
+	  var i, inside, intersect, j, x, xi, xj, y, yi, yj;
+	  x = point[0];
+	  y = point[1];
+	  inside = false;
+	  i = 0;
+	  j = vs.length - 1;
+	  while (i < vs.length) {
+	    xi = vs[i][0];
+	    yi = vs[i][1];
+	    xj = vs[j][0];
+	    yj = vs[j][1];
+	    intersect = ((yi > y && y !== yj) && yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi;
+	    if (intersect) {
+	      inside = !inside;
+	    }
+	    j = i++;
+	  }
+	  return inside;
+	};
+	
+	Utils.frameCenterPoint = function(frame) {
+	  var point;
+	  return point = {
+	    x: Utils.frameGetMidX(frame),
+	    y: Utils.frameGetMidY(frame)
+	  };
+	};
+	
+	Utils.rotationNormalizer = function() {
+	  var lastValue;
+	  lastValue = null;
+	  return (function(_this) {
+	    return function(value) {
+	      var diff, maxDiff, nTimes;
+	      if (lastValue == null) {
+	        lastValue = value;
+	      }
+	      diff = lastValue - value;
+	      maxDiff = Math.abs(diff) + 180;
+	      nTimes = Math.floor(maxDiff / 360);
+	      if (diff < 180) {
+	        value -= nTimes * 360;
+	      }
+	      if (diff > 180) {
+	        value += nTimes * 360;
+	      }
+	      lastValue = value;
+	      return value;
+	    };
+	  })(this);
+	};
+	
+	Utils.convertPointToContext = function(point, layer, rootContext, includeLayer) {
+	  var ancestor, ancestors, len, o;
+	  if (point == null) {
+	    point = {};
+	  }
+	  if (rootContext == null) {
+	    rootContext = false;
+	  }
+	  if (includeLayer == null) {
+	    includeLayer = true;
+	  }
+	  point = _.defaults(point, {
+	    x: 0,
+	    y: 0,
+	    z: 0
+	  });
+	  ancestors = layer.ancestors(rootContext);
+	  if (includeLayer) {
+	    ancestors.unshift(layer);
+	  }
+	  for (o = 0, len = ancestors.length; o < len; o++) {
+	    ancestor = ancestors[o];
+	    if (ancestor.flat) {
+	      point.z = 0;
+	    }
+	    point = ancestor.matrix3d.point(point);
+	    if (!ancestor.parent) {
+	      point.z = 0;
+	    }
+	  }
+	  return point;
+	};
+	
+	Utils.convertFrameToContext = function(frame, layer, rootContext, includeLayer) {
+	  var convertedCorners, corners;
+	  if (frame == null) {
+	    frame = {};
+	  }
+	  if (rootContext == null) {
+	    rootContext = false;
+	  }
+	  if (includeLayer == null) {
+	    includeLayer = true;
+	  }
+	  frame = _.defaults(frame, {
+	    x: 0,
+	    y: 0,
+	    width: 100,
+	    height: 100
+	  });
+	  corners = Utils.pointsFromFrame(frame);
+	  convertedCorners = corners.map((function(_this) {
+	    return function(point) {
+	      return Utils.convertPointToContext(point, layer, rootContext, includeLayer);
+	    };
+	  })(this));
+	  return Utils.frameFromPoints(convertedCorners);
+	};
+	
+	Utils.convertPointFromContext = function(point, layer, rootContext, includeLayer) {
+	  var ancestor, ancestors, len, o;
+	  if (point == null) {
+	    point = {};
+	  }
+	  if (rootContext == null) {
+	    rootContext = false;
+	  }
+	  if (includeLayer == null) {
+	    includeLayer = true;
+	  }
+	  point = _.defaults(point, {
+	    x: 0,
+	    y: 0,
+	    z: 0
+	  });
+	  ancestors = layer.ancestors(rootContext);
+	  ancestors.reverse();
+	  if (includeLayer) {
+	    ancestors.push(layer);
+	  }
+	  for (o = 0, len = ancestors.length; o < len; o++) {
+	    ancestor = ancestors[o];
+	    point = ancestor.matrix3d.inverse().point(point);
+	  }
+	  return point;
+	};
+	
+	Utils.convertFrameFromContext = function(frame, layer, rootContext, includeLayer) {
+	  var convertedCorners, corners;
+	  if (frame == null) {
+	    frame = {};
+	  }
+	  if (rootContext == null) {
+	    rootContext = false;
+	  }
+	  if (includeLayer == null) {
+	    includeLayer = true;
+	  }
+	  frame = _.defaults(frame, {
+	    x: 0,
+	    y: 0,
+	    width: 100,
+	    height: 100
+	  });
+	  corners = Utils.pointsFromFrame(frame);
+	  convertedCorners = corners.map((function(_this) {
+	    return function(point) {
+	      return Utils.convertPointFromContext(point, layer, rootContext, includeLayer);
+	    };
+	  })(this));
+	  return Utils.frameFromPoints(convertedCorners);
+	};
+	
+	Utils.convertPoint = function(input, layerA, layerB, rootContext) {
+	  var point;
+	  if (rootContext == null) {
+	    rootContext = false;
+	  }
+	  point = _.defaults(input, {
+	    x: 0,
+	    y: 0,
+	    z: 0
+	  });
+	  if (layerA) {
+	    point = Utils.convertPointToContext(point, layerA, rootContext);
+	  }
+	  if (!layerB) {
+	    return point;
+	  }
+	  return Utils.convertPointFromContext(point, layerB, rootContext);
+	};
+	
+	Utils.boundingFrame = function(layer, rootContext) {
+	  var boundingFrame, contextCornerPoints, cornerPoints, frame;
+	  if (rootContext == null) {
+	    rootContext = true;
+	  }
+	  frame = {
+	    x: 0,
+	    y: 0,
+	    width: layer.width,
+	    height: layer.height
+	  };
+	  cornerPoints = Utils.pointsFromFrame(frame);
+	  contextCornerPoints = cornerPoints.map(function(point) {
+	    return Utils.convertPointToContext(point, layer, rootContext);
+	  });
+	  boundingFrame = Utils.frameFromPoints(contextCornerPoints);
+	  return Utils.pixelAlignedFrame(boundingFrame);
+	};
+	
+	Utils.perspectiveProjectionMatrix = function(element) {
+	  var m, p;
+	  p = element.perspective;
+	  m = new Matrix();
+	  if ((p != null) && p !== 0) {
+	    m.m34 = -1 / p;
+	  }
+	  return m;
+	};
+	
+	Utils.perspectiveMatrix = function(element) {
+	  var ox, oy, ppm;
+	  ox = element.perspectiveOriginX * element.width;
+	  oy = element.perspectiveOriginY * element.height;
+	  ppm = Utils.perspectiveProjectionMatrix(element);
+	  return new Matrix().translate(ox, oy).multiply(ppm).translate(-ox, -oy);
+	};
+	
+	Utils.globalLayers = function(importedLayers) {
+	  var layer, layerName;
+	  for (layerName in importedLayers) {
+	    layer = importedLayers[layerName];
+	    layerName = layerName.replace(/\s/g, "");
+	    if (window.hasOwnProperty(layerName) && !window.Framer._globalWarningGiven) {
+	      print("Warning: Cannot make layer '" + layerName + "' a global, a variable with that name already exists");
+	    } else {
+	      window[layerName] = layer;
+	    }
+	  }
+	  return window.Framer._globalWarningGiven = true;
+	};
+	
+	_textSizeNode = null;
+	
+	Utils.textSize = function(text, style, constraints) {
+	  var frame, rect, shouldCreateNode;
+	  if (style == null) {
+	    style = {};
+	  }
+	  if (constraints == null) {
+	    constraints = {};
+	  }
+	  shouldCreateNode = !_textSizeNode;
+	  if (shouldCreateNode) {
+	    _textSizeNode = document.createElement("div");
+	    _textSizeNode.id = "_textSizeNode";
+	  }
+	  _textSizeNode.removeAttribute("style");
+	  _textSizeNode.innerHTML = text;
+	  style = _.extend(_.clone(style), {
+	    position: "fixed",
+	    display: "inline",
+	    visibility: "hidden",
+	    top: "-10000px",
+	    left: "-10000px"
+	  });
+	  delete style.width;
+	  delete style.height;
+	  delete style.bottom;
+	  delete style.right;
+	  if (constraints.width) {
+	    style.width = constraints.width + "px";
+	  }
+	  if (constraints.height) {
+	    style.height = constraints.height + "px";
+	  }
+	  _.extend(_textSizeNode.style, style);
+	  if (shouldCreateNode) {
+	    if (!window.document.body) {
+	      document.write(_textSizeNode.outerHTML);
+	      _textSizeNode = document.getElementById("_textSizeNode");
+	    } else {
+	      window.document.body.appendChild(_textSizeNode);
+	    }
+	  }
+	  rect = _textSizeNode.getBoundingClientRect();
+	  return frame = {
+	    width: rect.right - rect.left,
+	    height: rect.bottom - rect.top
+	  };
+	};
+	
+	_.extend(exports, Utils);
+
+
+/***/ },
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var BaseClass, ScreenClass,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	BaseClass = __webpack_require__(7).BaseClass;
+	BaseClass = __webpack_require__(6).BaseClass;
 	
 	ScreenClass = (function(superClass) {
 	  extend(ScreenClass, superClass);
@@ -13694,23 +14000,136 @@
 	
 	  ScreenClass.define("size", {
 	    get: function() {
-	      return {
-	        width: this.width,
-	        height: this.height
-	      };
+	      return Framer.CurrentContext.size;
 	    }
 	  });
 	
 	  ScreenClass.define("frame", {
 	    get: function() {
-	      return {
-	        x: 0,
-	        y: 0,
-	        width: this.width,
-	        height: this.height
-	      };
+	      return Framer.CurrentContext.frame;
 	    }
 	  });
+	
+	  ScreenClass.define("canvasFrame", {
+	    get: function() {
+	      return Framer.CurrentContext.canvasFrame;
+	    }
+	  });
+	
+	  ScreenClass.define("backgroundColor", {
+	    importable: false,
+	    exportable: false,
+	    get: function() {
+	      return Framer.Device.screen.backgroundColor;
+	    },
+	    set: function(value) {
+	      return Framer.Device.screen.backgroundColor = value;
+	    }
+	  });
+	
+	  ScreenClass.define("perspective", {
+	    importable: false,
+	    exportable: false,
+	    get: function() {
+	      return Framer.CurrentContext.perspective;
+	    },
+	    set: function(value) {
+	      return Framer.CurrentContext.perspective = value;
+	    }
+	  });
+	
+	  ScreenClass.define("perspectiveOriginX", {
+	    importable: false,
+	    exportable: false,
+	    get: function() {
+	      return Framer.CurrentContext.perspectiveOriginX;
+	    },
+	    set: function(value) {
+	      return Framer.CurrentContext.perspectiveOriginX = value;
+	    }
+	  });
+	
+	  ScreenClass.define("perspectiveOriginY", {
+	    importable: false,
+	    exportable: false,
+	    get: function() {
+	      return Framer.CurrentContext.perspectiveOriginY;
+	    },
+	    set: function(value) {
+	      return Framer.CurrentContext.perspectiveOriginY = value;
+	    }
+	  });
+	
+	  ScreenClass.prototype.toInspect = function() {
+	    var round;
+	    round = function(value) {
+	      if (parseInt(value) === value) {
+	        return parseInt(value);
+	      }
+	      return Utils.round(value, 1);
+	    };
+	    return "<Screen " + (round(this.width)) + "x" + (round(this.height)) + ">";
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipe = function(cb) {
+	    return this.on(Events.EdgeSwipe, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeStart = function(cb) {
+	    return this.on(Events.EdgeSwipeStart, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeEnd = function(cb) {
+	    return this.on(Events.EdgeSwipeEnd, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeTop = function(cb) {
+	    return this.on(Events.EdgeSwipeTop, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeTopStart = function(cb) {
+	    return this.on(Events.EdgeSwipeTopStart, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeTopEnd = function(cb) {
+	    return this.on(Events.EdgeSwipeTopEnd, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeRight = function(cb) {
+	    return this.on(Events.EdgeSwipeRight, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeRightStart = function(cb) {
+	    return this.on(Events.EdgeSwipeRightStart, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeRightEnd = function(cb) {
+	    return this.on(Events.EdgeSwipeRightEnd, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeBottom = function(cb) {
+	    return this.on(Events.EdgeSwipeBottom, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeBottomStart = function(cb) {
+	    return this.on(Events.EdgeSwipeBottomStart, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeBottomEnd = function(cb) {
+	    return this.on(Events.EdgeSwipeBottomEnd, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeLeft = function(cb) {
+	    return this.on(Events.EdgeSwipeLeft, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeLeftStart = function(cb) {
+	    return this.on(Events.EdgeSwipeLeftStart, cb);
+	  };
+	
+	  ScreenClass.prototype.onEdgeSwipeLeftEnd = function(cb) {
+	    return this.on(Events.EdgeSwipeLeftEnd, cb);
+	  };
 	
 	  return ScreenClass;
 	
@@ -13720,7 +14139,7 @@
 
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var CounterKey, DefinedPropertiesKey, DefinedPropertiesValuesKey, EventEmitter, Utils, _, capitalizeFirstLetter,
@@ -13728,11 +14147,11 @@
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	EventEmitter = __webpack_require__(8).EventEmitter;
+	EventEmitter = __webpack_require__(7).EventEmitter;
 	
 	CounterKey = "_ObjectCounter";
 	
@@ -13886,6 +14305,10 @@
 	    return "<" + this.constructor.name + " id:" + (this.id || null) + ">";
 	  };
 	
+	  BaseClass.prototype.onChange = function(name, cb) {
+	    return this.on("change:" + name, cb);
+	  };
+	
 	  function BaseClass(options) {
 	    this.toInspect = bind(this.toInspect, this);
 	    this._getPropertyValue = bind(this._getPropertyValue, this);
@@ -13928,21 +14351,74 @@
 
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var EventEmitter;
+	var EventEmitter3, EventKey, _,
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
 	
-	EventEmitter = __webpack_require__(9).EventEmitter;
+	_ = __webpack_require__(1)._;
 	
-	exports.EventEmitter = EventEmitter;
+	EventEmitter3 = __webpack_require__(8);
+	
+	EventKey = "_events";
+	
+	exports.EventEmitter = (function(superClass) {
+	  extend(EventEmitter, superClass);
+	
+	  function EventEmitter() {
+	    return EventEmitter.__super__.constructor.apply(this, arguments);
+	  }
+	
+	  EventEmitter.prototype.listenerEvents = function() {
+	    return _.keys(this[EventKey]);
+	  };
+	
+	  EventEmitter.prototype.removeAllListeners = function(eventName) {
+	    var eventNames, i, len, listener, results;
+	    if (eventName) {
+	      eventNames = [eventName];
+	    } else {
+	      eventNames = this.listenerEvents();
+	    }
+	    results = [];
+	    for (i = 0, len = eventNames.length; i < len; i++) {
+	      eventName = eventNames[i];
+	      results.push((function() {
+	        var j, len1, ref, results1;
+	        ref = this.listeners(eventName);
+	        results1 = [];
+	        for (j = 0, len1 = ref.length; j < len1; j++) {
+	          listener = ref[j];
+	          results1.push(this.removeListener(eventName, listener));
+	        }
+	        return results1;
+	      }).call(this));
+	    }
+	    return results;
+	  };
+	
+	  return EventEmitter;
+	
+	})(EventEmitter3);
 
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+	
+	//
+	// We store our EE objects in a plain object whose properties are event names.
+	// If `Object.create(null)` is not supported we prefix the event names with a
+	// `~` to make sure that the built-in object properties are not overridden or
+	// used as an attack vector.
+	// We also assume that `Object.create(null)` is available when the event name
+	// is an ES6 Symbol.
+	//
+	var prefix = typeof Object.create !== 'function' ? '~' : false;
 	
 	/**
 	 * Representation of a single EventEmitter function.
@@ -13979,15 +14455,20 @@
 	 * Return a list of assigned event listeners.
 	 *
 	 * @param {String} event The events that should be listed.
-	 * @returns {Array}
+	 * @param {Boolean} exists We only need to know if there are listeners.
+	 * @returns {Array|Boolean}
 	 * @api public
 	 */
-	EventEmitter.prototype.listeners = function listeners(event) {
-	  if (!this._events || !this._events[event]) return [];
-	  if (this._events[event].fn) return [this._events[event].fn];
+	EventEmitter.prototype.listeners = function listeners(event, exists) {
+	  var evt = prefix ? prefix + event : event
+	    , available = this._events && this._events[evt];
 	
-	  for (var i = 0, l = this._events[event].length, ee = new Array(l); i < l; i++) {
-	    ee[i] = this._events[event][i].fn;
+	  if (exists) return !!available;
+	  if (!available) return [];
+	  if (available.fn) return [available.fn];
+	
+	  for (var i = 0, l = available.length, ee = new Array(l); i < l; i++) {
+	    ee[i] = available[i].fn;
 	  }
 	
 	  return ee;
@@ -14001,15 +14482,17 @@
 	 * @api public
 	 */
 	EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
-	  if (!this._events || !this._events[event]) return false;
+	  var evt = prefix ? prefix + event : event;
 	
-	  var listeners = this._events[event]
+	  if (!this._events || !this._events[evt]) return false;
+	
+	  var listeners = this._events[evt]
 	    , len = arguments.length
 	    , args
 	    , i;
 	
 	  if ('function' === typeof listeners.fn) {
-	    if (listeners.once) this.removeListener(event, listeners.fn, true);
+	    if (listeners.once) this.removeListener(event, listeners.fn, undefined, true);
 	
 	    switch (len) {
 	      case 1: return listeners.fn.call(listeners.context), true;
@@ -14030,7 +14513,7 @@
 	      , j;
 	
 	    for (i = 0; i < length; i++) {
-	      if (listeners[i].once) this.removeListener(event, listeners[i].fn, true);
+	      if (listeners[i].once) this.removeListener(event, listeners[i].fn, undefined, true);
 	
 	      switch (len) {
 	        case 1: listeners[i].fn.call(listeners[i].context); break;
@@ -14058,14 +14541,15 @@
 	 * @api public
 	 */
 	EventEmitter.prototype.on = function on(event, fn, context) {
-	  var listener = new EE(fn, context || this);
+	  var listener = new EE(fn, context || this)
+	    , evt = prefix ? prefix + event : event;
 	
-	  if (!this._events) this._events = {};
-	  if (!this._events[event]) this._events[event] = listener;
+	  if (!this._events) this._events = prefix ? {} : Object.create(null);
+	  if (!this._events[evt]) this._events[evt] = listener;
 	  else {
-	    if (!this._events[event].fn) this._events[event].push(listener);
-	    else this._events[event] = [
-	      this._events[event], listener
+	    if (!this._events[evt].fn) this._events[evt].push(listener);
+	    else this._events[evt] = [
+	      this._events[evt], listener
 	    ];
 	  }
 	
@@ -14081,14 +14565,15 @@
 	 * @api public
 	 */
 	EventEmitter.prototype.once = function once(event, fn, context) {
-	  var listener = new EE(fn, context || this, true);
+	  var listener = new EE(fn, context || this, true)
+	    , evt = prefix ? prefix + event : event;
 	
-	  if (!this._events) this._events = {};
-	  if (!this._events[event]) this._events[event] = listener;
+	  if (!this._events) this._events = prefix ? {} : Object.create(null);
+	  if (!this._events[evt]) this._events[evt] = listener;
 	  else {
-	    if (!this._events[event].fn) this._events[event].push(listener);
-	    else this._events[event] = [
-	      this._events[event], listener
+	    if (!this._events[evt].fn) this._events[evt].push(listener);
+	    else this._events[evt] = [
+	      this._events[evt], listener
 	    ];
 	  }
 	
@@ -14100,22 +14585,36 @@
 	 *
 	 * @param {String} event The event we want to remove.
 	 * @param {Function} fn The listener that we need to find.
+	 * @param {Mixed} context Only remove listeners matching this context.
 	 * @param {Boolean} once Only remove once listeners.
 	 * @api public
 	 */
-	EventEmitter.prototype.removeListener = function removeListener(event, fn, once) {
-	  if (!this._events || !this._events[event]) return this;
+	EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
+	  var evt = prefix ? prefix + event : event;
 	
-	  var listeners = this._events[event]
+	  if (!this._events || !this._events[evt]) return this;
+	
+	  var listeners = this._events[evt]
 	    , events = [];
 	
 	  if (fn) {
-	    if (listeners.fn && (listeners.fn !== fn || (once && !listeners.once))) {
-	      events.push(listeners);
-	    }
-	    if (!listeners.fn) for (var i = 0, length = listeners.length; i < length; i++) {
-	      if (listeners[i].fn !== fn || (once && !listeners[i].once)) {
-	        events.push(listeners[i]);
+	    if (listeners.fn) {
+	      if (
+	           listeners.fn !== fn
+	        || (once && !listeners.once)
+	        || (context && listeners.context !== context)
+	      ) {
+	        events.push(listeners);
+	      }
+	    } else {
+	      for (var i = 0, length = listeners.length; i < length; i++) {
+	        if (
+	             listeners[i].fn !== fn
+	          || (once && !listeners[i].once)
+	          || (context && listeners[i].context !== context)
+	        ) {
+	          events.push(listeners[i]);
+	        }
 	      }
 	    }
 	  }
@@ -14124,9 +14623,9 @@
 	  // Reset the array, or remove it completely if we have no more listeners.
 	  //
 	  if (events.length) {
-	    this._events[event] = events.length === 1 ? events[0] : events;
+	    this._events[evt] = events.length === 1 ? events[0] : events;
 	  } else {
-	    delete this._events[event];
+	    delete this._events[evt];
 	  }
 	
 	  return this;
@@ -14141,8 +14640,8 @@
 	EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
 	  if (!this._events) return this;
 	
-	  if (event) delete this._events[event];
-	  else this._events = {};
+	  if (event) delete this._events[prefix ? prefix + event : event];
+	  else this._events = prefix ? {} : Object.create(null);
 	
 	  return this;
 	};
@@ -14161,162 +14660,1431 @@
 	};
 	
 	//
-	// Expose the module.
+	// Expose the prefix.
 	//
-	EventEmitter.EventEmitter = EventEmitter;
-	EventEmitter.EventEmitter2 = EventEmitter;
-	EventEmitter.EventEmitter3 = EventEmitter;
+	EventEmitter.prefixed = prefix;
 	
 	//
 	// Expose the module.
 	//
-	module.exports = EventEmitter;
+	if (true) {
+	  module.exports = EventEmitter;
+	}
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	WebKitCSSMatrix.prototype.skew = function(skew) {
+	  var m, rad, value;
+	  if (!skew) {
+	    return this;
+	  }
+	  rad = skew * Math.PI / 180;
+	  value = Math.tan(rad);
+	  m = new WebKitCSSMatrix();
+	  m.m12 = value;
+	  m.m21 = value;
+	  return this.multiply(m);
+	};
+	
+	WebKitCSSMatrix.prototype.point = function(point) {
+	  var ref, w, x, y, z;
+	  if (point == null) {
+	    point = {};
+	  }
+	  ref = _.defaults(point, {
+	    x: 0,
+	    y: 0,
+	    z: 0
+	  }), x = ref.x, y = ref.y, z = ref.z;
+	  w = this.m14 * x + this.m24 * y + this.m34 * z + this.m44;
+	  w = w || 1;
+	  return point = {
+	    x: (this.m11 * x + this.m21 * y + this.m31 * z + this.m41) / w,
+	    y: (this.m12 * x + this.m22 * y + this.m32 * z + this.m42) / w,
+	    z: (this.m13 * x + this.m23 * y + this.m33 * z + this.m43) / w
+	  };
+	};
+	
+	exports.Matrix = WebKitCSSMatrix;
 
 
 /***/ },
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var FramerCSS, Utils;
+	var BaseClass, ColorModel, ColorType, bound01, convertToPercentage, correctAlpha, cssNames, hslToRgb, inputData, isNumeric, isOnePointZero, isPercentage, libhusl, matchers, numberFromString, pad2, percentToFraction, rgbToHex, rgbToHsl, rgbToRgb, rgbaFromHusl, stringToObject,
+	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
 	
-	Utils = __webpack_require__(2);
+	BaseClass = __webpack_require__(6).BaseClass;
 	
-	FramerCSS = "body {\n	margin: 0;\n}\n\n.framerContext {	\n	position: absolute;\n	left: 0;\n	top: 0;\n	right: 0;\n	bottom: 0;\n	pointer-events: none;\n	overflow: hidden;\n}\n\n.framerLayer {\n	display: block;\n	position: absolute;\n	background-repeat: no-repeat;\n	background-size: cover;\n	-webkit-overflow-scrolling: touch;\n	-webkit-box-sizing: border-box;\n	-webkit-user-select: none;\n}\n\n.framerLayer input,\n.framerLayer textarea,\n.framerLayer select,\n.framerLayer option,\n.framerLayer div[contenteditable=true]\n{\n	pointer-events: auto;\n	-webkit-user-select: auto;\n}\n\n.framerDebug {\n	padding: 6px;\n	color: #fff;\n	font: 10px/1em Monaco;\n}\n";
+	libhusl = __webpack_require__(11);
 	
-	Utils.domComplete(function() {
-	  return Utils.insertCSS(FramerCSS);
-	});
+	ColorType = {
+	  RGB: "rgb",
+	  HSL: "hsl",
+	  HEX: "hex",
+	  NAME: "name"
+	};
+	
+	exports.Color = (function(superClass) {
+	  extend(Color, superClass);
+	
+	  function Color(color1, r, g, b) {
+	    var color, input;
+	    this.color = color1;
+	    this.toInspect = bind(this.toInspect, this);
+	    if (this.color === "") {
+	      this.color = null;
+	    }
+	    color = this.color;
+	    if (Color.isColorObject(color)) {
+	      return color;
+	    }
+	    input = inputData(color, r, g, b);
+	    this._type = input.type;
+	    this._r = input.r;
+	    this._g = input.g;
+	    this._b = input.b;
+	    this._a = input.a;
+	    this._h = input.h;
+	    this._s = input.s;
+	    this._l = input.l;
+	    this._roundA = Math.round(100 * this._a) / 100;
+	  }
+	
+	  Color.define("r", {
+	    get: function() {
+	      return this._r;
+	    }
+	  });
+	
+	  Color.define("g", {
+	    get: function() {
+	      return this._g;
+	    }
+	  });
+	
+	  Color.define("b", {
+	    get: function() {
+	      return this._b;
+	    }
+	  });
+	
+	  Color.define("a", {
+	    get: function() {
+	      return this._a;
+	    }
+	  });
+	
+	  Color.define("h", {
+	    get: function() {
+	      return this._h;
+	    }
+	  });
+	
+	  Color.define("s", {
+	    get: function() {
+	      return this._s;
+	    }
+	  });
+	
+	  Color.define("l", {
+	    get: function() {
+	      return this._l;
+	    }
+	  });
+	
+	  Color.prototype.toHex = function(allow3Char) {
+	    return rgbToHex(this._r, this._g, this._b, allow3Char);
+	  };
+	
+	  Color.prototype.toHexString = function(allow3Char) {
+	    return "#" + this.toHex(allow3Char);
+	  };
+	
+	  Color.prototype.toRgb = function() {
+	    if (this._rgb === void 0) {
+	      this._rgb = {
+	        r: Math.round(this._r),
+	        g: Math.round(this._g),
+	        b: Math.round(this._b),
+	        a: this._a
+	      };
+	    }
+	    return this._rgb;
+	  };
+	
+	  Color.prototype.toRgbString = function() {
+	    if (this._a === 1) {
+	      return "rgb(" + (Utils.round(this._r, 0)) + ", " + (Utils.round(this._g, 0)) + ", " + (Utils.round(this._b, 0)) + ")";
+	    } else {
+	      return "rgba(" + (Utils.round(this._r, 0)) + ", " + (Utils.round(this._g, 0)) + ", " + (Utils.round(this._b, 0)) + ", " + this._roundA + ")";
+	    }
+	  };
+	
+	  Color.prototype.toHsl = function() {
+	    if (this._hsl === void 0) {
+	      this._hsl = {
+	        h: this.h,
+	        s: this.s,
+	        l: this.l,
+	        a: this.a
+	      };
+	    }
+	    return this._hsl;
+	  };
+	
+	  Color.prototype.toHusl = function() {
+	    var c, husl;
+	    if (this._husl === void 0) {
+	      c = libhusl._conv;
+	      husl = c.lch.husl(c.luv.lch(c.xyz.luv(c.rgb.xyz([this.r / 255, this.g / 255, this.b / 255]))));
+	      this._husl = {
+	        h: husl[0],
+	        s: husl[1],
+	        l: husl[2]
+	      };
+	    }
+	    return this._husl;
+	  };
+	
+	  Color.prototype.toHslString = function() {
+	    var h, hsl, l, s;
+	    if (this._hslString === void 0) {
+	      hsl = this.toHsl();
+	      h = Math.round(hsl.h);
+	      s = Math.round(hsl.s * 100);
+	      l = Math.round(hsl.l * 100);
+	      if (this._a === 1) {
+	        this._hslString = "hsl(" + h + ", " + s + "%, " + l + "%)";
+	      } else {
+	        this._hslString = "hsla(" + h + ", " + s + "%, " + l + "%, " + this._roundA + ")";
+	      }
+	    }
+	    return this._hslString;
+	  };
+	
+	  Color.prototype.toName = function() {
+	    var hex, i, key, len, ref, value;
+	    if (this._a === 0) {
+	      return "transparent";
+	    }
+	    if (this._a < 1) {
+	      return false;
+	    }
+	    hex = rgbToHex(this._r, this._g, this._b, true);
+	    ref = _.keys(cssNames);
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      key = ref[i];
+	      value = cssNames[key];
+	      if (value === hex) {
+	        return key;
+	      }
+	    }
+	    return false;
+	  };
+	
+	  Color.prototype.lighten = function(amount) {
+	    var hsl;
+	    if (amount == null) {
+	      amount = 10;
+	    }
+	    hsl = this.toHsl();
+	    hsl.l += amount / 100;
+	    hsl.l = Math.min(1, Math.max(0, hsl.l));
+	    return new Color(hsl);
+	  };
+	
+	  Color.prototype.brighten = function(amount) {
+	    var rgb;
+	    if (amount == null) {
+	      amount = 10;
+	    }
+	    rgb = this.toRgb();
+	    rgb.r = Math.max(0, Math.min(255, rgb.r - Math.round(255 * -(amount / 100))));
+	    rgb.g = Math.max(0, Math.min(255, rgb.g - Math.round(255 * -(amount / 100))));
+	    rgb.b = Math.max(0, Math.min(255, rgb.b - Math.round(255 * -(amount / 100))));
+	    return new Color(rgb);
+	  };
+	
+	  Color.prototype.darken = function(amount) {
+	    var hsl;
+	    if (amount == null) {
+	      amount = 10;
+	    }
+	    hsl = this.toHsl();
+	    hsl.l -= amount / 100;
+	    hsl.l = Math.min(1, Math.max(0, hsl.l));
+	    return new Color(hsl);
+	  };
+	
+	  Color.prototype.desaturate = function(amount) {
+	    var hsl;
+	    if (amount == null) {
+	      amount = 10;
+	    }
+	    hsl = this.toHsl();
+	    hsl.s -= amount / 100;
+	    hsl.s = Math.min(1, Math.max(0, hsl.s));
+	    return new Color(hsl);
+	  };
+	
+	  Color.prototype.saturate = function(amount) {
+	    var hsl;
+	    if (amount == null) {
+	      amount = 10;
+	    }
+	    hsl = this.toHsl();
+	    hsl.s += amount / 100;
+	    hsl.s = Math.min(1, Math.max(0, hsl.s));
+	    return new Color(hsl);
+	  };
+	
+	  Color.prototype.grayscale = function() {
+	    var hsl;
+	    hsl = this.toHsl();
+	    return new Color(hsl).desaturate(100);
+	  };
+	
+	  Color.prototype.toString = function() {
+	    return this.toRgbString();
+	  };
+	
+	  Color.prototype.transparent = function() {
+	    var result;
+	    return result = new Color({
+	      r: this.r,
+	      g: this.g,
+	      b: this.b,
+	      a: 0
+	    });
+	  };
+	
+	  Color.prototype.mix = function(colorB, fraction, limit, model) {
+	    if (limit == null) {
+	      limit = false;
+	    }
+	    return Color.mix(this, colorB, fraction, limit, model);
+	  };
+	
+	  Color.prototype.isEqual = function(colorB) {
+	    return Color.equal(this, colorB);
+	  };
+	
+	  Color.prototype.toInspect = function() {
+	    if (this._type === ColorType.HSL) {
+	      return "<" + this.constructor.name + " h:" + this.h + " s:" + this.s + " l:" + this.l + " a:" + this.a + ">";
+	    } else if (this._type === ColorType.HEX || this._type === ColorType.NAME) {
+	      return "<" + this.constructor.name + " \"" + this.color + "\">";
+	    } else {
+	      return "<" + this.constructor.name + " r:" + this.r + " g:" + this.g + " b:" + this.b + " a:" + this.a + ">";
+	    }
+	  };
+	
+	  Color.mix = function(colorA, colorB, fraction, limit, model) {
+	    var deltaH, fromH, hslA, hslB, result, toH, tween;
+	    if (fraction == null) {
+	      fraction = .5;
+	    }
+	    if (limit == null) {
+	      limit = false;
+	    }
+	    result = null;
+	    if (typeof colorA === "string" && this.isColorString(colorA)) {
+	      colorA = new Color(colorA);
+	    }
+	    if (typeof colorB === "string" && this.isColorString(colorB)) {
+	      colorB = new Color(colorB);
+	    }
+	    if (!(colorA instanceof Color) && colorB instanceof Color) {
+	      colorA = colorB.transparent();
+	    } else if (colorA instanceof Color && colorA._a === 0 && colorB instanceof Color && colorB._a !== 0) {
+	      colorA = colorB.transparent();
+	    } else if (!(colorB instanceof Color) && colorA instanceof Color) {
+	      colorB = colorA.transparent();
+	    } else if (colorB instanceof Color && colorB._a === 0 && colorA instanceof Color && colorA._a !== 0) {
+	      colorB = colorA.transparent();
+	    }
+	    if (colorB instanceof Color) {
+	      if (ColorModel.isRGB(model)) {
+	        result = new Color({
+	          r: Utils.modulate(fraction, [0, 1], [colorA._r, colorB._r], limit),
+	          g: Utils.modulate(fraction, [0, 1], [colorA._g, colorB._g], limit),
+	          b: Utils.modulate(fraction, [0, 1], [colorA._b, colorB._b], limit),
+	          a: Utils.modulate(fraction, [0, 1], [colorA._a, colorB._a], limit)
+	        });
+	      } else {
+	        hslA;
+	        hslB;
+	        if (ColorModel.isHSL(model)) {
+	          hslA = colorA.toHsl();
+	          hslB = colorB.toHsl();
+	        } else {
+	          hslA = colorA.toHusl();
+	          hslB = colorB.toHusl();
+	        }
+	        if (hslA.s === 0) {
+	          hslA.h = hslB.h;
+	        } else if (hslB.s === 0) {
+	          hslB.h = hslA.h;
+	        }
+	        fromH = hslA.h;
+	        toH = hslB.h;
+	        deltaH = toH - fromH;
+	        if (deltaH > 180) {
+	          deltaH = (toH - 360) - fromH;
+	        } else if (deltaH < -180) {
+	          deltaH = (toH + 360) - fromH;
+	        }
+	        tween = {
+	          h: Utils.modulate(fraction, [0, 1], [fromH, fromH + deltaH], limit),
+	          s: Utils.modulate(fraction, [0, 1], [hslA.s, hslB.s], limit),
+	          l: Utils.modulate(fraction, [0, 1], [hslA.l, hslB.l], limit),
+	          a: Utils.modulate(fraction, [0, 1], [colorA.a, colorB.a], limit)
+	        };
+	        if (ColorModel.isHSL(model)) {
+	          result = new Color(tween);
+	        } else {
+	          result = new Color(rgbaFromHusl(tween));
+	        }
+	      }
+	    }
+	    return result;
+	  };
+	
+	  Color.random = function(alpha) {
+	    var c;
+	    if (alpha == null) {
+	      alpha = 1.0;
+	    }
+	    c = function() {
+	      return parseInt(Math.random() * 255);
+	    };
+	    return new Color("rgba(" + (c()) + ", " + (c()) + ", " + (c()) + ", " + alpha + ")");
+	  };
+	
+	  Color.toColor = function(color) {
+	    return new Color(color);
+	  };
+	
+	  Color.validColorValue = function(color) {
+	    return color instanceof Color || color === null;
+	  };
+	
+	  Color.isColor = function(color) {
+	    if (_.isString(color)) {
+	      return this.isColorString(color);
+	    } else {
+	      return this.isColorObject(color);
+	    }
+	  };
+	
+	  Color.isColorObject = function(color) {
+	    return color instanceof Color;
+	  };
+	
+	  Color.isColorString = function(colorString) {
+	    if (_.isString(colorString)) {
+	      return stringToObject(colorString) !== false;
+	    }
+	    return false;
+	  };
+	
+	  Color.equal = function(colorA, colorB) {
+	    if (!this.validColorValue(colorA)) {
+	      if (!Color.isColorString(colorA)) {
+	        return false;
+	      }
+	    }
+	    if (!this.validColorValue(colorB)) {
+	      if (!Color.isColorString(colorB)) {
+	        return false;
+	      }
+	    }
+	    colorA = new Color(colorA);
+	    colorB = new Color(colorB);
+	    if (colorA.r !== colorB.r) {
+	      return false;
+	    }
+	    if (colorA.g !== colorB.g) {
+	      return false;
+	    }
+	    if (colorA.b !== colorB.b) {
+	      return false;
+	    }
+	    if (colorA.a !== colorB.a) {
+	      return false;
+	    }
+	    return true;
+	  };
+	
+	  Color.rgbToHsl = function(a, b, c) {
+	    return rgbToHsl(a, b, c);
+	  };
+	
+	  return Color;
+	
+	})(BaseClass);
+	
+	ColorModel = {
+	  RGB: "rgb",
+	  RGBA: "rgba",
+	  HSL: "hsl",
+	  HSLA: "hsla"
+	};
+	
+	ColorModel.isRGB = function(colorModel) {
+	  var ref;
+	  if (_.isString(colorModel)) {
+	    return (ref = colorModel.toLowerCase()) === ColorModel.RGB || ref === ColorModel.RGBA;
+	  }
+	  return false;
+	};
+	
+	ColorModel.isHSL = function(colorModel) {
+	  var ref;
+	  if (_.isString(colorModel)) {
+	    return (ref = colorModel.toLowerCase()) === ColorModel.HSL || ref === ColorModel.HSLA;
+	  }
+	  return false;
+	};
+	
+	rgbaFromHusl = function(husl) {
+	  var c, rgb, rgba;
+	  c = libhusl._conv;
+	  rgb = c.xyz.rgb(c.luv.xyz(c.lch.luv(c.husl.lch([husl.h, husl.s, husl.l]))));
+	  rgba = {
+	    r: rgb[0] * 255,
+	    g: rgb[1] * 255,
+	    b: rgb[2] * 255,
+	    a: husl.a
+	  };
+	  return rgba;
+	};
+	
+	inputData = function(color, g, b, alpha) {
+	  var a, h, hsl, l, ok, rgb, s, type;
+	  rgb = {
+	    r: 0,
+	    g: 0,
+	    b: 0
+	  };
+	  hsl = {
+	    h: 0,
+	    s: 0,
+	    l: 0
+	  };
+	  a = 1;
+	  ok = false;
+	  type = ColorType.RGB;
+	  if (color === null) {
+	    a = 0;
+	  } else if (_.isNumber(color)) {
+	    rgb.r = color;
+	    if (_.isNumber(g)) {
+	      rgb.g = g;
+	    }
+	    if (_.isNumber(b)) {
+	      rgb.b = b;
+	    }
+	    if (_.isNumber(alpha)) {
+	      a = alpha;
+	    }
+	  } else {
+	    if (typeof color === "string") {
+	      color = stringToObject(color);
+	      if (!color) {
+	        color = {
+	          r: 0,
+	          g: 0,
+	          b: 0,
+	          a: 0
+	        };
+	      }
+	      if (color.hasOwnProperty("type")) {
+	        type = color.type;
+	      }
+	    }
+	    if (typeof color === "object") {
+	      if (color.hasOwnProperty("r") || color.hasOwnProperty("g") || color.hasOwnProperty("b")) {
+	        rgb = rgbToRgb(color.r, color.g, color.b);
+	      } else if (color.hasOwnProperty("h") || color.hasOwnProperty("s") || color.hasOwnProperty("l")) {
+	        h = isNumeric(color.h) ? parseFloat(color.h) : 0;
+	        h = (h + 360) % 360;
+	        s = isNumeric(color.s) ? color.s : 1;
+	        if (_.isString(color.s)) {
+	          s = numberFromString(color.s);
+	        }
+	        l = isNumeric(color.l) ? color.l : 0.5;
+	        if (_.isString(color.l)) {
+	          l = numberFromString(color.l);
+	        }
+	        rgb = hslToRgb(h, s, l);
+	        type = ColorType.HSL;
+	        hsl = {
+	          h: h,
+	          s: s,
+	          l: l
+	        };
+	      }
+	      if (color.hasOwnProperty("a")) {
+	        a = color.a;
+	      }
+	    }
+	  }
+	  a = correctAlpha(a);
+	  if (type !== ColorType.HSL) {
+	    hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+	  }
+	  return {
+	    type: type,
+	    r: Math.min(255, Math.max(rgb.r, 0)),
+	    g: Math.min(255, Math.max(rgb.g, 0)),
+	    b: Math.min(255, Math.max(rgb.b, 0)),
+	    h: Utils.clamp(hsl.h, 0, 360),
+	    s: Utils.clamp(hsl.s, 0, 1),
+	    l: Utils.clamp(hsl.l, 0, 1),
+	    a: a
+	  };
+	};
+	
+	numberFromString = function(string) {
+	  return string.match(/\d+/)[0];
+	};
+	
+	rgbToRgb = function(r, g, b) {
+	  return {
+	    r: isNumeric(r) ? bound01(r, 255) * 255 : 0,
+	    g: isNumeric(g) ? bound01(g, 255) * 255 : 0,
+	    b: isNumeric(b) ? bound01(b, 255) * 255 : 0
+	  };
+	};
+	
+	rgbToHex = function(r, g, b, allow3Char) {
+	  var hex;
+	  hex = [pad2(Math.round(r).toString(16)), pad2(Math.round(g).toString(16)), pad2(Math.round(b).toString(16))];
+	  if (allow3Char && hex[0].charAt(0) === hex[0].charAt(1) && hex[1].charAt(0) === hex[1].charAt(1) && hex[2].charAt(0) === hex[2].charAt(1)) {
+	    return hex[0].charAt(0) + hex[1].charAt(0) + hex[2].charAt(0);
+	  }
+	  return hex.join("");
+	};
+	
+	rgbToHsl = function(r, g, b) {
+	  var d, h, l, max, min, s;
+	  r = bound01(r, 255);
+	  g = bound01(g, 255);
+	  b = bound01(b, 255);
+	  max = Math.max(r, g, b);
+	  min = Math.min(r, g, b);
+	  h = s = l = (max + min) / 2;
+	  if (max === min) {
+	    h = s = 0;
+	  } else {
+	    d = max - min;
+	    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+	    switch (max) {
+	      case r:
+	        h = (g - b) / d + (g < b ? 6 : 0);
+	        break;
+	      case g:
+	        h = (b - r) / d + 2;
+	        break;
+	      case b:
+	        h = (r - g) / d + 4;
+	    }
+	    h /= 6;
+	  }
+	  return {
+	    h: h * 360,
+	    s: s,
+	    l: l
+	  };
+	};
+	
+	hslToRgb = function(h, s, l) {
+	  var b, g, hue2rgb, p, q, r;
+	  r = void 0;
+	  g = void 0;
+	  b = void 0;
+	  h = bound01(h, 360);
+	  s = bound01(s * 100, 100);
+	  l = bound01(l * 100, 100);
+	  hue2rgb = function(p, q, t) {
+	    if (t < 0) {
+	      t += 1;
+	    }
+	    if (t > 1) {
+	      t -= 1;
+	    }
+	    if (t < 1 / 6) {
+	      return p + (q - p) * 6 * t;
+	    }
+	    if (t < 1 / 2) {
+	      return q;
+	    }
+	    if (t < 2 / 3) {
+	      return p + (q - p) * (2 / 3 - t) * 6;
+	    }
+	    return p;
+	  };
+	  if (s === 0) {
+	    r = g = b = l;
+	  } else {
+	    q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+	    p = 2 * l - q;
+	    r = hue2rgb(p, q, h + 1 / 3);
+	    g = hue2rgb(p, q, h);
+	    b = hue2rgb(p, q, h - (1 / 3));
+	  }
+	  return {
+	    r: r * 255,
+	    g: g * 255,
+	    b: b * 255
+	  };
+	};
+	
+	convertToPercentage = function(n) {
+	  if (n <= 1) {
+	    n = n * 100 + "%";
+	  }
+	  return n;
+	};
+	
+	correctAlpha = function(a) {
+	  a = parseFloat(a);
+	  if (a < 0) {
+	    a = 0;
+	  }
+	  if (isNaN(a) || a > 1) {
+	    a = 1;
+	  }
+	  return a;
+	};
+	
+	bound01 = function(n, max) {
+	  var processPercent;
+	  if (isOnePointZero(n)) {
+	    n = "100%";
+	  }
+	  processPercent = isPercentage(n);
+	  n = Math.min(max, Math.max(0, parseFloat(n)));
+	  if (processPercent) {
+	    n = parseInt(n * max, 10) / 100;
+	  }
+	  if (Math.abs(n - max) < 0.000001) {
+	    return 1;
+	  }
+	  return n % max / parseFloat(max);
+	};
+	
+	isOnePointZero = function(n) {
+	  return typeof n === "string" && n.indexOf(".") !== -1 && parseFloat(n) === 1;
+	};
+	
+	isPercentage = function(n) {
+	  return typeof n === "string" && n.indexOf("%") !== -1;
+	};
+	
+	pad2 = function(char) {
+	  if (char.length === 1) {
+	    return "0" + char;
+	  } else {
+	    return "" + char;
+	  }
+	};
+	
+	matchers = (function() {
+	  var css_integer, css_number, css_unit, permissive_match3, permissive_match4;
+	  css_integer = '[-\\+]?\\d+%?';
+	  css_number = "[-\\+]?\\d*\\.\\d+%?";
+	  css_unit = "(?:" + css_number + ")|(?:" + css_integer + ")";
+	  permissive_match3 = '[\\s|\\(]+(' + css_unit + ')[,|\\s]+(' + css_unit + ')[,|\\s]+(' + css_unit + ')\\s*\\)?';
+	  permissive_match4 = '[\\s|\\(]+(' + css_unit + ')[,|\\s]+(' + css_unit + ')[,|\\s]+(' + css_unit + ')[,|\\s]+(' + css_unit + ')\\s*\\)?';
+	  return {
+	    rgb: new RegExp('rgb' + permissive_match3),
+	    rgba: new RegExp('rgba' + permissive_match4),
+	    hsl: new RegExp('hsl' + permissive_match3),
+	    hsla: new RegExp('hsla' + permissive_match4),
+	    hex3: /^([0-9a-fA-F]{1})([0-9a-fA-F]{1})([0-9a-fA-F]{1})$/,
+	    hex6: /^([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/
+	  };
+	})();
+	
+	isNumeric = function(value) {
+	  return !isNaN(value) && isFinite(value);
+	};
+	
+	percentToFraction = function(percentage) {
+	  return numberFromString(percentage) / 100;
+	};
+	
+	stringToObject = function(color) {
+	  var match, named, trimLeft, trimRight;
+	  trimLeft = /^[\s,#]+/;
+	  trimRight = /\s+$/;
+	  color = color.replace(trimLeft, "").replace(trimRight, "").toLowerCase();
+	  named = false;
+	  if (cssNames[color]) {
+	    color = cssNames[color];
+	    named = true;
+	    ({
+	      type: ColorType.NAME
+	    });
+	  } else if (color === "transparent") {
+	    return {
+	      r: 0,
+	      g: 0,
+	      b: 0,
+	      a: 0,
+	      type: ColorType.NAME
+	    };
+	  }
+	  match = void 0;
+	  if (match = matchers.rgb.exec(color)) {
+	    return {
+	      r: match[1],
+	      g: match[2],
+	      b: match[3]
+	    };
+	  }
+	  if (match = matchers.rgba.exec(color)) {
+	    return {
+	      r: match[1],
+	      g: match[2],
+	      b: match[3],
+	      a: match[4]
+	    };
+	  }
+	  if (match = matchers.hsl.exec(color)) {
+	    return {
+	      h: match[1],
+	      s: percentToFraction(match[2]),
+	      l: percentToFraction(match[3])
+	    };
+	  }
+	  if (match = matchers.hsla.exec(color)) {
+	    return {
+	      h: match[1],
+	      s: percentToFraction(match[2]),
+	      l: percentToFraction(match[3]),
+	      a: match[4]
+	    };
+	  }
+	  if (match = matchers.hex6.exec(color) || (match = matchers.hex6.exec(cssNames[color]))) {
+	    return {
+	      r: parseInt(match[1], 16),
+	      g: parseInt(match[2], 16),
+	      b: parseInt(match[3], 16),
+	      a: 1,
+	      type: ColorType.HEX
+	    };
+	  }
+	  if (match = matchers.hex3.exec(color) || (match = matchers.hex3.exec(cssNames[color]))) {
+	    return {
+	      r: parseInt(match[1] + "" + match[1], 16),
+	      g: parseInt(match[2] + "" + match[2], 16),
+	      b: parseInt(match[3] + "" + match[3], 16),
+	      type: ColorType.HEX
+	    };
+	  } else {
+	    return false;
+	  }
+	};
+	
+	cssNames = {
+	  aliceblue: "f0f8ff",
+	  antiquewhite: "faebd7",
+	  aqua: "0ff",
+	  aquamarine: "7fffd4",
+	  azure: "f0ffff",
+	  beige: "f5f5dc",
+	  bisque: "ffe4c4",
+	  black: "000",
+	  blanchedalmond: "ffebcd",
+	  blue: "00f",
+	  blueviolet: "8a2be2",
+	  brown: "a52a2a",
+	  burlywood: "deb887",
+	  burntsienna: "ea7e5d",
+	  cadetblue: "5f9ea0",
+	  chartreuse: "7fff00",
+	  chocolate: "d2691e",
+	  coral: "ff7f50",
+	  cornflowerblue: "6495ed",
+	  cornsilk: "fff8dc",
+	  crimson: "dc143c",
+	  cyan: "0ff",
+	  darkblue: "00008b",
+	  darkcyan: "008b8b",
+	  darkgoldenrod: "b8860b",
+	  darkgray: "a9a9a9",
+	  darkgreen: "006400",
+	  darkgrey: "a9a9a9",
+	  darkkhaki: "bdb76b",
+	  darkmagenta: "8b008b",
+	  darkolivegreen: "556b2f",
+	  darkorange: "ff8c00",
+	  darkorchid: "9932cc",
+	  darkred: "8b0000",
+	  darksalmon: "e9967a",
+	  darkseagreen: "8fbc8f",
+	  darkslateblue: "483d8b",
+	  darkslategray: "2f4f4f",
+	  darkslategrey: "2f4f4f",
+	  darkturquoise: "00ced1",
+	  darkviolet: "9400d3",
+	  deeppink: "ff1493",
+	  deepskyblue: "00bfff",
+	  dimgray: "696969",
+	  dimgrey: "696969",
+	  dodgerblue: "1e90ff",
+	  firebrick: "b22222",
+	  floralwhite: "fffaf0",
+	  forestgreen: "228b22",
+	  fuchsia: "f0f",
+	  gainsboro: "dcdcdc",
+	  ghostwhite: "f8f8ff",
+	  gold: "ffd700",
+	  goldenrod: "daa520",
+	  gray: "808080",
+	  green: "008000",
+	  greenyellow: "adff2f",
+	  grey: "808080",
+	  honeydew: "f0fff0",
+	  hotpink: "ff69b4",
+	  indianred: "cd5c5c",
+	  indigo: "4b0082",
+	  ivory: "fffff0",
+	  khaki: "f0e68c",
+	  lavender: "e6e6fa",
+	  lavenderblush: "fff0f5",
+	  lawngreen: "7cfc00",
+	  lemonchiffon: "fffacd",
+	  lightblue: "add8e6",
+	  lightcoral: "f08080",
+	  lightcyan: "e0ffff",
+	  lightgoldenrodyellow: "fafad2",
+	  lightgray: "d3d3d3",
+	  lightgreen: "90ee90",
+	  lightgrey: "d3d3d3",
+	  lightpink: "ffb6c1",
+	  lightsalmon: "ffa07a",
+	  lightseagreen: "20b2aa",
+	  lightskyblue: "87cefa",
+	  lightslategray: "789",
+	  lightslategrey: "789",
+	  lightsteelblue: "b0c4de",
+	  lightyellow: "ffffe0",
+	  lime: "0f0",
+	  limegreen: "32cd32",
+	  linen: "faf0e6",
+	  magenta: "f0f",
+	  maroon: "800000",
+	  mediumaquamarine: "66cdaa",
+	  mediumblue: "0000cd",
+	  mediumorchid: "ba55d3",
+	  mediumpurple: "9370db",
+	  mediumseagreen: "3cb371",
+	  mediumslateblue: "7b68ee",
+	  mediumspringgreen: "00fa9a",
+	  mediumturquoise: "48d1cc",
+	  mediumvioletred: "c71585",
+	  midnightblue: "191970",
+	  mintcream: "f5fffa",
+	  mistyrose: "ffe4e1",
+	  moccasin: "ffe4b5",
+	  navajowhite: "ffdead",
+	  navy: "000080",
+	  oldlace: "fdf5e6",
+	  olive: "808000",
+	  olivedrab: "6b8e23",
+	  orange: "ffa500",
+	  orangered: "ff4500",
+	  orchid: "da70d6",
+	  palegoldenrod: "eee8aa",
+	  palegreen: "98fb98",
+	  paleturquoise: "afeeee",
+	  palevioletred: "db7093",
+	  papayawhip: "ffefd5",
+	  peachpuff: "ffdab9",
+	  peru: "cd853f",
+	  pink: "ffc0cb",
+	  plum: "dda0dd",
+	  powderblue: "b0e0e6",
+	  purple: "800080",
+	  rebeccapurple: "663399",
+	  red: "f00",
+	  rosybrown: "bc8f8f",
+	  royalblue: "4169e1",
+	  saddlebrown: "8b4513",
+	  salmon: "fa8072",
+	  sandybrown: "f4a460",
+	  seagreen: "2e8b57",
+	  seashell: "fff5ee",
+	  sienna: "a0522d",
+	  silver: "c0c0c0",
+	  skyblue: "87ceeb",
+	  slateblue: "6a5acd",
+	  slategray: "708090",
+	  slategrey: "708090",
+	  snow: "fffafa",
+	  springgreen: "00ff7f",
+	  steelblue: "4682b4",
+	  tan: "d2b48c",
+	  teal: "008080",
+	  thistle: "d8bfd8",
+	  tomato: "ff6347",
+	  turquoise: "40e0d0",
+	  violet: "ee82ee",
+	  wheat: "f5deb3",
+	  white: "fff",
+	  whitesmoke: "f5f5f5",
+	  yellow: "ff0",
+	  yellowgreen: "9acd32"
+	};
 
 
 /***/ },
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var EventManagerElement, EventManagerIdCounter,
-	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {// Generated by CoffeeScript 1.9.3
+	(function() {
+	  var L_to_Y, Y_to_L, conv, distanceFromPole, dotProduct, epsilon, fromLinear, getBounds, intersectLineLine, kappa, lengthOfRayUntilIntersect, m, m_inv, maxChromaForLH, maxSafeChromaForL, refU, refV, root, toLinear;
 	
-	EventManagerIdCounter = 0;
-	
-	EventManagerElement = (function() {
-	  function EventManagerElement(element1) {
-	    this.element = element1;
-	    this._events = {};
-	  }
-	
-	  EventManagerElement.prototype.addEventListener = function(eventName, listener) {
-	    var base;
-	    if ((base = this._events)[eventName] == null) {
-	      base[eventName] = [];
-	    }
-	    this._events[eventName].push(listener);
-	    return this.element.addEventListener(eventName, listener);
+	  m = {
+	    R: [3.2409699419045214, -1.5373831775700935, -0.49861076029300328],
+	    G: [-0.96924363628087983, 1.8759675015077207, 0.041555057407175613],
+	    B: [0.055630079696993609, -0.20397695888897657, 1.0569715142428786]
 	  };
 	
-	  EventManagerElement.prototype.removeEventListener = function(event, listener) {
-	    if (!this._events) {
-	      return;
-	    }
-	    if (!this._events[event]) {
-	      return;
-	    }
-	    this._events[event] = _.without(this._events[event], listener);
-	    this.element.removeEventListener(event, listener);
+	  m_inv = {
+	    X: [0.41239079926595948, 0.35758433938387796, 0.18048078840183429],
+	    Y: [0.21263900587151036, 0.71516867876775593, 0.072192315360733715],
+	    Z: [0.019330818715591851, 0.11919477979462599, 0.95053215224966058]
 	  };
 	
-	  EventManagerElement.prototype.removeAllEventListeners = function(eventName) {
-	    var eventListener, events, i, j, len, len1, ref;
-	    events = eventName ? [eventName] : _.keys(this._events);
-	    for (i = 0, len = events.length; i < len; i++) {
-	      eventName = events[i];
-	      ref = this._events[eventName];
-	      for (j = 0, len1 = ref.length; j < len1; j++) {
-	        eventListener = ref[j];
-	        this.removeEventListener(eventName, eventListener);
+	  refU = 0.19783000664283681;
+	
+	  refV = 0.468319994938791;
+	
+	  kappa = 903.2962962962963;
+	
+	  epsilon = 0.0088564516790356308;
+	
+	  getBounds = function(L) {
+	    var bottom, channel, j, k, len1, len2, m1, m2, m3, ref, ref1, ref2, ret, sub1, sub2, t, top1, top2;
+	    sub1 = Math.pow(L + 16, 3) / 1560896;
+	    sub2 = sub1 > epsilon ? sub1 : L / kappa;
+	    ret = [];
+	    ref = ['R', 'G', 'B'];
+	    for (j = 0, len1 = ref.length; j < len1; j++) {
+	      channel = ref[j];
+	      ref1 = m[channel], m1 = ref1[0], m2 = ref1[1], m3 = ref1[2];
+	      ref2 = [0, 1];
+	      for (k = 0, len2 = ref2.length; k < len2; k++) {
+	        t = ref2[k];
+	        top1 = (284517 * m1 - 94839 * m3) * sub2;
+	        top2 = (838422 * m3 + 769860 * m2 + 731718 * m1) * L * sub2 - 769860 * t * L;
+	        bottom = (632260 * m3 - 126452 * m2) * sub2 + 126452 * t;
+	        ret.push([top1 / bottom, top2 / bottom]);
 	      }
 	    }
+	    return ret;
 	  };
 	
-	  EventManagerElement.prototype.once = function(event, listener) {
-	    var fn;
-	    fn = (function(_this) {
-	      return function() {
-	        _this.removeListener(event, fn);
-	        return listener.apply(null, arguments);
-	      };
-	    })(this);
-	    return this.on(event, fn);
+	  intersectLineLine = function(line1, line2) {
+	    return (line1[1] - line2[1]) / (line2[0] - line1[0]);
 	  };
 	
-	  EventManagerElement.prototype.on = EventManagerElement.prototype.addEventListener;
+	  distanceFromPole = function(point) {
+	    return Math.sqrt(Math.pow(point[0], 2) + Math.pow(point[1], 2));
+	  };
 	
-	  EventManagerElement.prototype.off = EventManagerElement.prototype.removeEventListener;
-	
-	  return EventManagerElement;
-	
-	})();
-	
-	exports.EventManager = (function() {
-	  function EventManager(element) {
-	    this.wrap = bind(this.wrap, this);
-	    this._elements = {};
-	  }
-	
-	  EventManager.prototype.wrap = function(element) {
-	    if (!element._eventManagerId) {
-	      element._eventManagerId = EventManagerIdCounter++;
+	  lengthOfRayUntilIntersect = function(theta, line) {
+	    var b1, len, m1;
+	    m1 = line[0], b1 = line[1];
+	    len = b1 / (Math.sin(theta) - m1 * Math.cos(theta));
+	    if (len < 0) {
+	      return null;
 	    }
-	    if (!this._elements[element._eventManagerId]) {
-	      this._elements[element._eventManagerId] = new EventManagerElement(element);
-	    }
-	    return this._elements[element._eventManagerId];
+	    return len;
 	  };
 	
-	  EventManager.prototype.reset = function() {
-	    var element, elementEventManager, ref, results;
-	    ref = this._elements;
+	  maxSafeChromaForL = function(L) {
+	    var b1, j, len1, lengths, m1, ref, ref1, x;
+	    lengths = [];
+	    ref = getBounds(L);
+	    for (j = 0, len1 = ref.length; j < len1; j++) {
+	      ref1 = ref[j], m1 = ref1[0], b1 = ref1[1];
+	      x = intersectLineLine([m1, b1], [-1 / m1, 0]);
+	      lengths.push(distanceFromPole([x, b1 + x * m1]));
+	    }
+	    return Math.min.apply(Math, lengths);
+	  };
+	
+	  maxChromaForLH = function(L, H) {
+	    var hrad, j, l, len1, lengths, line, ref;
+	    hrad = H / 360 * Math.PI * 2;
+	    lengths = [];
+	    ref = getBounds(L);
+	    for (j = 0, len1 = ref.length; j < len1; j++) {
+	      line = ref[j];
+	      l = lengthOfRayUntilIntersect(hrad, line);
+	      if (l !== null) {
+	        lengths.push(l);
+	      }
+	    }
+	    return Math.min.apply(Math, lengths);
+	  };
+	
+	  dotProduct = function(a, b) {
+	    var i, j, ref, ret;
+	    ret = 0;
+	    for (i = j = 0, ref = a.length - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
+	      ret += a[i] * b[i];
+	    }
+	    return ret;
+	  };
+	
+	  fromLinear = function(c) {
+	    if (c <= 0.0031308) {
+	      return 12.92 * c;
+	    } else {
+	      return 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+	    }
+	  };
+	
+	  toLinear = function(c) {
+	    var a;
+	    a = 0.055;
+	    if (c > 0.04045) {
+	      return Math.pow((c + a) / (1 + a), 2.4);
+	    } else {
+	      return c / 12.92;
+	    }
+	  };
+	
+	  conv = {
+	    'xyz': {},
+	    'luv': {},
+	    'lch': {},
+	    'husl': {},
+	    'huslp': {},
+	    'rgb': {},
+	    'hex': {}
+	  };
+	
+	  conv.xyz.rgb = function(tuple) {
+	    var B, G, R;
+	    R = fromLinear(dotProduct(m.R, tuple));
+	    G = fromLinear(dotProduct(m.G, tuple));
+	    B = fromLinear(dotProduct(m.B, tuple));
+	    return [R, G, B];
+	  };
+	
+	  conv.rgb.xyz = function(tuple) {
+	    var B, G, R, X, Y, Z, rgbl;
+	    R = tuple[0], G = tuple[1], B = tuple[2];
+	    rgbl = [toLinear(R), toLinear(G), toLinear(B)];
+	    X = dotProduct(m_inv.X, rgbl);
+	    Y = dotProduct(m_inv.Y, rgbl);
+	    Z = dotProduct(m_inv.Z, rgbl);
+	    return [X, Y, Z];
+	  };
+	
+	  Y_to_L = function(Y) {
+	    if (Y <= epsilon) {
+	      return Y * kappa;
+	    } else {
+	      return 116 * Math.pow(Y, 1 / 3) - 16;
+	    }
+	  };
+	
+	  L_to_Y = function(L) {
+	    if (L <= 8) {
+	      return L / kappa;
+	    } else {
+	      return Math.pow((L + 16) / 116, 3);
+	    }
+	  };
+	
+	  conv.xyz.luv = function(tuple) {
+	    var L, U, V, X, Y, Z, varU, varV;
+	    X = tuple[0], Y = tuple[1], Z = tuple[2];
+	    if (Y === 0) {
+	      return [0, 0, 0];
+	    }
+	    L = Y_to_L(Y);
+	    varU = (4 * X) / (X + (15 * Y) + (3 * Z));
+	    varV = (9 * Y) / (X + (15 * Y) + (3 * Z));
+	    U = 13 * L * (varU - refU);
+	    V = 13 * L * (varV - refV);
+	    return [L, U, V];
+	  };
+	
+	  conv.luv.xyz = function(tuple) {
+	    var L, U, V, X, Y, Z, varU, varV;
+	    L = tuple[0], U = tuple[1], V = tuple[2];
+	    if (L === 0) {
+	      return [0, 0, 0];
+	    }
+	    varU = U / (13 * L) + refU;
+	    varV = V / (13 * L) + refV;
+	    Y = L_to_Y(L);
+	    X = 0 - (9 * Y * varU) / ((varU - 4) * varV - varU * varV);
+	    Z = (9 * Y - (15 * varV * Y) - (varV * X)) / (3 * varV);
+	    return [X, Y, Z];
+	  };
+	
+	  conv.luv.lch = function(tuple) {
+	    var C, H, Hrad, L, U, V;
+	    L = tuple[0], U = tuple[1], V = tuple[2];
+	    C = Math.sqrt(Math.pow(U, 2) + Math.pow(V, 2));
+	    if (C < 0.00000001) {
+	      H = 0;
+	    } else {
+	      Hrad = Math.atan2(V, U);
+	      H = Hrad * 360 / 2 / Math.PI;
+	      if (H < 0) {
+	        H = 360 + H;
+	      }
+	    }
+	    return [L, C, H];
+	  };
+	
+	  conv.lch.luv = function(tuple) {
+	    var C, H, Hrad, L, U, V;
+	    L = tuple[0], C = tuple[1], H = tuple[2];
+	    Hrad = H / 360 * 2 * Math.PI;
+	    U = Math.cos(Hrad) * C;
+	    V = Math.sin(Hrad) * C;
+	    return [L, U, V];
+	  };
+	
+	  conv.husl.lch = function(tuple) {
+	    var C, H, L, S, max;
+	    H = tuple[0], S = tuple[1], L = tuple[2];
+	    if (L > 99.9999999 || L < 0.00000001) {
+	      C = 0;
+	    } else {
+	      max = maxChromaForLH(L, H);
+	      C = max / 100 * S;
+	    }
+	    return [L, C, H];
+	  };
+	
+	  conv.lch.husl = function(tuple) {
+	    var C, H, L, S, max;
+	    L = tuple[0], C = tuple[1], H = tuple[2];
+	    if (L > 99.9999999 || L < 0.00000001) {
+	      S = 0;
+	    } else {
+	      max = maxChromaForLH(L, H);
+	      S = C / max * 100;
+	    }
+	    return [H, S, L];
+	  };
+	
+	  conv.huslp.lch = function(tuple) {
+	    var C, H, L, S, max;
+	    H = tuple[0], S = tuple[1], L = tuple[2];
+	    if (L > 99.9999999 || L < 0.00000001) {
+	      C = 0;
+	    } else {
+	      max = maxSafeChromaForL(L);
+	      C = max / 100 * S;
+	    }
+	    return [L, C, H];
+	  };
+	
+	  conv.lch.huslp = function(tuple) {
+	    var C, H, L, S, max;
+	    L = tuple[0], C = tuple[1], H = tuple[2];
+	    if (L > 99.9999999 || L < 0.00000001) {
+	      S = 0;
+	    } else {
+	      max = maxSafeChromaForL(L);
+	      S = C / max * 100;
+	    }
+	    return [H, S, L];
+	  };
+	
+	  conv.rgb.hex = function(tuple) {
+	    var ch, hex, j, len1;
+	    hex = "#";
+	    for (j = 0, len1 = tuple.length; j < len1; j++) {
+	      ch = tuple[j];
+	      ch = Math.round(ch * 1e6) / 1e6;
+	      if (ch < 0 || ch > 1) {
+	        throw new Error("Illegal rgb value: " + ch);
+	      }
+	      ch = Math.round(ch * 255).toString(16);
+	      if (ch.length === 1) {
+	        ch = "0" + ch;
+	      }
+	      hex += ch;
+	    }
+	    return hex;
+	  };
+	
+	  conv.hex.rgb = function(hex) {
+	    var b, g, j, len1, n, r, ref, results;
+	    if (hex.charAt(0) === "#") {
+	      hex = hex.substring(1, 7);
+	    }
+	    r = hex.substring(0, 2);
+	    g = hex.substring(2, 4);
+	    b = hex.substring(4, 6);
+	    ref = [r, g, b];
 	    results = [];
-	    for (element in ref) {
-	      elementEventManager = ref[element];
-	      results.push(elementEventManager.removeAllEventListeners());
+	    for (j = 0, len1 = ref.length; j < len1; j++) {
+	      n = ref[j];
+	      results.push(parseInt(n, 16) / 255);
 	    }
 	    return results;
 	  };
 	
-	  return EventManager;
-
-	})();
-
+	  conv.lch.rgb = function(tuple) {
+	    return conv.xyz.rgb(conv.luv.xyz(conv.lch.luv(tuple)));
+	  };
+	
+	  conv.rgb.lch = function(tuple) {
+	    return conv.luv.lch(conv.xyz.luv(conv.rgb.xyz(tuple)));
+	  };
+	
+	  conv.husl.rgb = function(tuple) {
+	    return conv.lch.rgb(conv.husl.lch(tuple));
+	  };
+	
+	  conv.rgb.husl = function(tuple) {
+	    return conv.lch.husl(conv.rgb.lch(tuple));
+	  };
+	
+	  conv.huslp.rgb = function(tuple) {
+	    return conv.lch.rgb(conv.huslp.lch(tuple));
+	  };
+	
+	  conv.rgb.huslp = function(tuple) {
+	    return conv.lch.huslp(conv.rgb.lch(tuple));
+	  };
+	
+	  root = {};
+	
+	  root.fromRGB = function(R, G, B) {
+	    return conv.rgb.husl([R, G, B]);
+	  };
+	
+	  root.fromHex = function(hex) {
+	    return conv.rgb.husl(conv.hex.rgb(hex));
+	  };
+	
+	  root.toRGB = function(H, S, L) {
+	    return conv.husl.rgb([H, S, L]);
+	  };
+	
+	  root.toHex = function(H, S, L) {
+	    return conv.rgb.hex(conv.husl.rgb([H, S, L]));
+	  };
+	
+	  root.p = {};
+	
+	  root.p.toRGB = function(H, S, L) {
+	    return conv.xyz.rgb(conv.luv.xyz(conv.lch.luv(conv.huslp.lch([H, S, L]))));
+	  };
+	
+	  root.p.toHex = function(H, S, L) {
+	    return conv.rgb.hex(conv.xyz.rgb(conv.luv.xyz(conv.lch.luv(conv.huslp.lch([H, S, L])))));
+	  };
+	
+	  root.p.fromRGB = function(R, G, B) {
+	    return conv.lch.huslp(conv.luv.lch(conv.xyz.luv(conv.rgb.xyz([R, G, B]))));
+	  };
+	
+	  root.p.fromHex = function(hex) {
+	    return conv.lch.huslp(conv.luv.lch(conv.xyz.luv(conv.rgb.xyz(conv.hex.rgb(hex)))));
+	  };
+	
+	  root._conv = conv;
+	
+	  root._getBounds = getBounds;
+	
+	  root._maxChromaForLH = maxChromaForLH;
+	
+	  root._maxSafeChromaForL = maxSafeChromaForL;
+	
+	  if (!((typeof module !== "undefined" && module !== null) || (typeof jQuery !== "undefined" && jQuery !== null) || (typeof requirejs !== "undefined" && requirejs !== null))) {
+	    this.HUSL = root;
+	  }
+	
+	  if (typeof module !== "undefined" && module !== null) {
+	    module.exports = root;
+	  }
+	
+	  if (typeof jQuery !== "undefined" && jQuery !== null) {
+	    jQuery.husl = root;
+	  }
+	
+	  if ((typeof requirejs !== "undefined" && requirejs !== null) && ("function" !== "undefined" && __webpack_require__(12) !== null)) {
+	    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (root), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  }
+	
+	}).call(this);
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)(module)))
 
 /***/ },
 /* 12 */
+/***/ function(module, exports) {
+
+	module.exports = function() { throw new Error("define cannot be used indirect"); };
+
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Animation, BaseClass, Config, Defaults, EventEmitter, LayerDraggable, LayerStates, LayerStyle, NoCacheDateKey, Utils, _, layerProperty, layerValueTypeError,
+	var Animation, BaseClass, Color, Config, Defaults, EventEmitter, Events, Gestures, LayerDraggable, LayerPinchable, LayerStates, LayerStyle, Matrix, NoCacheDateKey, Utils, _, layerProperty, layerValueTypeError,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty,
 	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
 	  slice = [].slice;
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Config = __webpack_require__(10).Config;
+	Config = __webpack_require__(14).Config;
 	
-	Defaults = __webpack_require__(13).Defaults;
+	Events = __webpack_require__(15).Events;
 	
-	BaseClass = __webpack_require__(7).BaseClass;
+	Defaults = __webpack_require__(17).Defaults;
 	
-	EventEmitter = __webpack_require__(8).EventEmitter;
+	BaseClass = __webpack_require__(6).BaseClass;
 	
-	Animation = __webpack_require__(14).Animation;
+	EventEmitter = __webpack_require__(7).EventEmitter;
 	
-	LayerStyle = __webpack_require__(21).LayerStyle;
+	Color = __webpack_require__(10).Color;
 	
-	LayerStates = __webpack_require__(22).LayerStates;
+	Matrix = __webpack_require__(9).Matrix;
 	
-	LayerDraggable = __webpack_require__(24).LayerDraggable;
+	Animation = __webpack_require__(18).Animation;
+	
+	LayerStyle = __webpack_require__(25).LayerStyle;
+	
+	LayerStates = __webpack_require__(26).LayerStates;
+	
+	LayerDraggable = __webpack_require__(27).LayerDraggable;
+	
+	LayerPinchable = __webpack_require__(34).LayerPinchable;
+	
+	Gestures = __webpack_require__(16).Gestures;
 	
 	NoCacheDateKey = Date.now();
 	
@@ -14324,7 +16092,7 @@
 	  throw new Error("Layer." + name + ": value '" + value + "' of type '" + (typeof value) + "'' is not valid");
 	};
 	
-	layerProperty = function(obj, name, cssProperty, fallback, validator, options, set) {
+	layerProperty = function(obj, name, cssProperty, fallback, validator, transformer, options, set) {
 	  var result;
 	  if (options == null) {
 	    options = {};
@@ -14338,11 +16106,19 @@
 	      return fallback;
 	    },
 	    set: function(value) {
+	      if (transformer) {
+	        value = transformer(value);
+	      }
+	      if (value === this._properties[name]) {
+	        return;
+	      }
 	      if (value && validator && !validator(value)) {
 	        layerValueTypeError(name, value);
 	      }
 	      this._properties[name] = value;
-	      this._element.style[cssProperty] = LayerStyle[cssProperty](this);
+	      if (cssProperty !== null) {
+	        this._element.style[cssProperty] = LayerStyle[cssProperty](this);
+	      }
 	      if (typeof set === "function") {
 	        set(this, value);
 	      }
@@ -14372,10 +16148,13 @@
 	      options = {};
 	    }
 	    this.addListener = bind(this.addListener, this);
+	    this.once = bind(this.once, this);
 	    this._properties = {};
 	    this._style = {};
+	    this._children = [];
 	    this._prefer2d = false;
-	    this._cacheImage = false;
+	    this._alwaysUseImageCache = false;
+	    this._cancelClickEventInDragSession = true;
 	    this._createElement();
 	    if (options.hasOwnProperty("frame")) {
 	      options = _.extend(options, options.frame);
@@ -14383,20 +16162,30 @@
 	    options = Defaults.getDefaults("Layer", options);
 	    Layer.__super__.constructor.call(this, options);
 	    this._context.addLayer(this);
-	    this._id = this._context.nextLayerId();
-	    if (!options.superLayer) {
+	    this._id = this._context.layerCounter;
+	    if (!options.parent && options.hasOwnProperty("superLayer")) {
+	      options.parent = options.superLayer;
+	    }
+	    if (!options.parent) {
 	      if (!options.shadow) {
 	        this._insertElement();
 	      }
 	    } else {
-	      this.superLayer = options.superLayer;
+	      this.parent = options.parent;
 	    }
 	    if (options.hasOwnProperty("index")) {
 	      this.index = options.index;
 	    }
-	    this._subLayers = [];
 	    this._context.emit("layer:create", this);
 	  }
+	
+	  Layer.define("context", {
+	    get: function() {
+	      return this._context;
+	    }
+	  });
+	
+	  Layer.define("custom", Layer.simpleProperty("custom", void 0));
 	
 	  Layer.define("width", layerProperty(Layer, "width", "width", 100, _.isNumber));
 	
@@ -14406,20 +16195,20 @@
 	
 	  Layer.define("opacity", layerProperty(Layer, "opacity", "opacity", 1, _.isNumber));
 	
-	  Layer.define("index", layerProperty(Layer, "index", "zIndex", 0, _.isNumber, {
+	  Layer.define("index", layerProperty(Layer, "index", "zIndex", 0, _.isNumber, null, {
 	    importable: false,
 	    exportable: false
 	  }));
 	
-	  Layer.define("clip", layerProperty(Layer, "clip", "overflow", true, _.isBoolean));
+	  Layer.define("clip", layerProperty(Layer, "clip", "overflow", false, _.isBoolean));
 	
-	  Layer.define("scrollHorizontal", layerProperty(Layer, "scrollHorizontal", "overflowX", false, _.isBoolean, {}, function(layer, value) {
+	  Layer.define("scrollHorizontal", layerProperty(Layer, "scrollHorizontal", "overflowX", false, _.isBoolean, null, {}, function(layer, value) {
 	    if (value === true) {
 	      return layer.ignoreEvents = false;
 	    }
 	  }));
 	
-	  Layer.define("scrollVertical", layerProperty(Layer, "scrollVertical", "overflowY", false, _.isBoolean, {}, function(layer, value) {
+	  Layer.define("scrollVertical", layerProperty(Layer, "scrollVertical", "overflowY", false, _.isBoolean, null, {}, function(layer, value) {
 	    if (value === true) {
 	      return layer.ignoreEvents = false;
 	    }
@@ -14460,7 +16249,13 @@
 	
 	  Layer.define("originY", layerProperty(Layer, "originY", "webkitTransformOrigin", 0.5, _.isNumber));
 	
+	  Layer.define("originZ", layerProperty(Layer, "originZ", null, 0, _.isNumber));
+	
 	  Layer.define("perspective", layerProperty(Layer, "perspective", "webkitPerspective", 0, _.isNumber));
+	
+	  Layer.define("perspectiveOriginX", layerProperty(Layer, "perspectiveOriginX", "webkitPerspectiveOrigin", 0.5, _.isNumber));
+	
+	  Layer.define("perspectiveOriginY", layerProperty(Layer, "perspectiveOriginY", "webkitPerspectiveOrigin", 0.5, _.isNumber));
 	
 	  Layer.define("rotationX", layerProperty(Layer, "rotationX", "webkitTransform", 0, _.isNumber));
 	
@@ -14501,17 +16296,21 @@
 	
 	  Layer.define("shadowSpread", layerProperty(Layer, "shadowSpread", "boxShadow", 0, _.isNumber));
 	
-	  Layer.define("shadowColor", layerProperty(Layer, "shadowColor", "boxShadow", ""));
+	  Layer.define("shadowColor", layerProperty(Layer, "shadowColor", "boxShadow", "", Color.validColorValue, Color.toColor));
 	
-	  Layer.define("backgroundColor", layerProperty(Layer, "backgroundColor", "backgroundColor", null, _.isString));
+	  Layer.define("backgroundColor", layerProperty(Layer, "backgroundColor", "backgroundColor", null, Color.validColorValue, Color.toColor));
 	
-	  Layer.define("color", layerProperty(Layer, "color", "color", null, _.isString));
+	  Layer.define("color", layerProperty(Layer, "color", "color", null, Color.validColorValue, Color.toColor));
 	
-	  Layer.define("borderColor", layerProperty(Layer, "borderColor", "border", null, _.isString));
+	  Layer.define("borderColor", layerProperty(Layer, "borderColor", "border", null, Color.validColorValue, Color.toColor));
 	
 	  Layer.define("borderWidth", layerProperty(Layer, "borderWidth", "border", 0, _.isNumber));
 	
 	  Layer.define("force2d", layerProperty(Layer, "force2d", "webkitTransform", false, _.isBoolean));
+	
+	  Layer.define("flat", layerProperty(Layer, "flat", "webkitTransformStyle", false, _.isBoolean));
+	
+	  Layer.define("backfaceVisible", layerProperty(Layer, "backfaceVisible", "webkitBackfaceVisibility", true, _.isBoolean));
 	
 	  Layer.define("name", {
 	    "default": "",
@@ -14524,7 +16323,39 @@
 	    }
 	  });
 	
+	  Layer.define("matrix", {
+	    get: function() {
+	      if (this.force2d) {
+	        return this._matrix2d;
+	      }
+	      return new Matrix().translate(this.x, this.y, this.z).scale(this.scale).scale(this.scaleX, this.scaleY, this.scaleZ).skew(this.skew).skewX(this.skewX).skewY(this.skewY).translate(0, 0, this.originZ).rotate(this.rotationX, 0, 0).rotate(0, this.rotationY, 0).rotate(0, 0, this.rotationZ).translate(0, 0, -this.originZ);
+	    }
+	  });
+	
+	  Layer.define("_matrix2d", {
+	    get: function() {
+	      return new Matrix().translate(this.x, this.y).scale(this.scale).skewX(this.skew).skewY(this.skew).rotate(0, 0, this.rotationZ);
+	    }
+	  });
+	
+	  Layer.define("transformMatrix", {
+	    get: function() {
+	      return new Matrix().translate(this.originX * this.width, this.originY * this.height).multiply(this.matrix).translate(-this.originX * this.width, -this.originY * this.height);
+	    }
+	  });
+	
+	  Layer.define("matrix3d", {
+	    get: function() {
+	      var parent, ppm;
+	      parent = this.superLayer || this.context;
+	      ppm = Utils.perspectiveMatrix(parent);
+	      return new Matrix().multiply(ppm).multiply(this.transformMatrix);
+	    }
+	  });
+	
 	  Layer.define("borderRadius", {
+	    importable: true,
+	    exportable: true,
 	    "default": 0,
 	    get: function() {
 	      return this._properties["borderRadius"];
@@ -14540,7 +16371,8 @@
 	  });
 	
 	  Layer.define("cornerRadius", {
-	    importable: true,
+	    importable: false,
+	    exportable: false,
 	    get: function() {
 	      return this.borderRadius;
 	    },
@@ -14557,6 +16389,12 @@
 	      var i, k, len, ref, results;
 	      if (!point) {
 	        return;
+	      }
+	      if (_.isNumber(point)) {
+	        point = {
+	          x: point,
+	          y: point
+	        };
 	      }
 	      ref = ["x", "y"];
 	      results = [];
@@ -14580,6 +16418,12 @@
 	      var i, k, len, ref, results;
 	      if (!size) {
 	        return;
+	      }
+	      if (_.isNumber(size)) {
+	        size = {
+	          width: size,
+	          height: size
+	        };
 	      }
 	      ref = ["width", "height"];
 	      results = [];
@@ -14684,24 +16528,30 @@
 	    }
 	  });
 	
-	  Layer.prototype.convertPoint = function(point) {
-	    return Utils.convertPoint(point, null, this);
+	  Layer.prototype.convertPointFromScreen = function(point) {
+	    return Utils.convertPointFromContext(point, this, false);
+	  };
+	
+	  Layer.prototype.convertPointFromCanvas = function(point) {
+	    return Utils.convertPointFromContext(point, this, true);
+	  };
+	
+	  Layer.prototype.convertPointToScreen = function(point) {
+	    return Utils.convertPointToContext(point, this, false);
+	  };
+	
+	  Layer.prototype.convertPointToCanvas = function(point) {
+	    return Utils.convertPointToContext(point, this, true);
 	  };
 	
 	  Layer.define("canvasFrame", {
 	    importable: true,
 	    exportable: false,
 	    get: function() {
-	      var context;
-	      return Utils.convertPoint(this.frame, this, null, context = true);
+	      return Utils.boundingFrame(this);
 	    },
 	    set: function(frame) {
-	      var context;
-	      if (!this.superLayer) {
-	        return this.frame = frame;
-	      } else {
-	        return this.frame = Utils.convertPoint(frame, null, this.superLayer, context = true);
-	      }
+	      return this.frame = Utils.convertFrameFromContext(frame, this, true, false);
 	    }
 	  });
 	
@@ -14709,21 +16559,15 @@
 	    importable: true,
 	    exportable: false,
 	    get: function() {
-	      var context;
-	      return Utils.convertPoint(this.frame, this, null, context = false);
+	      return Utils.boundingFrame(this, false);
 	    },
 	    set: function(frame) {
-	      var context;
-	      if (!this.superLayer) {
-	        return this.frame = frame;
-	      } else {
-	        return this.frame = Utils.convertPoint(frame, null, this.superLayer, context = false);
-	      }
+	      return this.frame = Utils.convertFrameFromContext(frame, this, false, false);
 	    }
 	  });
 	
 	  Layer.prototype.contentFrame = function() {
-	    if (!this.subLayers.length) {
+	    if (!this.children.length) {
 	      return {
 	        x: 0,
 	        y: 0,
@@ -14731,15 +16575,15 @@
 	        height: 0
 	      };
 	    }
-	    return Utils.frameMerge(_.pluck(this.subLayers, "frame"));
+	    return Utils.frameMerge(_.pluck(this.children, "frame"));
 	  };
 	
 	  Layer.prototype.centerFrame = function() {
 	    var frame;
-	    if (this.superLayer) {
+	    if (this.parent) {
 	      frame = this.frame;
-	      Utils.frameSetMidX(frame, parseInt(this.superLayer.width / 2.0));
-	      Utils.frameSetMidY(frame, parseInt(this.superLayer.height / 2.0));
+	      Utils.frameSetMidX(frame, parseInt((this.parent.width / 2.0) - this.superLayer.borderWidth));
+	      Utils.frameSetMidY(frame, parseInt((this.parent.height / 2.0) - this.superLayer.borderWidth));
 	      return frame;
 	    } else {
 	      frame = this.frame;
@@ -14776,65 +16620,65 @@
 	  };
 	
 	  Layer.prototype.canvasScaleX = function() {
-	    var context, i, len, ref, scale, superLayer;
+	    var context, i, len, parent, ref, scale;
 	    scale = this.scale * this.scaleX;
-	    ref = this.superLayers(context = true);
+	    ref = this.ancestors(context = true);
 	    for (i = 0, len = ref.length; i < len; i++) {
-	      superLayer = ref[i];
-	      scale = scale * superLayer.scale * superLayer.scaleX;
+	      parent = ref[i];
+	      scale = scale * parent.scale * parent.scaleX;
 	    }
 	    return scale;
 	  };
 	
 	  Layer.prototype.canvasScaleY = function() {
-	    var context, i, len, ref, scale, superLayer;
+	    var context, i, len, parent, ref, scale;
 	    scale = this.scale * this.scaleY;
-	    ref = this.superLayers(context = true);
+	    ref = this.ancestors(context = true);
 	    for (i = 0, len = ref.length; i < len; i++) {
-	      superLayer = ref[i];
-	      scale = scale * superLayer.scale * superLayer.scaleY;
+	      parent = ref[i];
+	      scale = scale * parent.scale * parent.scaleY;
 	    }
 	    return scale;
 	  };
 	
 	  Layer.prototype.screenScaleX = function() {
-	    var context, i, len, ref, scale, superLayer;
+	    var context, i, len, parent, ref, scale;
 	    scale = this.scale * this.scaleX;
-	    ref = this.superLayers(context = false);
+	    ref = this.ancestors(context = false);
 	    for (i = 0, len = ref.length; i < len; i++) {
-	      superLayer = ref[i];
-	      scale = scale * superLayer.scale * superLayer.scaleX;
+	      parent = ref[i];
+	      scale = scale * parent.scale * parent.scaleX;
 	    }
 	    return scale;
 	  };
 	
 	  Layer.prototype.screenScaleY = function() {
-	    var context, i, len, ref, scale, superLayer;
+	    var context, i, len, parent, ref, scale;
 	    scale = this.scale * this.scaleY;
-	    ref = this.superLayers(context = false);
+	    ref = this.ancestors(context = false);
 	    for (i = 0, len = ref.length; i < len; i++) {
-	      superLayer = ref[i];
-	      scale = scale * superLayer.scale * superLayer.scaleY;
+	      parent = ref[i];
+	      scale = scale * parent.scale * parent.scaleY;
 	    }
 	    return scale;
 	  };
 	
 	  Layer.prototype.screenScaledFrame = function() {
-	    var context, factorX, factorY, frame, i, layerScaledFrame, layers, len, superLayer;
+	    var context, factorX, factorY, frame, i, layerScaledFrame, layers, len, parent;
 	    frame = {
 	      x: 0,
 	      y: 0,
 	      width: this.width * this.screenScaleX(),
 	      height: this.height * this.screenScaleY()
 	    };
-	    layers = this.superLayers(context = true);
+	    layers = this.ancestors(context = true);
 	    layers.push(this);
 	    layers.reverse();
 	    for (i = 0, len = layers.length; i < len; i++) {
-	      superLayer = layers[i];
-	      factorX = superLayer._superOrParentLayer() ? superLayer._superOrParentLayer().screenScaleX() : 1;
-	      factorY = superLayer._superOrParentLayer() ? superLayer._superOrParentLayer().screenScaleY() : 1;
-	      layerScaledFrame = superLayer.scaledFrame();
+	      parent = layers[i];
+	      factorX = parent._parentOrContext() ? parent._parentOrContext().screenScaleX() : 1;
+	      factorY = parent._parentOrContext() ? parent._parentOrContext().screenScaleY() : 1;
+	      layerScaledFrame = parent.scaledFrame();
 	      frame.x += layerScaledFrame.x * factorX;
 	      frame.y += layerScaledFrame.y * factorY;
 	    }
@@ -14892,7 +16736,7 @@
 	
 	  Layer.prototype._insertElement = function() {
 	    this.bringToFront();
-	    return this._context.getRootElement().appendChild(this._element);
+	    return this._context.element.appendChild(this._element);
 	  };
 	
 	  Layer.define("html", {
@@ -14920,8 +16764,8 @@
 	
 	  Layer.prototype.destroy = function() {
 	    var ref;
-	    if (this.superLayer) {
-	      this.superLayer._subLayers = _.without(this.superLayer._subLayers, this);
+	    if (this.parent) {
+	      this.parent._children = _.without(this.parent._children, this);
 	    }
 	    if ((ref = this._element.parentNode) != null) {
 	      ref.removeChild(this._element);
@@ -14932,19 +16776,21 @@
 	  };
 	
 	  Layer.prototype.copy = function() {
-	    var copiedSublayer, i, layer, len, ref, subLayer;
+	    var child, copiedChild, i, layer, len, ref;
 	    layer = this.copySingle();
-	    ref = this.subLayers;
+	    ref = this.children;
 	    for (i = 0, len = ref.length; i < len; i++) {
-	      subLayer = ref[i];
-	      copiedSublayer = subLayer.copy();
-	      copiedSublayer.superLayer = layer;
+	      child = ref[i];
+	      copiedChild = child.copy();
+	      copiedChild.parent = layer;
 	    }
 	    return layer;
 	  };
 	
 	  Layer.prototype.copySingle = function() {
-	    return new this.constructor(this.props);
+	    var copy;
+	    copy = new this.constructor(this.props);
+	    return copy;
 	  };
 	
 	  Layer.define("image", {
@@ -14953,7 +16799,7 @@
 	      return this._getPropertyValue("image");
 	    },
 	    set: function(value) {
-	      var currentValue, imageUrl, loader, ref, ref1, shoudUseImageCache;
+	      var currentValue, imageUrl, loader;
 	      if (!(_.isString(value) || value === null)) {
 	        layerValueTypeError("image", value);
 	      }
@@ -14968,30 +16814,22 @@
 	        return;
 	      }
 	      imageUrl = value;
-	      shoudUseImageCache = true;
-	      if (this._cacheImage === false) {
-	        shoudUseImageCache = false;
-	      } else if (Utils.isLocalUrl(imageUrl)) {
-	        shoudUseImageCache = false;
-	      } else if (imageUrl.indexOf("127.0.0.1") !== -1 || imageUrl.indexOf("localhost") !== -1) {
-	        shoudUseImageCache = false;
-	      }
-	      if (shoudUseImageCache === false) {
+	      if (this._alwaysUseImageCache === false && Utils.isLocalAssetUrl(imageUrl)) {
 	        imageUrl += "?nocache=" + NoCacheDateKey;
 	      }
-	      if ((ref = this.events) != null ? ref.hasOwnProperty("load" || ((ref1 = this.events) != null ? ref1.hasOwnProperty("error") : void 0)) : void 0) {
+	      if (this._domEventManager.listeners(Events.ImageLoaded) || this._domEventManager.listeners(Events.ImageLoadError)) {
 	        loader = new Image();
 	        loader.name = imageUrl;
 	        loader.src = imageUrl;
 	        loader.onload = (function(_this) {
 	          return function() {
 	            _this.style["background-image"] = "url('" + imageUrl + "')";
-	            return _this.emit("load", loader);
+	            return _this.emit(Events.ImageLoaded, loader);
 	          };
 	        })(this);
 	        return loader.onerror = (function(_this) {
 	          return function() {
-	            return _this.emit("error", loader);
+	            return _this.emit(Events.ImageLoadError, loader);
 	          };
 	        })(this);
 	      } else {
@@ -15000,32 +16838,40 @@
 	    }
 	  });
 	
-	  Layer.define("superLayer", {
+	  Layer.define("parent", {
 	    enumerable: false,
 	    exportable: false,
 	    importable: true,
 	    get: function() {
-	      return this._superLayer || null;
+	      return this._parent || null;
 	    },
 	    set: function(layer) {
-	      if (layer === this._superLayer) {
+	      if (layer === this._parent) {
 	        return;
 	      }
 	      if (!layer instanceof Layer) {
-	        throw Error("Layer.superLayer needs to be a Layer object");
+	        throw Error("Layer.parent needs to be a Layer object");
 	      }
 	      Utils.domCompleteCancel(this.__insertElement);
-	      if (this._superLayer) {
-	        this._superLayer._subLayers = _.without(this._superLayer._subLayers, this);
-	        this._superLayer._element.removeChild(this._element);
-	        this._superLayer.emit("change:subLayers", {
+	      if (this._parent) {
+	        this._parent._children = _.without(this._parent._children, this);
+	        this._parent._element.removeChild(this._element);
+	        this._parent.emit("change:children", {
+	          added: [],
+	          removed: [this]
+	        });
+	        this._parent.emit("change:subLayers", {
 	          added: [],
 	          removed: [this]
 	        });
 	      }
 	      if (layer) {
 	        layer._element.appendChild(this._element);
-	        layer._subLayers.push(this);
+	        layer._children.push(this);
+	        layer.emit("change:children", {
+	          added: [this],
+	          removed: []
+	        });
 	        layer.emit("change:subLayers", {
 	          added: [this],
 	          removed: []
@@ -15033,9 +16879,164 @@
 	      } else {
 	        this._insertElement();
 	      }
-	      this._superLayer = layer;
+	      this._parent = layer;
 	      this.bringToFront();
+	      this.emit("change:parent");
 	      return this.emit("change:superLayer");
+	    }
+	  });
+	
+	  Layer.define("children", {
+	    enumerable: false,
+	    exportable: false,
+	    importable: false,
+	    get: function() {
+	      return _.clone(this._children);
+	    }
+	  });
+	
+	  Layer.define("siblings", {
+	    enumerable: false,
+	    exportable: false,
+	    importable: false,
+	    get: function() {
+	      if (this.parent === null) {
+	        return _.filter(this._context.getLayers(), (function(_this) {
+	          return function(layer) {
+	            return layer !== _this && layer.parent === null;
+	          };
+	        })(this));
+	      }
+	      return _.without(this.parent.children, this);
+	    }
+	  });
+	
+	  Layer.define("descendants", {
+	    enumerable: false,
+	    exportable: false,
+	    importable: false,
+	    get: function() {
+	      var f, result;
+	      result = [];
+	      f = function(layer) {
+	        result.push(layer);
+	        return layer.children.map(f);
+	      };
+	      this.children.map(f);
+	      return result;
+	    }
+	  });
+	
+	  Layer.prototype.addChild = function(layer) {
+	    return layer.parent = this;
+	  };
+	
+	  Layer.prototype.removeChild = function(layer) {
+	    if (indexOf.call(this.children, layer) < 0) {
+	      return;
+	    }
+	    return layer.parent = null;
+	  };
+	
+	  Layer.prototype.childrenWithName = function(name) {
+	    return _.filter(this.children, function(layer) {
+	      return layer.name === name;
+	    });
+	  };
+	
+	  Layer.prototype.siblingsWithName = function(name) {
+	    return _.filter(this.siblingLayers, function(layer) {
+	      return layer.name === name;
+	    });
+	  };
+	
+	  Layer.prototype.ancestors = function(context) {
+	    var currentLayer, parents;
+	    if (context == null) {
+	      context = false;
+	    }
+	    parents = [];
+	    currentLayer = this;
+	    if (context === false) {
+	      while (currentLayer.parent) {
+	        parents.push(currentLayer.parent);
+	        currentLayer = currentLayer.parent;
+	      }
+	    } else {
+	      while (currentLayer._parentOrContext()) {
+	        parents.push(currentLayer._parentOrContext());
+	        currentLayer = currentLayer._parentOrContext();
+	      }
+	    }
+	    return parents;
+	  };
+	
+	  Layer.prototype.childrenAbove = function(point, originX, originY) {
+	    if (originX == null) {
+	      originX = 0;
+	    }
+	    if (originY == null) {
+	      originY = 0;
+	    }
+	    return _.filter(this.children, function(layer) {
+	      return Utils.framePointForOrigin(layer.frame, originX, originY).y < point.y;
+	    });
+	  };
+	
+	  Layer.prototype.childrenBelow = function(point, originX, originY) {
+	    if (originX == null) {
+	      originX = 0;
+	    }
+	    if (originY == null) {
+	      originY = 0;
+	    }
+	    return _.filter(this.children, function(layer) {
+	      return Utils.framePointForOrigin(layer.frame, originX, originY).y > point.y;
+	    });
+	  };
+	
+	  Layer.prototype.childrenLeft = function(point, originX, originY) {
+	    if (originX == null) {
+	      originX = 0;
+	    }
+	    if (originY == null) {
+	      originY = 0;
+	    }
+	    return _.filter(this.children, function(layer) {
+	      return Utils.framePointForOrigin(layer.frame, originX, originY).x < point.x;
+	    });
+	  };
+	
+	  Layer.prototype.childrenRight = function(point, originX, originY) {
+	    if (originX == null) {
+	      originX = 0;
+	    }
+	    if (originY == null) {
+	      originY = 0;
+	    }
+	    return _.filter(this.children, function(layer) {
+	      return Utils.framePointForOrigin(layer.frame, originX, originY).x > point.x;
+	    });
+	  };
+	
+	  Layer.prototype._parentOrContext = function() {
+	    if (this.parent) {
+	      return this.parent;
+	    }
+	    if (this._context._parent) {
+	      return this._context._parent;
+	    }
+	  };
+	
+	  Layer.define("superLayer", {
+	    enumerable: false,
+	    exportable: false,
+	    importable: false,
+	    get: function() {
+	      return this.parent;
+	    },
+	    set: function(value) {
+	      return this.parent = value;
 	    }
 	  });
 	
@@ -15044,7 +17045,7 @@
 	    exportable: false,
 	    importable: false,
 	    get: function() {
-	      return _.clone(this._subLayers);
+	      return this.children;
 	    }
 	  });
 	
@@ -15053,62 +17054,31 @@
 	    exportable: false,
 	    importable: false,
 	    get: function() {
-	      if (this.superLayer === null) {
-	        return _.filter(this._context.getLayers(), (function(_this) {
-	          return function(layer) {
-	            return layer !== _this && layer.superLayer === null;
-	          };
-	        })(this));
-	      }
-	      return _.without(this.superLayer.subLayers, this);
+	      return this.siblings;
 	    }
 	  });
 	
-	  Layer.prototype.addSubLayer = function(layer) {
-	    return layer.superLayer = this;
-	  };
-	
-	  Layer.prototype.removeSubLayer = function(layer) {
-	    if (indexOf.call(this.subLayers, layer) < 0) {
-	      return;
-	    }
-	    return layer.superLayer = null;
-	  };
-	
-	  Layer.prototype.subLayersByName = function(name) {
-	    return _.filter(this.subLayers, function(layer) {
-	      return layer.name === name;
-	    });
-	  };
-	
 	  Layer.prototype.superLayers = function(context) {
-	    var currentLayer, superLayers;
 	    if (context == null) {
 	      context = false;
 	    }
-	    superLayers = [];
-	    currentLayer = this;
-	    if (context === false) {
-	      while (currentLayer.superLayer) {
-	        superLayers.push(currentLayer.superLayer);
-	        currentLayer = currentLayer.superLayer;
-	      }
-	    } else {
-	      while (currentLayer._superOrParentLayer()) {
-	        superLayers.push(currentLayer._superOrParentLayer());
-	        currentLayer = currentLayer._superOrParentLayer();
-	      }
-	    }
-	    return superLayers;
+	    return this.ancestors(context);
 	  };
 	
-	  Layer.prototype._superOrParentLayer = function() {
-	    if (this.superLayer) {
-	      return this.superLayer;
-	    }
-	    if (this._context._parentLayer) {
-	      return this._context._parentLayer;
-	    }
+	  Layer.prototype.addSubLayer = function(layer) {
+	    return this.addChild(layer);
+	  };
+	
+	  Layer.prototype.removeSubLayer = function(layer) {
+	    return this.removeChild(layer);
+	  };
+	
+	  Layer.prototype.subLayersByName = function(name) {
+	    return this.childrenWithName(name);
+	  };
+	
+	  Layer.prototype.siblingLayersByName = function(name) {
+	    return this.siblingsWithName(name);
 	  };
 	
 	  Layer.prototype.subLayersAbove = function(point, originX, originY) {
@@ -15118,9 +17088,7 @@
 	    if (originY == null) {
 	      originY = 0;
 	    }
-	    return _.filter(this.subLayers, function(layer) {
-	      return Utils.framePointForOrigin(layer.frame, originX, originY).y < point.y;
-	    });
+	    return this.childrenAbove(point, originX, originY);
 	  };
 	
 	  Layer.prototype.subLayersBelow = function(point, originX, originY) {
@@ -15130,9 +17098,7 @@
 	    if (originY == null) {
 	      originY = 0;
 	    }
-	    return _.filter(this.subLayers, function(layer) {
-	      return Utils.framePointForOrigin(layer.frame, originX, originY).y > point.y;
-	    });
+	    return this.childrenBelow(point, originX, originY);
 	  };
 	
 	  Layer.prototype.subLayersLeft = function(point, originX, originY) {
@@ -15142,9 +17108,7 @@
 	    if (originY == null) {
 	      originY = 0;
 	    }
-	    return _.filter(this.subLayers, function(layer) {
-	      return Utils.framePointForOrigin(layer.frame, originX, originY).x < point.x;
-	    });
+	    return this.childrenLeft(point, originX, originY);
 	  };
 	
 	  Layer.prototype.subLayersRight = function(point, originX, originY) {
@@ -15154,9 +17118,11 @@
 	    if (originY == null) {
 	      originY = 0;
 	    }
-	    return _.filter(this.subLayers, function(layer) {
-	      return Utils.framePointForOrigin(layer.frame, originX, originY).x > point.x;
-	    });
+	    return this.childrenRight(point, originX, originY);
+	  };
+	
+	  Layer.prototype._superOrParentLayer = function() {
+	    return this._parentOrContext();
 	  };
 	
 	  Layer.prototype.animate = function(options) {
@@ -15175,7 +17141,7 @@
 	  };
 	
 	  Layer.prototype.animations = function() {
-	    return _.filter(this._context._animationList, (function(_this) {
+	    return _.filter(this._context.animations, (function(_this) {
 	      return function(animation) {
 	        return animation.options.layer === _this;
 	      };
@@ -15267,6 +17233,24 @@
 	    exportable: false,
 	    get: function() {
 	      return this._draggable != null ? this._draggable : this._draggable = new LayerDraggable(this);
+	    },
+	    set: function(value) {
+	      if (_.isBoolean(value)) {
+	        return this.draggable.enabled = value;
+	      }
+	    }
+	  });
+	
+	  Layer.define("pinchable", {
+	    importable: false,
+	    exportable: false,
+	    get: function() {
+	      return this._pinchable != null ? this._pinchable : this._pinchable = new LayerPinchable(this);
+	    },
+	    set: function(value) {
+	      if (_.isBoolean(value)) {
+	        return this.pinchable.enabled = value;
+	      }
 	    }
 	  });
 	
@@ -15311,111 +17295,373 @@
 	    }
 	  });
 	
-	  Layer.prototype.addListener = function() {
-	    var eventName, eventNames, i, j, len, listener, originalListener, results;
-	    eventNames = 2 <= arguments.length ? slice.call(arguments, 0, i = arguments.length - 1) : (i = 0, []), originalListener = arguments[i++];
-	    if (!originalListener) {
-	      return;
+	  Layer.define("_domEventManager", {
+	    get: function() {
+	      return this._context.domEventManager.wrap(this._element);
 	    }
-	    listener = (function(_this) {
-	      return function() {
-	        var args;
-	        args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-	        return originalListener.call.apply(originalListener, [_this].concat(slice.call(args), [_this]));
-	      };
-	    })(this);
-	    originalListener.modifiedListener = listener;
-	    if (typeof eventNames === 'string') {
-	      eventNames = [eventNames];
-	    }
-	    results = [];
-	    for (j = 0, len = eventNames.length; j < len; j++) {
-	      eventName = eventNames[j];
-	      results.push((function(_this) {
-	        return function(eventName) {
-	          var base;
-	          Layer.__super__.addListener.call(_this, eventName, listener);
-	          _this._context.eventManager.wrap(_this._element).addEventListener(eventName, listener);
-	          if (_this._eventListeners == null) {
-	            _this._eventListeners = {};
-	          }
-	          if ((base = _this._eventListeners)[eventName] == null) {
-	            base[eventName] = [];
-	          }
-	          _this._eventListeners[eventName].push(listener);
-	          if (!_.startsWith(eventName, "change:")) {
-	            return _this.ignoreEvents = false;
-	          }
-	        };
-	      })(this)(eventName));
-	    }
-	    return results;
-	  };
+	  });
 	
-	  Layer.prototype.removeListener = function() {
-	    var eventName, eventNames, i, j, len, listener, results;
-	    eventNames = 2 <= arguments.length ? slice.call(arguments, 0, i = arguments.length - 1) : (i = 0, []), listener = arguments[i++];
-	    if (listener.modifiedListener) {
-	      listener = listener.modifiedListener;
+	  Layer.prototype.emit = function() {
+	    var args, eventName, ref;
+	    eventName = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+	    if (this._cancelClickEventInDragSession) {
+	      if (eventName === Events.Click || eventName === Events.Tap || eventName === Events.TapStart || eventName === Events.TapEnd || eventName === Events.LongPress || eventName === Events.LongPressStart || eventName === Events.LongPressEnd) {
+	        if ((ref = this._parentDraggableLayer()) != null ? ref.draggable.isMoving : void 0) {
+	          return;
+	        }
+	      }
 	    }
-	    if (typeof eventNames === 'string') {
-	      eventNames = [eventNames];
-	    }
-	    results = [];
-	    for (j = 0, len = eventNames.length; j < len; j++) {
-	      eventName = eventNames[j];
-	      results.push((function(_this) {
-	        return function(eventName) {
-	          Layer.__super__.removeListener.call(_this, eventName, listener);
-	          _this._context.eventManager.wrap(_this._element).removeEventListener(eventName, listener);
-	          if (_this._eventListeners) {
-	            return _this._eventListeners[eventName] = _.without(_this._eventListeners[eventName], listener);
-	          }
-	        };
-	      })(this)(eventName));
-	    }
-	    return results;
+	    return Layer.__super__.emit.apply(this, [eventName].concat(slice.call(args), [this]));
 	  };
 	
 	  Layer.prototype.once = function(eventName, listener) {
-	    var originalListener;
-	    originalListener = listener;
-	    listener = (function(_this) {
-	      return function() {
-	        var args;
-	        args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-	        originalListener.call.apply(originalListener, [_this].concat(slice.call(args), [_this]));
-	        return _this.removeListener(eventName, listener);
-	      };
-	    })(this);
-	    return this.addListener(eventName, listener);
+	    Layer.__super__.once.call(this, eventName, listener);
+	    return this._addListener(eventName, listener);
 	  };
 	
-	  Layer.prototype.removeAllListeners = function() {
-	    var eventName, listener, listeners, ref, results;
-	    if (!this._eventListeners) {
-	      return;
+	  Layer.prototype.addListener = function(eventName, listener) {
+	    if (!eventName) {
+	      throw Error("Layer.on needs a valid event name");
 	    }
-	    ref = this._eventListeners;
-	    results = [];
-	    for (eventName in ref) {
-	      listeners = ref[eventName];
-	      results.push((function() {
-	        var i, len, results1;
-	        results1 = [];
-	        for (i = 0, len = listeners.length; i < len; i++) {
-	          listener = listeners[i];
-	          results1.push(this.removeListener(eventName, listener));
-	        }
-	        return results1;
-	      }).call(this));
+	    if (!listener) {
+	      throw Error("Layer.on needs an event listener");
 	    }
-	    return results;
+	    Layer.__super__.addListener.call(this, eventName, listener);
+	    return this._addListener(eventName, listener);
+	  };
+	
+	  Layer.prototype.removeListener = function(eventName, listener) {
+	    if (!eventName) {
+	      throw Error("Layer.off needs a valid event name");
+	    }
+	    Layer.__super__.removeListener.call(this, eventName, listener);
+	    return this._removeListener(eventName, listener);
+	  };
+	
+	  Layer.prototype._addListener = function(eventName, listener) {
+	    if (!_.startsWith(eventName, "change:")) {
+	      this.ignoreEvents = false;
+	    }
+	    if (Utils.domValidEvent(this._element, eventName) || indexOf.call(_.values(Gestures), eventName) >= 0) {
+	      if (!this._domEventManager.listeners(eventName).length) {
+	        return this._domEventManager.addEventListener(eventName, (function(_this) {
+	          return function(event) {
+	            return _this.emit(eventName, event);
+	          };
+	        })(this));
+	      }
+	    }
+	  };
+	
+	  Layer.prototype._removeListener = function(eventName, listener) {
+	    if (!this.listeners(eventName).length) {
+	      return this._domEventManager.removeAllListeners(eventName);
+	    }
+	  };
+	
+	  Layer.prototype._parentDraggableLayer = function() {
+	    var i, layer, len, ref, ref1;
+	    ref = this.ancestors();
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      layer = ref[i];
+	      if ((ref1 = layer._draggable) != null ? ref1.enabled : void 0) {
+	        return layer;
+	      }
+	    }
+	    return null;
 	  };
 	
 	  Layer.prototype.on = Layer.prototype.addListener;
 	
 	  Layer.prototype.off = Layer.prototype.removeListener;
+	
+	  Layer.prototype.onClick = function(cb) {
+	    return this.on(Events.Click, cb);
+	  };
+	
+	  Layer.prototype.onDoubleClick = function(cb) {
+	    return this.on(Events.DoubleClick, cb);
+	  };
+	
+	  Layer.prototype.onScroll = function(cb) {
+	    return this.on(Events.Scroll, cb);
+	  };
+	
+	  Layer.prototype.onTouchStart = function(cb) {
+	    return this.on(Events.TouchStart, cb);
+	  };
+	
+	  Layer.prototype.onTouchEnd = function(cb) {
+	    return this.on(Events.TouchEnd, cb);
+	  };
+	
+	  Layer.prototype.onTouchMove = function(cb) {
+	    return this.on(Events.TouchMove, cb);
+	  };
+	
+	  Layer.prototype.onMouseUp = function(cb) {
+	    return this.on(Events.MouseUp, cb);
+	  };
+	
+	  Layer.prototype.onMouseDown = function(cb) {
+	    return this.on(Events.MouseDown, cb);
+	  };
+	
+	  Layer.prototype.onMouseOver = function(cb) {
+	    return this.on(Events.MouseOver, cb);
+	  };
+	
+	  Layer.prototype.onMouseOut = function(cb) {
+	    return this.on(Events.MouseOut, cb);
+	  };
+	
+	  Layer.prototype.onMouseMove = function(cb) {
+	    return this.on(Events.MouseMove, cb);
+	  };
+	
+	  Layer.prototype.onMouseWheel = function(cb) {
+	    return this.on(Events.MouseWheel, cb);
+	  };
+	
+	  Layer.prototype.onAnimationStart = function(cb) {
+	    return this.on(Events.AnimationStart, cb);
+	  };
+	
+	  Layer.prototype.onAnimationStop = function(cb) {
+	    return this.on(Events.AnimationStop, cb);
+	  };
+	
+	  Layer.prototype.onAnimationEnd = function(cb) {
+	    return this.on(Events.AnimationEnd, cb);
+	  };
+	
+	  Layer.prototype.onAnimationDidStart = function(cb) {
+	    return this.on(Events.AnimationDidStart, cb);
+	  };
+	
+	  Layer.prototype.onAnimationDidStop = function(cb) {
+	    return this.on(Events.AnimationDidStop, cb);
+	  };
+	
+	  Layer.prototype.onAnimationDidEnd = function(cb) {
+	    return this.on(Events.AnimationDidEnd, cb);
+	  };
+	
+	  Layer.prototype.onImageLoaded = function(cb) {
+	    return this.on(Events.ImageLoaded, cb);
+	  };
+	
+	  Layer.prototype.onImageLoadError = function(cb) {
+	    return this.on(Events.ImageLoadError, cb);
+	  };
+	
+	  Layer.prototype.onMove = function(cb) {
+	    return this.on(Events.Move, cb);
+	  };
+	
+	  Layer.prototype.onDragStart = function(cb) {
+	    return this.on(Events.DragStart, cb);
+	  };
+	
+	  Layer.prototype.onDragWillMove = function(cb) {
+	    return this.on(Events.DragWillMove, cb);
+	  };
+	
+	  Layer.prototype.onDragMove = function(cb) {
+	    return this.on(Events.DragMove, cb);
+	  };
+	
+	  Layer.prototype.onDragDidMove = function(cb) {
+	    return this.on(Events.DragDidMove, cb);
+	  };
+	
+	  Layer.prototype.onDrag = function(cb) {
+	    return this.on(Events.Drag, cb);
+	  };
+	
+	  Layer.prototype.onDragEnd = function(cb) {
+	    return this.on(Events.DragEnd, cb);
+	  };
+	
+	  Layer.prototype.onDragAnimationStart = function(cb) {
+	    return this.on(Events.DragAnimationStart, cb);
+	  };
+	
+	  Layer.prototype.onDragAnimationEnd = function(cb) {
+	    return this.on(Events.DragAnimationEnd, cb);
+	  };
+	
+	  Layer.prototype.onDirectionLockStart = function(cb) {
+	    return this.on(Events.DirectionLockStart, cb);
+	  };
+	
+	  Layer.prototype.onTap = function(cb) {
+	    return this.on(Events.Tap, cb);
+	  };
+	
+	  Layer.prototype.onTapStart = function(cb) {
+	    return this.on(Events.TapStart, cb);
+	  };
+	
+	  Layer.prototype.onTapEnd = function(cb) {
+	    return this.on(Events.TapEnd, cb);
+	  };
+	
+	  Layer.prototype.onDoubleTap = function(cb) {
+	    return this.on(Events.DoubleTap, cb);
+	  };
+	
+	  Layer.prototype.onForceTap = function(cb) {
+	    return this.on(Events.ForceTap, cb);
+	  };
+	
+	  Layer.prototype.onForceTapChange = function(cb) {
+	    return this.on(Events.ForceTapChange, cb);
+	  };
+	
+	  Layer.prototype.onForceTapStart = function(cb) {
+	    return this.on(Events.ForceTapStart, cb);
+	  };
+	
+	  Layer.prototype.onForceTapEnd = function(cb) {
+	    return this.on(Events.ForceTapEnd, cb);
+	  };
+	
+	  Layer.prototype.onLongPress = function(cb) {
+	    return this.on(Events.LongPress, cb);
+	  };
+	
+	  Layer.prototype.onLongPressStart = function(cb) {
+	    return this.on(Events.LongPressStart, cb);
+	  };
+	
+	  Layer.prototype.onLongPressEnd = function(cb) {
+	    return this.on(Events.LongPressEnd, cb);
+	  };
+	
+	  Layer.prototype.onSwipe = function(cb) {
+	    return this.on(Events.Swipe, cb);
+	  };
+	
+	  Layer.prototype.onSwipeStart = function(cb) {
+	    return this.on(Events.SwipeStart, cb);
+	  };
+	
+	  Layer.prototype.onSwipeEnd = function(cb) {
+	    return this.on(Events.SwipeEnd, cb);
+	  };
+	
+	  Layer.prototype.onSwipeUp = function(cb) {
+	    return this.on(Events.SwipeUp, cb);
+	  };
+	
+	  Layer.prototype.onSwipeUpStart = function(cb) {
+	    return this.on(Events.SwipeUpStart, cb);
+	  };
+	
+	  Layer.prototype.onSwipeUpEnd = function(cb) {
+	    return this.on(Events.SwipeUpEnd, cb);
+	  };
+	
+	  Layer.prototype.onSwipeDown = function(cb) {
+	    return this.on(Events.SwipeDown, cb);
+	  };
+	
+	  Layer.prototype.onSwipeDownStart = function(cb) {
+	    return this.on(Events.SwipeDownStart, cb);
+	  };
+	
+	  Layer.prototype.onSwipeDownEnd = function(cb) {
+	    return this.on(Events.SwipeDownEnd, cb);
+	  };
+	
+	  Layer.prototype.onSwipeLeft = function(cb) {
+	    return this.on(Events.SwipeLeft, cb);
+	  };
+	
+	  Layer.prototype.onSwipeLeftStart = function(cb) {
+	    return this.on(Events.SwipeLeftStart, cb);
+	  };
+	
+	  Layer.prototype.onSwipeLeftEnd = function(cb) {
+	    return this.on(Events.SwipeLeftEnd, cb);
+	  };
+	
+	  Layer.prototype.onSwipeRight = function(cb) {
+	    return this.on(Events.SwipeRight, cb);
+	  };
+	
+	  Layer.prototype.onSwipeRightStart = function(cb) {
+	    return this.on(Events.SwipeRightStart, cb);
+	  };
+	
+	  Layer.prototype.onSwipeRightEnd = function(cb) {
+	    return this.on(Events.SwipeRightEnd, cb);
+	  };
+	
+	  Layer.prototype.onPan = function(cb) {
+	    return this.on(Events.Pan, cb);
+	  };
+	
+	  Layer.prototype.onPanStart = function(cb) {
+	    return this.on(Events.PanStart, cb);
+	  };
+	
+	  Layer.prototype.onPanEnd = function(cb) {
+	    return this.on(Events.PanEnd, cb);
+	  };
+	
+	  Layer.prototype.onPanLeft = function(cb) {
+	    return this.on(Events.PanLeft, cb);
+	  };
+	
+	  Layer.prototype.onPanRight = function(cb) {
+	    return this.on(Events.PanRight, cb);
+	  };
+	
+	  Layer.prototype.onPanUp = function(cb) {
+	    return this.on(Events.PanUp, cb);
+	  };
+	
+	  Layer.prototype.onPanDown = function(cb) {
+	    return this.on(Events.PanDown, cb);
+	  };
+	
+	  Layer.prototype.onPinch = function(cb) {
+	    return this.on(Events.Pinch, cb);
+	  };
+	
+	  Layer.prototype.onPinchStart = function(cb) {
+	    return this.on(Events.PinchStart, cb);
+	  };
+	
+	  Layer.prototype.onPinchEnd = function(cb) {
+	    return this.on(Events.PinchEnd, cb);
+	  };
+	
+	  Layer.prototype.onScale = function(cb) {
+	    return this.on(Events.Scale, cb);
+	  };
+	
+	  Layer.prototype.onScaleStart = function(cb) {
+	    return this.on(Events.ScaleStart, cb);
+	  };
+	
+	  Layer.prototype.onScaleEnd = function(cb) {
+	    return this.on(Events.ScaleEnd, cb);
+	  };
+	
+	  Layer.prototype.onRotate = function(cb) {
+	    return this.on(Events.Rotate, cb);
+	  };
+	
+	  Layer.prototype.onRotateStart = function(cb) {
+	    return this.on(Events.RotateStart, cb);
+	  };
+	
+	  Layer.prototype.onRotateEnd = function(cb) {
+	    return this.on(Events.RotateEnd, cb);
+	  };
 	
 	  Layer.prototype.toInspect = function() {
 	    var round;
@@ -15437,18 +17683,248 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var FramerCSS, Utils;
+	
+	Utils = __webpack_require__(4);
+	
+	FramerCSS = "body {\n	margin: 0;\n}\n\n.framerContext {\n	position: absolute;\n	left: 0;\n	top: 0;\n	right: 0;\n	bottom: 0;\n	pointer-events: none;\n}\n\n.framerLayer {\n	display: block;\n	position: absolute;\n	left: 0;\n	top: 0;\n	background-repeat: no-repeat;\n	background-size: cover;\n	-webkit-overflow-scrolling: touch;\n	-webkit-box-sizing: border-box;\n	-webkit-user-select: none;\n}\n\n.framerLayer input,\n.framerLayer textarea,\n.framerLayer select,\n.framerLayer option,\n.framerLayer div[contenteditable=true]\n{\n	pointer-events: auto;\n	-webkit-user-select: auto;\n}\n\n.framerDebug {\n	padding: 6px;\n	color: #fff;\n	font: 10px/1em Monaco;\n}\n";
+	
+	Utils.domComplete(function() {
+	  return Utils.insertCSS(FramerCSS);
+	});
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Events, Gestures, Utils, _,
+	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+	
+	Utils = __webpack_require__(4);
+	
+	_ = __webpack_require__(1)._;
+	
+	Gestures = __webpack_require__(16).Gestures;
+	
+	Events = {};
+	
+	Events.TouchStart = "touchstart";
+	
+	Events.TouchEnd = "touchend";
+	
+	Events.TouchMove = "touchmove";
+	
+	Events.MouseUp = "mouseup";
+	
+	Events.MouseDown = "mousedown";
+	
+	Events.MouseOver = "mouseover";
+	
+	Events.MouseOut = "mouseout";
+	
+	Events.MouseMove = "mousemove";
+	
+	Events.MouseWheel = "mousewheel";
+	
+	Events.DoubleClick = "dblclick";
+	
+	Events.MouseDoubleClick = "dblclick";
+	
+	if (!Utils.isTouch()) {
+	  Events.TouchStart = Events.MouseDown;
+	  Events.TouchEnd = Events.MouseUp;
+	  Events.TouchMove = Events.MouseMove;
+	}
+	
+	Events.Click = Events.TouchEnd;
+	
+	Events.AnimationStart = "start";
+	
+	Events.AnimationStop = "stop";
+	
+	Events.AnimationEnd = "end";
+	
+	Events.AnimationDidStart = "start";
+	
+	Events.AnimationDidStop = "stop";
+	
+	Events.AnimationDidEnd = "end";
+	
+	Events.Scroll = "scroll";
+	
+	Events.ImageLoaded = "load";
+	
+	Events.ImageLoadError = "error";
+	
+	_.extend(Events, Gestures);
+	
+	Events.touchEvent = function(event) {
+	  var ref, ref1, touchEvent;
+	  touchEvent = (ref = event.touches) != null ? ref[0] : void 0;
+	  if (touchEvent == null) {
+	    touchEvent = (ref1 = event.changedTouches) != null ? ref1[0] : void 0;
+	  }
+	  if (touchEvent == null) {
+	    touchEvent = event;
+	  }
+	  return touchEvent;
+	};
+	
+	Events.wrap = function(element) {
+	  return Framer.CurrentContext.domEventManager.wrap(element);
+	};
+	
+	Events.isGesture = function(eventName) {
+	  return indexOf.call(Gestures, eventName) >= 0;
+	};
+	
+	exports.Events = Events;
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	var Gestures;
+	
+	Gestures = {};
+	
+	Gestures.Tap = "tap";
+	
+	Gestures.TapStart = "tapstart";
+	
+	Gestures.TapEnd = "tapend";
+	
+	Gestures.DoubleTap = "doubletap";
+	
+	Gestures.ForceTap = "forcetap";
+	
+	Gestures.ForceTapChange = "forcetapchange";
+	
+	Gestures.ForceTapStart = "forcetapstart";
+	
+	Gestures.ForceTapEnd = "forcetapend";
+	
+	Gestures.LongPress = "longpress";
+	
+	Gestures.LongPressStart = "longpressstart";
+	
+	Gestures.LongPressEnd = "longpressend";
+	
+	Gestures.Swipe = "swipe";
+	
+	Gestures.SwipeStart = "swipestart";
+	
+	Gestures.SwipeEnd = "swipeend";
+	
+	Gestures.SwipeUp = "swipeup";
+	
+	Gestures.SwipeUpStart = "swipeupstart";
+	
+	Gestures.SwipeUpEnd = "swipeupend";
+	
+	Gestures.SwipeDown = "swipedown";
+	
+	Gestures.SwipeDownStart = "swipedownstart";
+	
+	Gestures.SwipeDownEnd = "swipedownend";
+	
+	Gestures.SwipeLeft = "swipeleft";
+	
+	Gestures.SwipeLeftStart = "swipeleftstart";
+	
+	Gestures.SwipeLeftEnd = "swipeleftend";
+	
+	Gestures.SwipeRight = "swiperight";
+	
+	Gestures.SwipeRightStart = "swiperightstart";
+	
+	Gestures.SwipeRightEnd = "swiperightend";
+	
+	Gestures.EdgeSwipe = "edgeswipe";
+	
+	Gestures.EdgeSwipeStart = "edgeswipestart";
+	
+	Gestures.EdgeSwipeEnd = "edgeswipeend";
+	
+	Gestures.EdgeSwipeTop = "edgeswipetop";
+	
+	Gestures.EdgeSwipeTopStart = "edgeswipetopstart";
+	
+	Gestures.EdgeSwipeTopEnd = "edgeswipetopend";
+	
+	Gestures.EdgeSwipeRight = "edgeswiperight";
+	
+	Gestures.EdgeSwipeRightStart = "edgeswiperightstart";
+	
+	Gestures.EdgeSwipeRightEnd = "edgeswiperightend";
+	
+	Gestures.EdgeSwipeBottom = "edgeswipebottom";
+	
+	Gestures.EdgeSwipeBottomStart = "edgeswipebottomstart";
+	
+	Gestures.EdgeSwipeBottomEnd = "edgeswipebottomend";
+	
+	Gestures.EdgeSwipeLeft = "edgeswipeleft";
+	
+	Gestures.EdgeSwipeLeftStart = "edgeswipeleftstart";
+	
+	Gestures.EdgeSwipeLeftEnd = "edgeswipeleftend";
+	
+	Gestures.Pan = "pan";
+	
+	Gestures.PanStart = "panstart";
+	
+	Gestures.PanEnd = "panend";
+	
+	Gestures.PanLeft = "panleft";
+	
+	Gestures.PanRight = "panright";
+	
+	Gestures.PanUp = "panup";
+	
+	Gestures.PanDown = "pandown";
+	
+	Gestures.Pinch = "pinch";
+	
+	Gestures.PinchStart = "pinchstart";
+	
+	Gestures.PinchEnd = "pinchend";
+	
+	Gestures.Scale = "scale";
+	
+	Gestures.ScaleStart = "scalestart";
+	
+	Gestures.ScaleEnd = "scaleend";
+	
+	Gestures.Rotate = "rotate";
+	
+	Gestures.RotateStart = "rotatestart";
+	
+	Gestures.RotateEnd = "rotateend";
+	
+	exports.Gestures = Gestures;
+
+
+/***/ },
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Originals, Utils, _;
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
 	Originals = {
 	  Layer: {
-	    backgroundColor: "rgba(0,124,255,.5)",
+	    backgroundColor: "rgba(0, 124, 255, 0.5)",
+	    color: "white",
+	    shadowColor: "black",
 	    width: 100,
 	    height: 100
 	  },
@@ -15456,16 +17932,24 @@
 	    curve: "ease",
 	    time: 1
 	  },
+	  Context: {
+	    perspective: 0,
+	    perspectiveOriginX: 0.5,
+	    perspectiveOriginY: 0.5,
+	    parent: null,
+	    name: null
+	  },
 	  DeviceComponent: {
 	    fullScreen: false,
 	    padding: 50,
-	    deviceType: "iphone-5s-spacegray",
+	    deviceType: "apple-iphone-6s-silver",
 	    deviceZoom: "fit",
 	    contentZoom: 1,
 	    orientation: "portrait",
 	    keyboard: false,
 	    animationOptions: {
-	      curve: "spring(400,40,0)"
+	      time: .3,
+	      curve: "ease-in-out"
 	    }
 	  },
 	  LayerDraggable: {
@@ -15557,33 +18041,33 @@
 
 
 /***/ },
-/* 14 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AnimatorClassBezierPresets, AnimatorClasses, BezierCurveAnimator, Config, Defaults, EventEmitter, LinearAnimator, SpringDHOAnimator, SpringRK4Animator, Utils, _, evaluateRelativeProperty, isRelativeProperty, numberRE, relativePropertyRE,
+	var AnimatorClassBezierPresets, AnimatorClasses, BaseClass, BezierCurveAnimator, Config, Defaults, LinearAnimator, SpringDHOAnimator, SpringRK4Animator, Utils, _, evaluateRelativeProperty, isRelativeProperty, numberRE, relativePropertyRE,
 	  slice = [].slice,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty,
 	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Config = __webpack_require__(10).Config;
+	Config = __webpack_require__(14).Config;
 	
-	Defaults = __webpack_require__(13).Defaults;
+	Defaults = __webpack_require__(17).Defaults;
 	
-	EventEmitter = __webpack_require__(8).EventEmitter;
+	BaseClass = __webpack_require__(6).BaseClass;
 	
-	LinearAnimator = __webpack_require__(15).LinearAnimator;
+	LinearAnimator = __webpack_require__(19).LinearAnimator;
 	
-	BezierCurveAnimator = __webpack_require__(17).BezierCurveAnimator;
+	BezierCurveAnimator = __webpack_require__(21).BezierCurveAnimator;
 	
-	SpringRK4Animator = __webpack_require__(18).SpringRK4Animator;
+	SpringRK4Animator = __webpack_require__(22).SpringRK4Animator;
 	
-	SpringDHOAnimator = __webpack_require__(20).SpringDHOAnimator;
+	SpringDHOAnimator = __webpack_require__(24).SpringDHOAnimator;
 	
 	AnimatorClasses = {
 	  "linear": LinearAnimator,
@@ -15636,7 +18120,8 @@
 	      time: 1,
 	      repeat: 0,
 	      delay: 0,
-	      debug: false
+	      debug: false,
+	      colorModel: "husl"
 	    }));
 	    if (options.origin) {
 	      console.warn("Animation.origin: please use layer.originX and layer.originY");
@@ -15646,6 +18131,12 @@
 	    this._originalState = this._currentState();
 	    this._repeatCounter = this.options.repeat;
 	  }
+	
+	  Animation.define("isAnimating", {
+	    get: function() {
+	      return indexOf.call(this.options.layer.context.animations, this) >= 0;
+	    }
+	  });
 	
 	  Animation.prototype.start = function() {
 	    var AnimatorClass, animation, k, property, ref, ref1, ref2, v;
@@ -15686,6 +18177,12 @@
 	      if (this._stateA.hasOwnProperty(property)) {
 	        animation.stop();
 	      }
+	      if (property === "x" && (this._stateA.hasOwnProperty("minX") || this._stateA.hasOwnProperty("midX") || this._stateA.hasOwnProperty("maxX"))) {
+	        animation.stop();
+	      }
+	      if (property === "y" && (this._stateA.hasOwnProperty("minY") || this._stateA.hasOwnProperty("midY") || this._stateA.hasOwnProperty("maxY"))) {
+	        animation.stop();
+	      }
 	    }
 	    if (this.options.debug) {
 	      console.log("Animation.start");
@@ -15721,7 +18218,7 @@
 	    if (emit == null) {
 	      emit = true;
 	    }
-	    this.options.layer._context._animationList = _.without(this.options.layer._context._animationList, this);
+	    this.options.layer.context.removeAnimation(this);
 	    if (emit) {
 	      this.emit("stop");
 	    }
@@ -15762,7 +18259,7 @@
 	  };
 	
 	  Animation.prototype._start = function() {
-	    this.options.layer._context._animationList.push(this);
+	    this.options.layer.context.addAnimation(this);
 	    this.emit("start");
 	    return Framer.Loop.on("update", this._update);
 	  };
@@ -15784,7 +18281,11 @@
 	    ref = this._stateB;
 	    for (k in ref) {
 	      v = ref[k];
-	      this._target[k] = Utils.mapRange(value, 0, 1, this._stateA[k], this._stateB[k]);
+	      if (Color.isColorObject(v) || Color.isColorObject(this._stateA[k])) {
+	        this._target[k] = Color.mix(this._stateA[k], this._stateB[k], value, false, this.options.colorModel);
+	      } else {
+	        this._target[k] = Utils.mapRange(value, 0, 1, this._stateA[k], this._stateB[k]);
+	      }
 	    }
 	  };
 	
@@ -15864,29 +18365,61 @@
 	    animatableProperties = {};
 	    for (k in properties) {
 	      v = properties[k];
-	      if (_.isNumber(v) || _.isFunction(v) || isRelativeProperty(v)) {
+	      if (_.isNumber(v) || _.isFunction(v) || isRelativeProperty(v) || Color.isColorObject(v) || v === null) {
 	        animatableProperties[k] = v;
+	      } else if (_.isString(v)) {
+	        if (Color.isColorString(v)) {
+	          animatableProperties[k] = new Color(v);
+	        }
 	      }
 	    }
 	    return animatableProperties;
 	  };
 	
+	  Animation.prototype.toInspect = function() {
+	    return "<" + this.constructor.name + " id:" + this.id + " isAnimating:" + this.isAnimating + " [" + (_.keys(this.options.properties)) + "]>";
+	  };
+	
+	  Animation.prototype.onAnimationStart = function(cb) {
+	    return this.on(Events.AnimationStart, cb);
+	  };
+	
+	  Animation.prototype.onAnimationStop = function(cb) {
+	    return this.on(Events.AnimationStop, cb);
+	  };
+	
+	  Animation.prototype.onAnimationEnd = function(cb) {
+	    return this.on(Events.AnimationEnd, cb);
+	  };
+	
+	  Animation.prototype.onAnimationDidStart = function(cb) {
+	    return this.on(Events.AnimationDidStart, cb);
+	  };
+	
+	  Animation.prototype.onAnimationDidStop = function(cb) {
+	    return this.on(Events.AnimationDidStop, cb);
+	  };
+	
+	  Animation.prototype.onAnimationDidEnd = function(cb) {
+	    return this.on(Events.AnimationDidEnd, cb);
+	  };
+	
 	  return Animation;
 	
-	})(EventEmitter);
+	})(BaseClass);
 
 
 /***/ },
-/* 15 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Animator, Utils,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Animator = __webpack_require__(16).Animator;
+	Animator = __webpack_require__(20).Animator;
 	
 	exports.LinearAnimator = (function(superClass) {
 	  extend(LinearAnimator, superClass);
@@ -15921,14 +18454,14 @@
 
 
 /***/ },
-/* 16 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Config, Utils;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Config = __webpack_require__(10).Config;
+	Config = __webpack_require__(14).Config;
 	
 	exports.Animator = (function() {
 	  "The animator class is a very simple class that\n	- Takes a set of input values at setup({input values})\n	- Emits an output value for progress (0 -> 1) in value(progress)";
@@ -15957,18 +18490,18 @@
 
 
 /***/ },
-/* 17 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Animator, BezierCurveDefaults, UnitBezier, Utils, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Animator = __webpack_require__(16).Animator;
+	Animator = __webpack_require__(20).Animator;
 	
 	BezierCurveDefaults = {
 	  "linear": [0, 0, 1, 1],
@@ -16100,7 +18633,7 @@
 
 
 /***/ },
-/* 18 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Animator, Integrator, Utils,
@@ -16108,11 +18641,11 @@
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Animator = __webpack_require__(16).Animator;
+	Animator = __webpack_require__(20).Animator;
 	
-	Integrator = __webpack_require__(19).Integrator;
+	Integrator = __webpack_require__(23).Integrator;
 	
 	exports.SpringRK4Animator = (function(superClass) {
 	  extend(SpringRK4Animator, superClass);
@@ -16173,14 +18706,14 @@
 
 
 /***/ },
-/* 19 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Config, Utils;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Config = __webpack_require__(10).Config;
+	Config = __webpack_require__(14).Config;
 	
 	exports.Integrator = (function() {
 	  "Usage:\n	- Instantiate with a function that takes (state) -> acceleration\n	- Call integrateState with state={x, v} and delta";
@@ -16232,7 +18765,7 @@
 
 
 /***/ },
-/* 20 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Animator, Utils,
@@ -16240,9 +18773,9 @@
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Animator = __webpack_require__(16).Animator;
+	Animator = __webpack_require__(20).Animator;
 	
 	exports.SpringDHOAnimator = (function(superClass) {
 	  extend(SpringDHOAnimator, superClass);
@@ -16292,8 +18825,8 @@
 
 
 /***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
+/* 25 */
+/***/ function(module, exports) {
 
 	var _Force2DProperties, _WebkitProperties, filterFormat;
 	
@@ -16329,6 +18862,20 @@
 	  },
 	  opacity: function(layer) {
 	    return layer._properties.opacity;
+	  },
+	  webkitTransformStyle: function(layer) {
+	    if (layer._properties.flat) {
+	      return "flat";
+	    } else {
+	      return "preserve-3d";
+	    }
+	  },
+	  webkitBackfaceVisibility: function(layer) {
+	    if (layer._properties.backfaceVisible) {
+	      return "visible";
+	    } else {
+	      return "hidden";
+	    }
 	  },
 	  overflow: function(layer) {
 	    if (layer._properties.scrollHorizontal === true || layer._properties.scrollVertical === true) {
@@ -16375,7 +18922,7 @@
 	    if (layer._prefer2d || layer._properties.force2d) {
 	      return exports.LayerStyle.webkitTransformForce2d(layer);
 	    }
-	    return "translate3d(" + layer._properties.x + "px," + layer._properties.y + "px," + layer._properties.z + "px) scale(" + layer._properties.scale + ") scale3d(" + layer._properties.scaleX + "," + layer._properties.scaleY + "," + layer._properties.scaleZ + ") skew(" + layer._properties.skew + "deg," + layer._properties.skew + "deg) skewX(" + layer._properties.skewX + "deg) skewY(" + layer._properties.skewY + "deg) rotateX(" + layer._properties.rotationX + "deg) rotateY(" + layer._properties.rotationY + "deg) rotateZ(" + layer._properties.rotationZ + "deg)";
+	    return "translate3d( " + layer._properties.x + "px, " + layer._properties.y + "px, " + layer._properties.z + "px) scale3d( " + (layer._properties.scaleX * layer._properties.scale) + ", " + (layer._properties.scaleY * layer._properties.scale) + ", " + layer._properties.scaleZ + ") skew(" + layer._properties.skew + "deg," + layer._properties.skew + "deg) skewX(" + layer._properties.skewX + "deg) skewY(" + layer._properties.skewY + "deg) translateZ(" + layer._properties.originZ + "px) rotateX(" + layer._properties.rotationX + "deg) rotateY(" + layer._properties.rotationY + "deg) rotateZ(" + layer._properties.rotationZ + "deg) translateZ(" + (-layer._properties.originZ) + "px)";
 	  },
 	  webkitTransformForce2d: function(layer) {
 	    var css, p, v;
@@ -16398,6 +18945,9 @@
 	  webkitPerspective: function(layer) {
 	    return "" + layer._properties.perspective;
 	  },
+	  webkitPerspectiveOrigin: function(layer) {
+	    return (layer._properties.perspectiveOriginX * 100) + "% " + (layer._properties.perspectiveOriginY * 100) + "%";
+	  },
 	  pointerEvents: function(layer) {
 	    if (layer._properties.ignoreEvents) {
 	      return "none";
@@ -16406,7 +18956,11 @@
 	    }
 	  },
 	  boxShadow: function(layer) {
-	    if (!layer._properties.shadowColor) {
+	    var props;
+	    props = layer._properties;
+	    if (!props.shadowColor) {
+	      return "";
+	    } else if (props.shadowX === 0 && props.shadowY === 0 && props.shadowBlur === 0 && props.shadowSpread === 0) {
 	      return "";
 	    }
 	    return layer._properties.shadowX + "px " + layer._properties.shadowY + "px " + layer._properties.shadowBlur + "px " + layer._properties.shadowSpread + "px " + layer._properties.shadowColor;
@@ -16430,7 +18984,7 @@
 
 
 /***/ },
-/* 22 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var BaseClass, Defaults, Events, LayerStatesIgnoredKeys, _,
@@ -16439,13 +18993,13 @@
 	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
 	  slice = [].slice;
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Events = __webpack_require__(23).Events;
+	Events = __webpack_require__(15).Events;
 	
-	BaseClass = __webpack_require__(7).BaseClass;
+	BaseClass = __webpack_require__(6).BaseClass;
 	
-	Defaults = __webpack_require__(13).Defaults;
+	Defaults = __webpack_require__(17).Defaults;
 	
 	LayerStatesIgnoredKeys = ["ignoreEvents"];
 	
@@ -16529,6 +19083,10 @@
 	      v = properties[k];
 	      if (_.isNumber(v)) {
 	        animatablePropertyKeys.push(k);
+	      } else if (Color.isColorObject(v)) {
+	        animatablePropertyKeys.push(k);
+	      } else if (v === null) {
+	        animatablePropertyKeys.push(k);
 	      }
 	    }
 	    if (animatablePropertyKeys.length === 0) {
@@ -16550,7 +19108,7 @@
 	        return function() {
 	          for (k in properties) {
 	            v = properties[k];
-	            if (!_.isNumber(v)) {
+	            if (!(_.isNumber(v) || Color.isColorObject(v))) {
 	              _this.layer[k] = v;
 	            }
 	          }
@@ -16576,6 +19134,12 @@
 	    }
 	  });
 	
+	  LayerStates.define("all", {
+	    get: function() {
+	      return _.clone(this._orderedStates);
+	    }
+	  });
+	
 	  LayerStates.prototype.states = function() {
 	    return _.clone(this._orderedStates);
 	  };
@@ -16586,9 +19150,6 @@
 	    ref = this._states;
 	    for (stateName in ref) {
 	      state = ref[stateName];
-	      if (stateName === "default") {
-	        continue;
-	      }
 	      keys = _.union(keys, _.keys(state));
 	    }
 	    return keys;
@@ -16626,7 +19187,9 @@
 	    stateProperties = {};
 	    for (k in properties) {
 	      v = properties[k];
-	      if (_.isNumber(v) || _.isFunction(v) || _.isBoolean(v) || _.isString(v)) {
+	      if (_.isString(v) && Color.isColorString(v)) {
+	        stateProperties[k] = new Color(v);
+	      } else if (_.isNumber(v) || _.isFunction(v) || _.isBoolean(v) || _.isString(v) || Color.isColorObject(v) || v === null) {
 	        stateProperties[k] = v;
 	      }
 	    }
@@ -16639,96 +19202,29 @@
 
 
 /***/ },
-/* 23 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Events, Utils, _;
-	
-	_ = __webpack_require__(3)._;
-	
-	Utils = __webpack_require__(2);
-	
-	Events = {};
-	
-	if (Utils.isTouch()) {
-	  Events.TouchStart = "touchstart";
-	  Events.TouchEnd = "touchend";
-	  Events.TouchMove = "touchmove";
-	} else {
-	  Events.TouchStart = "mousedown";
-	  Events.TouchEnd = "mouseup";
-	  Events.TouchMove = "mousemove";
-	}
-	
-	Events.Click = Events.TouchEnd;
-	
-	Events.MouseOver = "mouseover";
-	
-	Events.MouseOut = "mouseout";
-	
-	Events.MouseMove = "mousemove";
-	
-	Events.MouseWheel = "mousewheel";
-	
-	Events.AnimationStart = "start";
-	
-	Events.AnimationStop = "stop";
-	
-	Events.AnimationEnd = "end";
-	
-	Events.AnimationDidStart = "start";
-	
-	Events.AnimationDidStop = "stop";
-	
-	Events.AnimationDidEnd = "end";
-	
-	Events.Scroll = "scroll";
-	
-	Events.ImageLoaded = "load";
-	
-	Events.ImageLoadError = "error";
-	
-	Events.touchEvent = function(event) {
-	  var ref, ref1, touchEvent;
-	  touchEvent = (ref = event.touches) != null ? ref[0] : void 0;
-	  if (touchEvent == null) {
-	    touchEvent = (ref1 = event.changedTouches) != null ? ref1[0] : void 0;
-	  }
-	  if (touchEvent == null) {
-	    touchEvent = event;
-	  }
-	  return touchEvent;
-	};
-	
-	Events.wrap = function(element) {
-	  return Framer.CurrentContext.eventManager.wrap(element);
-	};
-	
-	exports.Events = Events;
-
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var BaseClass, Defaults, EventBuffer, Events, Simulation, Utils, _,
+	var BaseClass, Defaults, EventBuffer, Events, Gestures, Simulation, Utils, _,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	BaseClass = __webpack_require__(7).BaseClass;
+	BaseClass = __webpack_require__(6).BaseClass;
 	
-	Events = __webpack_require__(23).Events;
+	Events = __webpack_require__(15).Events;
 	
-	Simulation = __webpack_require__(25).Simulation;
+	Simulation = __webpack_require__(28).Simulation;
 	
-	Defaults = __webpack_require__(13).Defaults;
+	Defaults = __webpack_require__(17).Defaults;
 	
-	EventBuffer = __webpack_require__(30).EventBuffer;
+	EventBuffer = __webpack_require__(33).EventBuffer;
+	
+	Gestures = __webpack_require__(16).Gestures;
 	
 	Events.Move = "move";
 	
@@ -16744,13 +19240,17 @@
 	
 	Events.DragEnd = "dragend";
 	
-	Events.DragAnimationDidStart = "draganimationdidstart";
+	Events.DragAnimationStart = "draganimationstart";
 	
-	Events.DragAnimationDidEnd = "draganimationdidend";
+	Events.DragAnimationEnd = "draganimationend";
 	
-	Events.DirectionLockDidStart = "directionlockdidstart";
+	Events.DirectionLockStart = "directionlockstart";
 	
-	"         \n┌──────┐                   │         \n│      │                             \n│      │  ───────────────▶ │ ◀────▶  \n│      │                             \n└──────┘                   │         \n                                     \n════════  ═════════════════ ═══════  \n                                     \n  Drag         Momentum      Bounce  \n                                         ";
+	Events.DragAnimationDidStart = Events.DragAnimationStart;
+	
+	Events.DragAnimationDidEnd = Events.DragAnimationEnd;
+	
+	"\n┌──────┐                   │\n│      │\n│      │  ───────────────▶ │ ◀────▶\n│      │\n└──────┘                   │\n\n════════  ═════════════════ ═══════\n\n  Drag         Momentum      Bounce\n";
 	
 	exports.LayerDraggable = (function(superClass) {
 	  extend(LayerDraggable, superClass);
@@ -16780,12 +19280,14 @@
 	    },
 	    set: function(value) {
 	      if (value && _.isObject(value)) {
-	        this._constraints = _.defaults(value, {
+	        value = _.pick(value, ["x", "y", "width", "height"]);
+	        value = _.defaults(value, {
 	          x: 0,
 	          y: 0,
 	          width: 0,
 	          height: 0
 	        });
+	        this._constraints = value;
 	      } else {
 	        this._constraints = {
 	          x: 0,
@@ -16867,6 +19369,7 @@
 	    this._touchEnd = bind(this._touchEnd, this);
 	    this._touchMove = bind(this._touchMove, this);
 	    this._touchStart = bind(this._touchStart, this);
+	    this._updateLayerPosition = bind(this._updateLayerPosition, this);
 	    this.touchStart = bind(this.touchStart, this);
 	    options = Defaults.getDefaults("LayerDraggable", {});
 	    LayerDraggable.__super__.constructor.call(this, options);
@@ -16874,15 +19377,22 @@
 	    this.enabled = true;
 	    this._eventBuffer = new EventBuffer;
 	    this._constraints = null;
+	    this._ignoreUpdateLayerPosition = true;
 	    this.attach();
 	  }
 	
 	  LayerDraggable.prototype.attach = function() {
-	    return this.layer.on(Events.TouchStart, this._touchStart);
+	    this.layer.on(Gestures.TapStart, this.touchStart);
+	    this.layer.on(Gestures.Pan, this._touchMove);
+	    this.layer.on(Gestures.TapEnd, this._touchEnd);
+	    this.layer.on("change:x", this._updateLayerPosition);
+	    return this.layer.on("change:y", this._updateLayerPosition);
 	  };
 	
 	  LayerDraggable.prototype.remove = function() {
-	    return this.layer.off(Events.TouchStart, this._touchStart);
+	    this.layer.off(Gestures.PanStart, this.touchStart);
+	    this.layer.off(Gestures.Pan, this._touchMove);
+	    return this.layer.off(Gestures.PanEnd, this._touchEnd);
 	  };
 	
 	  LayerDraggable.prototype.updatePosition = function(point) {
@@ -16893,14 +19403,28 @@
 	    return this._touchStart(event);
 	  };
 	
+	  LayerDraggable.prototype._updateLayerPosition = function() {
+	    if (this._ignoreUpdateLayerPosition === true) {
+	      return;
+	    }
+	    return this._point = this.layer.point;
+	  };
+	
 	  LayerDraggable.prototype._touchStart = function(event) {
-	    var touchEvent;
+	    var animation, i, len, properties, ref, touchEvent;
 	    this._isMoving = this.isAnimating;
-	    this.layer.animateStop();
+	    ref = this.layer.animations();
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      animation = ref[i];
+	      properties = animation.options.properties;
+	      if (properties.hasOwnProperty("x") || properties.hasOwnProperty("y")) {
+	        animation.stop();
+	      }
+	    }
 	    this._stopSimulation();
 	    this._resetdirectionLock();
 	    event.preventDefault();
-	    if (!this.propagateEvents) {
+	    if (this.propagateEvents === false) {
 	      event.stopPropagation();
 	    }
 	    touchEvent = Events.touchEvent(event);
@@ -16922,18 +19446,21 @@
 	      x: touchEvent.clientX - this._correctedLayerStartPoint.x,
 	      y: touchEvent.clientY - this._correctedLayerStartPoint.y
 	    };
-	    document.addEventListener(Events.TouchMove, this._touchMove);
-	    document.addEventListener(Events.TouchEnd, this._touchEnd);
-	    return this.emit(Events.DragStart, event);
+	    this._point = this._correctedLayerStartPoint;
+	    return this._ignoreUpdateLayerPosition = false;
 	  };
 	
 	  LayerDraggable.prototype._touchMove = function(event) {
-	    var offset, point, touchEvent;
+	    var offset, point, scaleX, scaleY, touchEvent;
 	    if (!this.enabled) {
 	      return;
 	    }
+	    if (!this._point) {
+	      this.touchStart(event);
+	    }
+	    this._lastEvent = event;
 	    event.preventDefault();
-	    if (!this.propagateEvents) {
+	    if (this.propagateEvents === false) {
 	      event.stopPropagation();
 	    }
 	    touchEvent = Events.touchEvent(event);
@@ -16942,24 +19469,24 @@
 	      y: touchEvent.clientY,
 	      t: Date.now()
 	    });
-	    offset = {
-	      x: touchEvent.clientX - this._correctedLayerStartPoint.x - this._layerCursorOffset.x,
-	      y: touchEvent.clientY - this._correctedLayerStartPoint.y - this._layerCursorOffset.y
-	    };
-	    offset.x = offset.x * this.speedX * (1 / this.layer.canvasScaleX()) * this.layer.scaleX * this.layer.scale;
-	    offset.y = offset.y * this.speedY * (1 / this.layer.canvasScaleY()) * this.layer.scaleY * this.layer.scale;
-	    point = this.layer.point;
+	    point = _.clone(this._point);
+	    scaleX = 1 / this.layer.canvasScaleX() * this.layer.scale * this.layer.scaleX;
+	    scaleY = 1 / this.layer.canvasScaleY() * this.layer.scale * this.layer.scaleY;
 	    if (this.horizontal) {
-	      point.x = this._correctedLayerStartPoint.x + offset.x;
+	      point.x = this._point.x + (event.delta.x * scaleX * this.speedX);
 	    }
 	    if (this.vertical) {
-	      point.y = this._correctedLayerStartPoint.y + offset.y;
+	      point.y = this._point.y + (event.delta.y * scaleY * this.speedY);
 	    }
+	    this._point = _.clone(point);
 	    if (this._constraints) {
 	      point = this._constrainPosition(point, this._constraints, this.overdragScale);
 	    }
 	    if (this.directionLock) {
 	      if (!this._directionLockEnabledX && !this._directionLockEnabledY) {
+	        offset = event.offset;
+	        offset.x = offset.x * this.speedX * (1 / this.layer.canvasScaleX()) * this.layer.scaleX * this.layer.scale;
+	        offset.y = offset.y * this.speedY * (1 / this.layer.canvasScaleY()) * this.layer.scaleY * this.layer.scale;
 	        this._updatedirectionLock(offset);
 	        return;
 	      } else {
@@ -16971,18 +19498,27 @@
 	        }
 	      }
 	    }
-	    if (this.pixelAlign) {
-	      point.x = parseInt(point.x);
-	      point.y = parseInt(point.y);
-	    }
 	    if (point.x !== this._layerStartPoint.x || point.y !== this._layerStartPoint.y) {
-	      this._isDragging = true;
-	      this._isMoving = true;
+	      if (!this._isDragging) {
+	        this._isDragging = true;
+	        this._isMoving = true;
+	        this.emit(Events.DragStart, event);
+	      }
 	    }
 	    if (this.isDragging) {
 	      this.emit(Events.DragWillMove, event);
 	    }
+	    if (this.pixelAlign) {
+	      if (this.horizontal) {
+	        point.x = parseInt(point.x);
+	      }
+	      if (this.vertical) {
+	        point.y = parseInt(point.y);
+	      }
+	    }
+	    this._ignoreUpdateLayerPosition = true;
 	    this.layer.point = this.updatePosition(point);
+	    this._ignoreUpdateLayerPosition = false;
 	    if (this.isDragging) {
 	      this.emit(Events.Move, this.layer.point);
 	      return this.emit(Events.DragDidMove, event);
@@ -16990,14 +19526,13 @@
 	  };
 	
 	  LayerDraggable.prototype._touchEnd = function(event) {
-	    if (!this.propagateEvents) {
+	    if (this.propagateEvents === false) {
 	      event.stopPropagation();
 	    }
-	    document.removeEventListener(Events.TouchMove, this._touchMove);
-	    document.removeEventListener(Events.TouchEnd, this._touchEnd);
 	    this._startSimulation();
 	    this.emit(Events.DragEnd, event);
-	    return this._isDragging = false;
+	    this._isDragging = false;
+	    return this._ignoreUpdateLayerPosition = true;
 	  };
 	
 	  LayerDraggable.define("constraintsOffset", {
@@ -17056,6 +19591,12 @@
 	        minY: Infinity,
 	        maxY: Infinity
 	      };
+	    }
+	    if (bounds.width < this.layer.width) {
+	      bounds.width = this.layer.width;
+	    }
+	    if (bounds.height < this.layer.height) {
+	      bounds.height = this.layer.height;
 	    }
 	    constraints = {
 	      minX: Utils.frameGetMinX(bounds),
@@ -17158,7 +19699,7 @@
 	    this._directionLockEnabledX = Math.abs(correctedDelta.y) > this.directionLockThreshold.y;
 	    this._directionLockEnabledY = Math.abs(correctedDelta.x) > this.directionLockThreshold.x;
 	    if (this._directionLockEnabledX || this._directionLockEnabledY) {
-	      return this.emit(Events.DirectionLockDidStart, {
+	      return this.emit(Events.DirectionLockStart, {
 	        x: this._directionLockEnabledX,
 	        y: this._directionLockEnabledY
 	      });
@@ -17259,10 +19800,10 @@
 	    }
 	    updatePoint = this.layer.point;
 	    if (axis === "x") {
-	      updatePoint[axis] = updatePoint[axis] + (delta * this.speedX);
+	      updatePoint[axis] = updatePoint[axis] + delta;
 	    }
 	    if (axis === "y") {
-	      updatePoint[axis] = updatePoint[axis] + (delta * this.speedY);
+	      updatePoint[axis] = updatePoint[axis] + delta;
 	    }
 	    this.updatePosition(updatePoint);
 	    this.layer[axis] = this.updatePosition(updatePoint)[axis];
@@ -17270,6 +19811,12 @@
 	  };
 	
 	  LayerDraggable.prototype._onSimulationStop = function(axis, state) {
+	    if (axis === "x" && this.horizontal === false) {
+	      return;
+	    }
+	    if (axis === "y" && this.vertical === false) {
+	      return;
+	    }
 	    if (!this._simulation) {
 	      return;
 	    }
@@ -17318,32 +19865,68 @@
 	    if (startSimulationY) {
 	      this._simulation.y.start();
 	    }
-	    return this.emit(Events.DragAnimationDidStart);
+	    return this.emit(Events.DragAnimationStart);
 	  };
 	
 	  LayerDraggable.prototype._stopSimulation = function() {
-	    var base, base1;
+	    var ref, ref1;
 	    this._isAnimating = false;
 	    if (!this._simulation) {
 	      return;
 	    }
-	    if (this._simulation.x) {
-	      if (typeof (base = this._simulation.x).stop === "function") {
-	        base.stop();
-	      }
+	    if ((ref = this._simulation) != null) {
+	      ref.x.stop();
 	    }
-	    if (this._simulation.y) {
-	      if (typeof (base1 = this._simulation.y).stop === "function") {
-	        base1.stop();
-	      }
+	    if ((ref1 = this._simulation) != null) {
+	      ref1.y.stop();
 	    }
+	    this._simulation = null;
 	    this.emit(Events.Move, this.layer.point);
-	    this.emit(Events.DragAnimationDidEnd);
-	    return this._simulation = null;
+	    return this.emit(Events.DragAnimationEnd);
 	  };
 	
 	  LayerDraggable.prototype.animateStop = function() {
 	    return this._stopSimulation();
+	  };
+	
+	  LayerDraggable.prototype.onMove = function(cb) {
+	    return this.on(Events.Move, cb);
+	  };
+	
+	  LayerDraggable.prototype.onDragStart = function(cb) {
+	    return this.on(Events.DragStart, cb);
+	  };
+	
+	  LayerDraggable.prototype.onDragWillMove = function(cb) {
+	    return this.on(Events.DragWillMove, cb);
+	  };
+	
+	  LayerDraggable.prototype.onDragMove = function(cb) {
+	    return this.on(Events.DragMove, cb);
+	  };
+	
+	  LayerDraggable.prototype.onDragDidMove = function(cb) {
+	    return this.on(Events.DragDidMove, cb);
+	  };
+	
+	  LayerDraggable.prototype.onDrag = function(cb) {
+	    return this.on(Events.Drag, cb);
+	  };
+	
+	  LayerDraggable.prototype.onDragEnd = function(cb) {
+	    return this.on(Events.DragEnd, cb);
+	  };
+	
+	  LayerDraggable.prototype.onDragAnimationStart = function(cb) {
+	    return this.on(Events.DragAnimationStart, cb);
+	  };
+	
+	  LayerDraggable.prototype.onDragAnimationEnd = function(cb) {
+	    return this.on(Events.DragAnimationEnd, cb);
+	  };
+	
+	  LayerDraggable.prototype.onDirectionLockStart = function(cb) {
+	    return this.on(Events.DirectionLockStart, cb);
 	  };
 	
 	  return LayerDraggable;
@@ -17352,7 +19935,7 @@
 
 
 /***/ },
-/* 25 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var BaseClass, Config, Defaults, Events, FrictionSimulator, MomentumBounceSimulator, SimulatorClasses, SpringSimulator, Utils, _,
@@ -17361,23 +19944,23 @@
 	  hasProp = {}.hasOwnProperty,
 	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Config = __webpack_require__(10).Config;
+	Config = __webpack_require__(14).Config;
 	
-	Defaults = __webpack_require__(13).Defaults;
+	Defaults = __webpack_require__(17).Defaults;
 	
-	BaseClass = __webpack_require__(7).BaseClass;
+	BaseClass = __webpack_require__(6).BaseClass;
 	
-	Events = __webpack_require__(23).Events;
+	Events = __webpack_require__(15).Events;
 	
-	SpringSimulator = __webpack_require__(26).SpringSimulator;
+	SpringSimulator = __webpack_require__(29).SpringSimulator;
 	
-	FrictionSimulator = __webpack_require__(28).FrictionSimulator;
+	FrictionSimulator = __webpack_require__(31).FrictionSimulator;
 	
-	MomentumBounceSimulator = __webpack_require__(29).MomentumBounceSimulator;
+	MomentumBounceSimulator = __webpack_require__(32).MomentumBounceSimulator;
 	
 	Events.SimulationStart = 'simulationStart';
 	
@@ -17452,7 +20035,7 @@
 	      return;
 	    }
 	    this._running = false;
-	    this.options.layer._context._animationList = _.without(this.options.layer._context._animationList, this);
+	    this.options.layer.context.removeAnimation(this);
 	    if (emit) {
 	      this.emit(Events.SimulationStop);
 	    }
@@ -17469,7 +20052,7 @@
 	      return;
 	    }
 	    this._running = true;
-	    this.options.layer._context._animationList.push(this);
+	    this.options.layer.context.addAnimation(this);
 	    this.emit(Events.SimulationStart);
 	    return Framer.Loop.on("update", this._update);
 	  };
@@ -17502,7 +20085,7 @@
 
 
 /***/ },
-/* 26 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Defaults, Integrator, Simulator, Utils,
@@ -17510,13 +20093,13 @@
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Defaults = __webpack_require__(13).Defaults;
+	Defaults = __webpack_require__(17).Defaults;
 	
-	Simulator = __webpack_require__(27).Simulator;
+	Simulator = __webpack_require__(30).Simulator;
 	
-	Integrator = __webpack_require__(19).Integrator;
+	Integrator = __webpack_require__(23).Integrator;
 	
 	exports.SpringSimulator = (function(superClass) {
 	  extend(SpringSimulator, superClass);
@@ -17577,23 +20160,23 @@
 
 
 /***/ },
-/* 27 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var BaseClass, Config, Utils, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Config = __webpack_require__(10).Config;
+	Config = __webpack_require__(14).Config;
 	
-	BaseClass = __webpack_require__(7).BaseClass;
+	BaseClass = __webpack_require__(6).BaseClass;
 	
 	exports.Simulator = (function(superClass) {
-	  "The simulator class runs a physics simulation based on a set of input values \nat setup({input values}), and emits an output state {x, v}";
+	  "The simulator class runs a physics simulation based on a set of input values\nat setup({input values}), and emits an output state {x, v}";
 	  extend(Simulator, superClass);
 	
 	  Simulator.define("state", {
@@ -17635,7 +20218,7 @@
 
 
 /***/ },
-/* 28 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Defaults, Integrator, Simulator, Utils,
@@ -17643,13 +20226,13 @@
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Defaults = __webpack_require__(13).Defaults;
+	Defaults = __webpack_require__(17).Defaults;
 	
-	Simulator = __webpack_require__(27).Simulator;
+	Simulator = __webpack_require__(30).Simulator;
 	
-	Integrator = __webpack_require__(19).Integrator;
+	Integrator = __webpack_require__(23).Integrator;
 	
 	exports.FrictionSimulator = (function(superClass) {
 	  extend(FrictionSimulator, superClass);
@@ -17691,7 +20274,7 @@
 
 
 /***/ },
-/* 29 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Defaults, FrictionSimulator, Simulator, SpringSimulator, Utils,
@@ -17699,15 +20282,15 @@
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Defaults = __webpack_require__(13).Defaults;
+	Defaults = __webpack_require__(17).Defaults;
 	
-	Simulator = __webpack_require__(27).Simulator;
+	Simulator = __webpack_require__(30).Simulator;
 	
-	SpringSimulator = __webpack_require__(26).SpringSimulator;
+	SpringSimulator = __webpack_require__(29).SpringSimulator;
 	
-	FrictionSimulator = __webpack_require__(28).FrictionSimulator;
+	FrictionSimulator = __webpack_require__(31).FrictionSimulator;
 	
 	exports.MomentumBounceSimulator = (function(superClass) {
 	  extend(MomentumBounceSimulator, superClass);
@@ -17831,20 +20414,20 @@
 
 
 /***/ },
-/* 30 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var BaseClass, Events, Utils, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	BaseClass = __webpack_require__(7).BaseClass;
+	BaseClass = __webpack_require__(6).BaseClass;
 	
-	Events = __webpack_require__(23).Events;
+	Events = __webpack_require__(15).Events;
 	
 	Events.EventBufferReset = "eventbufferreset";
 	
@@ -17961,7 +20544,185 @@
 
 
 /***/ },
-/* 31 */
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var BaseClass, Events, Gestures, Utils,
+	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
+	
+	Utils = __webpack_require__(4);
+	
+	BaseClass = __webpack_require__(6).BaseClass;
+	
+	Events = __webpack_require__(15).Events;
+	
+	Gestures = __webpack_require__(16).Gestures;
+	
+	Events.PinchStart = "pinchstart";
+	
+	Events.Pinch = "pinch";
+	
+	Events.PinchEnd = "pinchend";
+	
+	Events.RotateStart = "rotatestart";
+	
+	Events.Rotate = "rotate";
+	
+	Events.RotateEnd = "rotateend";
+	
+	Events.ScaleStart = "scalestart";
+	
+	Events.Scale = "scale";
+	
+	Events.ScaleEnd = "scaleend";
+	
+	exports.LayerPinchable = (function(superClass) {
+	  extend(LayerPinchable, superClass);
+	
+	  LayerPinchable.define("enabled", LayerPinchable.simpleProperty("enabled", true));
+	
+	  LayerPinchable.define("threshold", LayerPinchable.simpleProperty("threshold", 0));
+	
+	  LayerPinchable.define("centerOrigin", LayerPinchable.simpleProperty("centerOrigin", true));
+	
+	  LayerPinchable.define("scale", LayerPinchable.simpleProperty("scale", true));
+	
+	  LayerPinchable.define("scaleIncrements", LayerPinchable.simpleProperty("scaleIncrements", 0));
+	
+	  LayerPinchable.define("minScale", LayerPinchable.simpleProperty("minScale", 0));
+	
+	  LayerPinchable.define("maxScale", LayerPinchable.simpleProperty("maxScale", Number.MAX_VALUE));
+	
+	  LayerPinchable.define("scaleFactor", LayerPinchable.simpleProperty("scaleFactor", 1));
+	
+	  LayerPinchable.define("rotate", LayerPinchable.simpleProperty("rotate", true));
+	
+	  LayerPinchable.define("rotateIncrements", LayerPinchable.simpleProperty("rotateIncrements", 0));
+	
+	  LayerPinchable.define("rotateMin", LayerPinchable.simpleProperty("rotateMin", 0));
+	
+	  LayerPinchable.define("rotateMax", LayerPinchable.simpleProperty("rotateMax", 0));
+	
+	  LayerPinchable.define("rotateFactor", LayerPinchable.simpleProperty("rotateFactor", 1));
+	
+	  function LayerPinchable(layer) {
+	    this.layer = layer;
+	    this._pinchEnd = bind(this._pinchEnd, this);
+	    this._pinch = bind(this._pinch, this);
+	    this._pinchStart = bind(this._pinchStart, this);
+	    this._centerOrigin = bind(this._centerOrigin, this);
+	    LayerPinchable.__super__.constructor.apply(this, arguments);
+	    this._attach();
+	  }
+	
+	  LayerPinchable.prototype._attach = function() {
+	    this.layer.on(Gestures.PinchStart, this._pinchStart);
+	    this.layer.on(Gestures.Pinch, this._pinch);
+	    this.layer.on(Gestures.PinchEnd, this._pinchEnd);
+	    return this.layer.on(Gestures.TapStart, this._tapStart);
+	  };
+	
+	  LayerPinchable.prototype._reset = function() {
+	    this._scaleStart = null;
+	    this._rotationStart = null;
+	    return this._rotationOffset = null;
+	  };
+	
+	  LayerPinchable.prototype._tapStart = function(event) {};
+	
+	  LayerPinchable.prototype._centerOrigin = function(event) {
+	    var originDelta, pinchLocation, topInSuperAfter, topInSuperBefore;
+	    topInSuperBefore = Utils.convertPoint({}, this.layer, this.layer.superLayer);
+	    pinchLocation = Utils.convertPointFromContext(event.touchCenter, this.layer, true, true);
+	    this.layer.originX = pinchLocation.x / this.layer.width;
+	    this.layer.originY = pinchLocation.y / this.layer.height;
+	    topInSuperAfter = Utils.convertPoint({}, this.layer, this.layer.superLayer);
+	    originDelta = {
+	      x: topInSuperAfter.x - topInSuperBefore.x,
+	      y: topInSuperAfter.y - topInSuperBefore.y
+	    };
+	    this.layer.x -= originDelta.x;
+	    return this.layer.y -= originDelta.y;
+	  };
+	
+	  LayerPinchable.prototype._pinchStart = function(event) {
+	    this._reset();
+	    if (this.centerOrigin) {
+	      this._centerOrigin(event);
+	    }
+	    return this.normalizeRotation = Utils.rotationNormalizer();
+	  };
+	
+	  LayerPinchable.prototype._pinch = function(event) {
+	    var pointA, pointB, rotation, scale;
+	    if (event.touches.length !== 2) {
+	      return;
+	    }
+	    if (!this.enabled) {
+	      return;
+	    }
+	    pointA = {
+	      x: event.touches[0].pageX,
+	      y: event.touches[0].pageY
+	    };
+	    pointB = {
+	      x: event.touches[1].pageX,
+	      y: event.touches[1].pageY
+	    };
+	    if (!(Utils.pointTotal(Utils.pointAbs(Utils.pointSubtract(pointA, pointB))) > this.threshold)) {
+	      return;
+	    }
+	    if (this.scale) {
+	      if (this._scaleStart == null) {
+	        this._scaleStart = this.layer.scale;
+	      }
+	      scale = (((event.scale - 1) * this.scaleFactor) + 1) * this._scaleStart;
+	      if (this.minScale && this.maxScale) {
+	        scale = Utils.clamp(scale, this.minScale, this.maxScale);
+	      } else if (this.minScale) {
+	        scale = Utils.clamp(scale, this.minScale, 1000000);
+	      } else if (this.maxScale) {
+	        scale = Utils.clamp(scale, 0.00001, this.maxScale);
+	      }
+	      if (this.scaleIncrements) {
+	        scale = Utils.nearestIncrement(scale, this.scaleIncrements);
+	      }
+	      this.layer.scale = scale;
+	      this.emit(Events.Scale, event);
+	    }
+	    if (this.rotate) {
+	      if (this._rotationStart == null) {
+	        this._rotationStart = this.layer.rotation;
+	      }
+	      if (this._rotationOffset == null) {
+	        this._rotationOffset = event.rotation;
+	      }
+	      rotation = event.rotation - this._rotationOffset + this._rotationStart;
+	      rotation = rotation * this.rotateFactor;
+	      rotation = this.normalizeRotation(rotation);
+	      if (this.rotateMin && this.rotateMax) {
+	        rotation = Utils.clamp(rotation, this.rotateMin, this.rotateMax);
+	      }
+	      if (this.rotateIncrements) {
+	        rotation = Utils.nearestIncrement(rotation, this.rotateIncrements);
+	      }
+	      return this.layer.rotation = rotation;
+	    }
+	  };
+	
+	  LayerPinchable.prototype._pinchEnd = function(event) {
+	    return this._reset();
+	  };
+	
+	  return LayerPinchable;
+	
+	})(BaseClass);
+
+
+/***/ },
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Layer,
@@ -17969,7 +20730,7 @@
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	Layer = __webpack_require__(12).Layer;
+	Layer = __webpack_require__(13).Layer;
 	
 	"Todo: make it work in a parent layer";
 	
@@ -17987,31 +20748,14 @@
 	    BackgroundLayer.__super__.constructor.call(this, options);
 	    this.sendToBack();
 	    this.layout();
-	    this._context.eventManager.wrap(window).addEventListener("resize", this.layout);
+	    this._context.domEventManager.wrap(window).addEventListener("resize", this.layout);
 	  }
 	
 	  BackgroundLayer.prototype.layout = function() {
-	    if (this.superLayer) {
-	      return this.frame = {
-	        x: 0,
-	        y: 0,
-	        width: this.superLayer.width,
-	        height: this.superLayer.height
-	      };
-	    } else if (this._context._parentLayer) {
-	      return this.frame = {
-	        x: 0,
-	        y: 0,
-	        width: this._context._parentLayer.width,
-	        height: this._context._parentLayer.height
-	      };
+	    if (this.parent) {
+	      return this.frame = this.parent.frame;
 	    } else {
-	      return this.frame = {
-	        x: 0,
-	        y: 0,
-	        width: window.innerWidth,
-	        height: window.innerHeight
-	      };
+	      return this.frame = this._context.frame;
 	    }
 	  };
 	
@@ -18021,14 +20765,14 @@
 
 
 /***/ },
-/* 32 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Layer,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	Layer = __webpack_require__(12).Layer;
+	Layer = __webpack_require__(13).Layer;
 	
 	exports.VideoLayer = (function(superClass) {
 	  extend(VideoLayer, superClass);
@@ -18042,8 +20786,8 @@
 	    this.player.style.width = "100%";
 	    this.player.style.height = "100%";
 	    VideoLayer.__super__.constructor.call(this, options);
-	    this.player.on = this.player.addEventListener;
-	    this.player.off = this.player.removeEventListener;
+	    this.player.on = this._context.domEventManager.wrap(this.player).addEventListener;
+	    this.player.off = this._context.domEventManager.wrap(this.player).removeEventListener;
 	    this.video = options.video;
 	    this._element.appendChild(this.player);
 	  }
@@ -18063,16 +20807,16 @@
 
 
 /***/ },
-/* 33 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AnimationGroup, EventEmitter, _,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	EventEmitter = __webpack_require__(8).EventEmitter;
+	EventEmitter = __webpack_require__(7).EventEmitter;
 	
 	AnimationGroup = (function(superClass) {
 	  extend(AnimationGroup, superClass);
@@ -18124,7 +20868,7 @@
 
 
 /***/ },
-/* 34 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var BaseClass, CanvasClass, Events,
@@ -18132,9 +20876,9 @@
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	BaseClass = __webpack_require__(7).BaseClass;
+	BaseClass = __webpack_require__(6).BaseClass;
 	
-	Events = __webpack_require__(23).Events;
+	Events = __webpack_require__(15).Events;
 	
 	CanvasClass = (function(superClass) {
 	  extend(CanvasClass, superClass);
@@ -18176,6 +20920,28 @@
 	    }
 	  });
 	
+	  CanvasClass.define("backgroundColor", {
+	    importable: false,
+	    exportable: false,
+	    get: function() {
+	      return Framer.Device.background.backgroundColor;
+	    },
+	    set: function(value) {
+	      return Framer.Device.background.backgroundColor = value;
+	    }
+	  });
+	
+	  CanvasClass.define("image", {
+	    importable: false,
+	    exportable: false,
+	    get: function() {
+	      return Framer.Device.background.image;
+	    },
+	    set: function(value) {
+	      return Framer.Device.background.image = value;
+	    }
+	  });
+	
 	  CanvasClass.prototype.addListener = function(eventName, listener) {
 	    if (eventName === "resize") {
 	      Events.wrap(window).addEventListener("resize", (function(_this) {
@@ -18189,6 +20955,10 @@
 	
 	  CanvasClass.prototype.on = CanvasClass.prototype.addListener;
 	
+	  CanvasClass.prototype.onResize = function(cb) {
+	    return this.on("resize", cb);
+	  };
+	
 	  return CanvasClass;
 	
 	})(BaseClass);
@@ -18197,15 +20967,15 @@
 
 
 /***/ },
-/* 35 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Context, Utils, printContext, printLayer,
 	  slice = [].slice;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Context = __webpack_require__(1).Context;
+	Context = __webpack_require__(40).Context;
 	
 	"\nTodo:\n- Better looks\n- Resizable\n- Live in own space on top of all Framer stuff\n";
 	
@@ -18245,11 +21015,13 @@
 	        return printLayer.maxY = window.innerHeight;
 	      };
 	      update();
-	      printContext.eventManager.wrap(window).addEventListener("resize", update);
+	      printContext.domEventManager.wrap(window).addEventListener("resize", update);
 	    }
 	    printPrefix = "» ";
 	    printNode = document.createElement("div");
-	    printNode.innerHTML = _.escape(printPrefix + args.map(Utils.inspect).join(", ")) + "<br>";
+	    printNode.innerHTML = _.escape(printPrefix + args.map(function(obj) {
+	      return Utils.inspect(obj);
+	    }).join(", ")) + "<br>";
 	    printNode.style["-webkit-user-select"] = "text";
 	    printNode.style["cursor"] = "auto";
 	    return printLayer._element.appendChild(printNode);
@@ -18261,23 +21033,531 @@
 
 
 /***/ },
-/* 36 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var EventMappers, Events, Layer, Utils, _,
+	var BaseClass, Config, DOMEventManager, Defaults, Utils, _,
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty,
+	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+	
+	_ = __webpack_require__(1)._;
+	
+	Utils = __webpack_require__(4);
+	
+	Config = __webpack_require__(14).Config;
+	
+	Defaults = __webpack_require__(17).Defaults;
+	
+	BaseClass = __webpack_require__(6).BaseClass;
+	
+	DOMEventManager = __webpack_require__(41).DOMEventManager;
+	
+	
+	/*
+	
+	An easy way to think of the context is a bucket of things related to a set of layers. There
+	is always at least one context on the screen, but often many more. For example, the device has
+	a special context and replaces the default one (so it renders in the screen), and the print
+	function uses on to draw the console.
+	
+	The default context lives under Framer.DefaultContext and the current one in
+	Framer.CurrentContext. You can create layers in any context by using the run function.
+	
+	A context keeps track of everyting around those layers, so it can clean it up again. We use
+	this a lot in Framer Studio's autocomplete function. Async things like running animations and
+	timers get stopped too.
+	
+	Contexts can live inside another context (with a layer as a parent) so you can only reload
+	a part of a prototype. This is mainly how device works.
+	
+	Another feature is to temporarily freeze/resume a context. If you freeze it, all user event
+	will temporarily get blocked so in theory nothing will change in the context. You can restore
+	these at any time.
+	 */
+	
+	exports.Context = (function(superClass) {
+	  extend(Context, superClass);
+	
+	  Context.define("parent", {
+	    get: function() {
+	      return this._parent;
+	    }
+	  });
+	
+	  Context.define("element", {
+	    get: function() {
+	      return this._element;
+	    }
+	  });
+	
+	  function Context(options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    options = Defaults.getDefaults("Context", options);
+	    Context.__super__.constructor.apply(this, arguments);
+	    if (!options.name) {
+	      throw Error("Contexts need a name");
+	    }
+	    this._parent = options.parent;
+	    this._name = options.name;
+	    this.perspective = options.perspective;
+	    this.perspectiveOriginX = options.perspectiveOriginX;
+	    this.perspectiveOriginY = options.perspectiveOriginY;
+	    this.reset();
+	  }
+	
+	  Context.prototype.reset = function() {
+	    this._createDOMEventManager();
+	    this._createRootElement();
+	    this.resetLayers();
+	    this.resetAnimations();
+	    this.resetTimers();
+	    this.resetIntervals();
+	    return this.emit("reset", this);
+	  };
+	
+	  Context.define("layers", {
+	    get: function() {
+	      return _.clone(this._layers);
+	    }
+	  });
+	
+	  Context.define("layerCounter", {
+	    get: function() {
+	      return this._layerCounter;
+	    }
+	  });
+	
+	  Context.prototype.addLayer = function(layer) {
+	    if (indexOf.call(this._layers, layer) >= 0) {
+	      return;
+	    }
+	    this._layerCounter++;
+	    return this._layers.push(layer);
+	  };
+	
+	  Context.prototype.removeLayer = function(layer) {
+	    return this._layers = _.without(this._layers, layer);
+	  };
+	
+	  Context.prototype.resetLayers = function() {
+	    this.resetGestures();
+	    this._layers = [];
+	    return this._layerCounter = 0;
+	  };
+	
+	  Context.define("animations", {
+	    get: function() {
+	      return _.clone(this._animations);
+	    }
+	  });
+	
+	  Context.prototype.addAnimation = function(animation) {
+	    if (indexOf.call(this._animations, animation) >= 0) {
+	      return;
+	    }
+	    return this._animations.push(animation);
+	  };
+	
+	  Context.prototype.removeAnimation = function(animation) {
+	    return this._animations = _.without(this._animations, animation);
+	  };
+	
+	  Context.prototype.resetAnimations = function() {
+	    this.stopAnimations();
+	    return this._animations = [];
+	  };
+	
+	  Context.prototype.stopAnimations = function() {
+	    if (!this._animations) {
+	      return;
+	    }
+	    return this._animations.map(function(animation) {
+	      return animation.stop(true);
+	    });
+	  };
+	
+	  Context.define("timers", {
+	    get: function() {
+	      return _.clone(this._timers);
+	    }
+	  });
+	
+	  Context.prototype.addTimer = function(timer) {
+	    if (indexOf.call(this._timers, timer) >= 0) {
+	      return;
+	    }
+	    return this._timers.push(timer);
+	  };
+	
+	  Context.prototype.removeTimer = function(timer) {
+	    return this._timers = _.without(this._timers, timer);
+	  };
+	
+	  Context.prototype.resetTimers = function() {
+	    if (this._timers) {
+	      this._timers.map(window.clearTimeout);
+	    }
+	    return this._timers = [];
+	  };
+	
+	  Context.define("intervals", {
+	    get: function() {
+	      return _.clone(this._intervals);
+	    }
+	  });
+	
+	  Context.prototype.addInterval = function(interval) {
+	    if (indexOf.call(this._intervals, interval) >= 0) {
+	      return;
+	    }
+	    return this._intervals.push(interval);
+	  };
+	
+	  Context.prototype.removeInterval = function(interval) {
+	    return this._intervals = _.without(this._intervals, interval);
+	  };
+	
+	  Context.prototype.resetIntervals = function() {
+	    if (this._intervals) {
+	      this._intervals.map(window.clearInterval);
+	    }
+	    return this._intervals = [];
+	  };
+	
+	  Context.prototype.resetGestures = function() {
+	    var i, layer, len, ref;
+	    if (!this._layers) {
+	      return;
+	    }
+	    ref = this._layers;
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      layer = ref[i];
+	      if (layer._gestures) {
+	        layer._gestures.destroy();
+	      }
+	    }
+	  };
+	
+	  Context.prototype.run = function(fn) {
+	    var previousContext;
+	    previousContext = Framer.CurrentContext;
+	    Framer.CurrentContext = this;
+	    fn();
+	    return Framer.CurrentContext = previousContext;
+	  };
+	
+	  Context.prototype.freeze = function() {
+	    var eventName, i, j, layer, layerId, layerListeners, len, len1, ref, ref1;
+	    if (this._frozenEvents != null) {
+	      throw new Error("Context is already frozen");
+	    }
+	    this._frozenEvents = {};
+	    ref = this._layers;
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      layer = ref[i];
+	      layerListeners = {};
+	      ref1 = layer.listenerEvents();
+	      for (j = 0, len1 = ref1.length; j < len1; j++) {
+	        eventName = ref1[j];
+	        layerListeners[eventName] = layer.listeners(eventName);
+	      }
+	      layer.removeAllListeners();
+	      layerId = this._layers.indexOf(layer);
+	      this._frozenEvents[layerId] = layerListeners;
+	    }
+	    this.stopAnimations();
+	    this.resetTimers();
+	    return this.resetIntervals();
+	  };
+	
+	  Context.prototype.resume = function() {
+	    var eventName, events, i, layer, layerId, len, listener, listeners, ref;
+	    if (this._frozenEvents == null) {
+	      throw new Error("Context is not frozen, cannot resume");
+	    }
+	    ref = this._frozenEvents;
+	    for (layerId in ref) {
+	      events = ref[layerId];
+	      layer = this._layers[layerId];
+	      for (eventName in events) {
+	        listeners = events[eventName];
+	        for (i = 0, len = listeners.length; i < len; i++) {
+	          listener = listeners[i];
+	          layer.on(eventName, listener);
+	        }
+	      }
+	    }
+	    return delete this._frozenEvents;
+	  };
+	
+	  Context.prototype._createDOMEventManager = function() {
+	    var ref;
+	    if ((ref = this.domEventManager) != null) {
+	      ref.reset();
+	    }
+	    return this.domEventManager = new DOMEventManager;
+	  };
+	
+	  Context.prototype._createRootElement = function() {
+	    this._destroyRootElement();
+	    this._element = document.createElement("div");
+	    this._element.id = "FramerContextRoot-" + this._name;
+	    this._element.classList.add("framerContext");
+	    this._element.style["webkitPerspective"] = this.perspective;
+	    this._element.style["backgroundColor"] = this.backgroundColor;
+	    this.__pendingElementAppend = (function(_this) {
+	      return function() {
+	        var parentElement, ref;
+	        parentElement = (ref = _this._parent) != null ? ref._element : void 0;
+	        if (parentElement == null) {
+	          parentElement = document.body;
+	        }
+	        return parentElement.appendChild(_this._element);
+	      };
+	    })(this);
+	    return Utils.domComplete(this.__pendingElementAppend);
+	  };
+	
+	  Context.prototype._destroyRootElement = function() {
+	    var ref;
+	    if ((ref = this._element) != null ? ref.parentNode : void 0) {
+	      this._element.parentNode.removeChild(this._element);
+	    }
+	    if (this.__pendingElementAppend) {
+	      Utils.domCompleteCancel(this.__pendingElementAppend);
+	      this.__pendingElementAppend = null;
+	    }
+	    return this._element = null;
+	  };
+	
+	  Context.define("width", {
+	    get: function() {
+	      if (this.parent != null) {
+	        return this.parent.width;
+	      }
+	      return window.innerWidth;
+	    }
+	  });
+	
+	  Context.define("height", {
+	    get: function() {
+	      if (this.parent != null) {
+	        return this.parent.height;
+	      }
+	      return window.innerHeight;
+	    }
+	  });
+	
+	  Context.define("frame", {
+	    get: function() {
+	      return {
+	        x: 0,
+	        y: 0,
+	        width: this.width,
+	        height: this.height
+	      };
+	    }
+	  });
+	
+	  Context.define("size", {
+	    get: function() {
+	      return _.pick(this.frame, ["width", "height"]);
+	    }
+	  });
+	
+	  Context.define("point", {
+	    get: function() {
+	      return _.pick(this.frame, ["x", "y"]);
+	    }
+	  });
+	
+	  Context.define("canvasFrame", {
+	    get: function() {
+	      if (this.parent == null) {
+	        return this.frame;
+	      }
+	      return this.parent.canvasFrame;
+	    }
+	  });
+	
+	  Context.define("backgroundColor", {
+	    get: function() {
+	      if (Color.isColor(this._backgroundColor)) {
+	        return this._backgroundColor;
+	      }
+	      return "transparent";
+	    },
+	    set: function(value) {
+	      var ref;
+	      if (Color.isColor(value)) {
+	        this._backgroundColor = value;
+	        return (ref = this._element) != null ? ref.style["backgroundColor"] = new Color(value.toString()) : void 0;
+	      }
+	    }
+	  });
+	
+	  Context.define("perspective", {
+	    get: function() {
+	      return this._perspective;
+	    },
+	    set: function(value) {
+	      var ref;
+	      if (_.isNumber(value)) {
+	        this._perspective = value;
+	        return (ref = this._element) != null ? ref.style["webkitPerspective"] = this._perspective : void 0;
+	      }
+	    }
+	  });
+	
+	  Context.prototype._updatePerspective = function() {
+	    var ref;
+	    return (ref = this._element) != null ? ref.style["webkitPerspectiveOrigin"] = (this.perspectiveOriginX * 100) + "% " + (this.perspectiveOriginY * 100) + "%" : void 0;
+	  };
+	
+	  Context.define("perspectiveOriginX", {
+	    get: function() {
+	      if (_.isNumber(this._perspectiveOriginX)) {
+	        return this._perspectiveOriginX;
+	      }
+	      return 0.5;
+	    },
+	    set: function(value) {
+	      if (_.isNumber(value)) {
+	        this._perspectiveOriginX = value;
+	        return this._updatePerspective();
+	      }
+	    }
+	  });
+	
+	  Context.define("perspectiveOriginY", {
+	    get: function() {
+	      if (_.isNumber(this._perspectiveOriginY)) {
+	        return this._perspectiveOriginY;
+	      }
+	      return .5;
+	    },
+	    set: function(value) {
+	      if (_.isNumber(value)) {
+	        this._perspectiveOriginY = value;
+	        return this._updatePerspective();
+	      }
+	    }
+	  });
+	
+	  Context.prototype.toInspect = function() {
+	    var round;
+	    round = function(value) {
+	      if (parseInt(value) === value) {
+	        return parseInt(value);
+	      }
+	      return Utils.round(value, 1);
+	    };
+	    return "<" + this.constructor.name + " id:" + this.id + " name:" + this._name + " " + (round(this.width)) + "x" + (round(this.height)) + ">";
+	  };
+	
+	  return Context;
+	
+	})(BaseClass);
+
+
+/***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var DOMEventManagerElement, EventEmitter, EventManagerIdCounter, Utils, _,
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty,
+	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+	
+	_ = __webpack_require__(1)._;
+	
+	EventEmitter = __webpack_require__(7).EventEmitter;
+	
+	Utils = __webpack_require__(4);
+	
+	EventManagerIdCounter = 0;
+	
+	DOMEventManagerElement = (function(superClass) {
+	  extend(DOMEventManagerElement, superClass);
+	
+	  function DOMEventManagerElement(element1) {
+	    this.element = element1;
+	  }
+	
+	  DOMEventManagerElement.prototype.addListener = function(eventName, listener, capture) {
+	    if (capture == null) {
+	      capture = false;
+	    }
+	    DOMEventManagerElement.__super__.addListener.call(this, eventName, listener);
+	    return this.element.addEventListener(eventName, listener, false);
+	  };
+	
+	  DOMEventManagerElement.prototype.removeListener = function(eventName, listener) {
+	    DOMEventManagerElement.__super__.removeListener.call(this, eventName, listener);
+	    return this.element.removeEventListener(eventName, listener, false);
+	  };
+	
+	  DOMEventManagerElement.prototype.addEventListener = DOMEventManagerElement.prototype.addListener;
+	
+	  DOMEventManagerElement.prototype.removeEventListener = DOMEventManagerElement.prototype.removeListener;
+	
+	  return DOMEventManagerElement;
+	
+	})(EventEmitter);
+	
+	exports.DOMEventManager = (function() {
+	  function DOMEventManager(element) {
+	    this.wrap = bind(this.wrap, this);
+	    this._elements = {};
+	  }
+	
+	  DOMEventManager.prototype.wrap = function(element) {
+	    if (!element._eventManagerId) {
+	      element._eventManagerId = EventManagerIdCounter++;
+	    }
+	    if (!this._elements[element._eventManagerId]) {
+	      this._elements[element._eventManagerId] = new DOMEventManagerElement(element);
+	    }
+	    return this._elements[element._eventManagerId];
+	  };
+	
+	  DOMEventManager.prototype.reset = function() {
+	    var element, elementEventManager, ref, results;
+	    ref = this._elements;
+	    results = [];
+	    for (element in ref) {
+	      elementEventManager = ref[element];
+	      results.push(elementEventManager.removeAllListeners());
+	    }
+	    return results;
+	  };
+	
+	  return DOMEventManager;
+
+	})();
+
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var EventMappers, Events, Layer, Utils, _, wrapComponent,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty,
 	  slice = [].slice,
 	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Layer = __webpack_require__(12).Layer;
+	Layer = __webpack_require__(13).Layer;
 	
-	Events = __webpack_require__(23).Events;
+	Events = __webpack_require__(15).Events;
 	
 	"ScrollComponent\n\ncontent <Layer>\ncontentSize <{width:n, height:n}>\ncontentInset <{top:n, right:n, bottom:n, left:n}> TODO\ncontentOffset <{x:n, y:n}> TODO\nscrollFrame <{x:n, y:n, width:n, height:n}>\nscrollPoint <{x:n, y:n}>\nscrollHorizontal <bool>\nscrollVertical <bool>\nspeedX <number>\nspeedY <number>\ndelaysContentTouches <bool> TODO\nloadPreset(<\"ios\"|\"android\">) TODO\nscrollToPoint(<{x:n, y:n}>, animate=true, animationOptions={})\nscrollToLayer(contentLayer, originX=0, originY=0)\nscrollFrameForContentLayer(<x:n, y:n>) <{x:n, y:n, width:n, height:n}> TODO\nclosestContentLayer(<x:n, y:n>) <Layer> TODO\n\nScrollComponent Events\n\n(all of the draggable events)\nScrollStart -> DragStart\nScrollWillMove -> DragWillMove\nScrollDidMove -> DragDidMove\nscroll -> DragMove (html compat)\nScrollEnd -> DragEnd";
 	
@@ -18303,11 +21583,11 @@
 	
 	EventMappers[Events.ScrollEnd] = Events.DragEnd;
 	
-	EventMappers[Events.ScrollAnimationDidStart] = Events.DragAnimationDidStart;
+	EventMappers[Events.ScrollAnimationDidStart] = Events.DragAnimationStart;
 	
-	EventMappers[Events.ScrollAnimationDidEnd] = Events.DragAnimationDidEnd;
+	EventMappers[Events.ScrollAnimationDidEnd] = Events.DragAnimationEnd;
 	
-	EventMappers[Events.DirectionLockDidStart] = Events.DirectionLockDidStart;
+	EventMappers[Events.DirectionLockStart] = Events.DirectionLockStart;
 	
 	exports.ScrollComponent = (function(superClass) {
 	  extend(ScrollComponent, superClass);
@@ -18357,9 +21637,6 @@
 	    if (options.clip == null) {
 	      options.clip = true;
 	    }
-	    if (options.name == null) {
-	      options.name = this.constructor.name;
-	    }
 	    if (options.mouseWheelEnabled == null) {
 	      options.mouseWheelEnabled = false;
 	    }
@@ -18371,6 +21648,9 @@
 	    this.setContentLayer(new Layer);
 	    this._applyOptionsAndDefaults(options);
 	    this._enableMouseWheelHandling();
+	    if (options.hasOwnProperty("wrap")) {
+	      wrapComponent(this, options.wrap);
+	    }
 	  }
 	
 	  ScrollComponent.prototype.calculateContentFrame = function() {
@@ -18389,12 +21669,12 @@
 	      this._content.destroy();
 	    }
 	    this._content = layer;
-	    this._content.superLayer = this;
-	    this._content.name = (this.constructor.name.replace("Component", "")) + "Content";
-	    this._content.clip = false;
+	    this._content.parent = this;
+	    this._content.name = "content";
+	    this._content.clip = true;
 	    this._content.draggable.enabled = true;
 	    this._content.draggable.momentum = true;
-	    this._content.on("change:subLayers", this.updateContent);
+	    this._content.on("change:children", this.updateContent);
 	    this.on("change:width", this.updateContent);
 	    this.on("change:height", this.updateContent);
 	    this.updateContent();
@@ -18406,7 +21686,7 @@
 	  };
 	
 	  ScrollComponent.prototype.updateContent = function() {
-	    var constraintsFrame, contentFrame;
+	    var constraintsFrame, contentFrame, ref;
 	    if (!this.content) {
 	      return;
 	    }
@@ -18422,8 +21702,8 @@
 	      height: constraintsFrame.height + constraintsFrame.height - this.height + this._contentInset.top + this._contentInset.bottom
 	    };
 	    this.content.draggable.constraints = constraintsFrame;
-	    if (this.content.subLayers.length) {
-	      if (this.content.backgroundColor === Framer.Defaults.Layer.backgroundColor) {
+	    if (this.content.children.length) {
+	      if ((ref = this.content.backgroundColor) != null ? ref.isEqual(Framer.Defaults.Layer.backgroundColor) : void 0) {
 	        return this.content.backgroundColor = null;
 	      }
 	    }
@@ -18627,10 +21907,10 @@
 	        curve: "spring(500,50,0)"
 	      };
 	    }
-	    if (contentLayer && contentLayer.superLayer !== this.content) {
-	      throw Error("This layer is not in the scroll component content");
+	    if (contentLayer && contentLayer.parent !== this.content) {
+	      throw Error("Can't scroll to this layer because it's not in the ScrollComponent. Add it to the content like layer.parent = scroll.content.");
 	    }
-	    if (!contentLayer || this.content.subLayers.length === 0) {
+	    if (!contentLayer || this.content.children.length === 0) {
 	      scrollPoint = {
 	        x: 0,
 	        y: 0
@@ -18717,7 +21997,7 @@
 	    if (originY == null) {
 	      originY = 0;
 	    }
-	    return Utils.frameSortByAbsoluteDistance(scrollPoint, this.content.subLayers, originX, originY);
+	    return Utils.frameSortByAbsoluteDistance(scrollPoint, this.content.children, originX, originY);
 	  };
 	
 	  ScrollComponent.prototype._pointInConstraints = function(point) {
@@ -18809,43 +22089,73 @@
 	  ScrollComponent.prototype.copy = function() {
 	    var contentLayer, copy;
 	    copy = ScrollComponent.__super__.copy.apply(this, arguments);
-	    contentLayer = _.first(_.without(copy.subLayers, copy.content));
+	    contentLayer = _.first(_.without(copy.children, copy.content));
 	    copy.setContentLayer(contentLayer);
 	    copy.props = this.props;
 	    return copy;
 	  };
 	
 	  ScrollComponent.wrap = function(layer, options) {
-	    var i, j, len, len1, propKey, ref, ref1, scroll, subLayer, subLayerIndex;
-	    if (options == null) {
-	      options = {};
-	    }
-	    scroll = new this(options);
-	    ref = ["frame", "image", "name"];
-	    for (i = 0, len = ref.length; i < len; i++) {
-	      propKey = ref[i];
-	      scroll[propKey] = layer[propKey];
-	    }
-	    ref1 = layer.subLayers;
-	    for (j = 0, len1 = ref1.length; j < len1; j++) {
-	      subLayer = ref1[j];
-	      subLayerIndex = subLayer.index;
-	      subLayer.superLayer = scroll.content;
-	      subLayer.index = subLayerIndex;
-	    }
-	    scroll.superLayer = layer.superLayer;
-	    scroll.index = layer.index;
-	    layer.destroy();
-	    return scroll;
+	    return wrapComponent(new this(options), layer, options);
 	  };
 	
 	  return ScrollComponent;
 	
 	})(Layer);
+	
+	wrapComponent = function(instance, layer, options) {
+	  var ref, screenFrame, scroll, wrapper;
+	  if (options == null) {
+	    options = {
+	      correct: true
+	    };
+	  }
+	  if (!(layer instanceof Layer)) {
+	    throw new Error("ScrollComponent.wrap expects a layer, not " + layer + ". Are you sure the layer exists?");
+	  }
+	  scroll = instance;
+	  if (options.correct === true) {
+	    if (layer.children.length === 0) {
+	      wrapper = new Layer;
+	      wrapper.name = "ScrollComponent";
+	      wrapper.frame = layer.frame;
+	      layer.parent = wrapper;
+	      layer.x = layer.y = 0;
+	      layer = wrapper;
+	    }
+	  }
+	  scroll.frame = layer.frame;
+	  scroll.parent = layer.parent;
+	  scroll.index = layer.index;
+	  if (layer.name && layer.name !== "") {
+	    scroll.name = layer.name;
+	  } else if ((ref = layer.__framerInstanceInfo) != null ? ref.name : void 0) {
+	    scroll.name = layer.__framerInstanceInfo.name;
+	  }
+	  if (layer.image) {
+	    scroll.image = layer.image;
+	    layer.image = null;
+	  }
+	  scroll.setContentLayer(layer);
+	  if (options.correct === true) {
+	    screenFrame = scroll.screenFrame;
+	    if (screenFrame.x < Screen.width) {
+	      if (screenFrame.x + screenFrame.width > Screen.width) {
+	        scroll.width = Screen.width - screenFrame.x;
+	      }
+	    }
+	    if (screenFrame.y < Screen.height) {
+	      if (screenFrame.y + screenFrame.height > Screen.height) {
+	        scroll.height = Screen.height - screenFrame.y;
+	      }
+	    }
+	  }
+	  return scroll;
+	};
 
 
 /***/ },
-/* 37 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Events, ScrollComponent,
@@ -18854,9 +22164,9 @@
 	  hasProp = {}.hasOwnProperty,
 	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 	
-	Events = __webpack_require__(23).Events;
+	Events = __webpack_require__(15).Events;
 	
-	ScrollComponent = __webpack_require__(36).ScrollComponent;
+	ScrollComponent = __webpack_require__(42).ScrollComponent;
 	
 	"PageComponent\n\noriginX <number>\noriginY <number>\n\nvelocityThreshold <number>\nanimationOptions <animationOptions={}>\ncurrentPage <Layer>\nclosestPage(<originX:n, originY:n>) <Layer>\n\nnextPage(direction=\"\", currentPage)\nsnapToNextPage(direction=\"\", animate, animationOptions={})\n";
 	
@@ -18876,9 +22186,9 @@
 	  function PageComponent() {
 	    this._resetHistory = bind(this._resetHistory, this);
 	    this._scrollEnd = bind(this._scrollEnd, this);
-	    this._onAminationEnd = bind(this._onAminationEnd, this);
-	    this._onAminationStep = bind(this._onAminationStep, this);
-	    this._onAminationStart = bind(this._onAminationStart, this);
+	    this._onAnimationStop = bind(this._onAnimationStop, this);
+	    this._onAnimationStep = bind(this._onAnimationStep, this);
+	    this._onAnimationStart = bind(this._onAnimationStart, this);
 	    this._scrollMove = bind(this._scrollMove, this);
 	    this._scrollStart = bind(this._scrollStart, this);
 	    PageComponent.__super__.constructor.apply(this, arguments);
@@ -18887,7 +22197,7 @@
 	    this.on(Events.ScrollStart, this._scrollStart);
 	    this.on(Events.ScrollEnd, this._scrollEnd);
 	    this.content.on("change:frame", _.debounce(this._scrollMove, 16));
-	    this.content.on("change:subLayers", this._resetHistory);
+	    this.content.on("change:children", this._resetHistory);
 	    this._resetHistory();
 	  }
 	
@@ -18909,13 +22219,16 @@
 	    }
 	  });
 	
-	  PageComponent.prototype.nextPage = function(direction, currentPage) {
+	  PageComponent.prototype.nextPage = function(direction, currentPage, withoutCurrentPage) {
 	    var layers, point;
 	    if (direction == null) {
 	      direction = "right";
 	    }
 	    if (currentPage == null) {
 	      currentPage = null;
+	    }
+	    if (withoutCurrentPage == null) {
+	      withoutCurrentPage = true;
 	    }
 	    if (currentPage == null) {
 	      currentPage = this.currentPage;
@@ -18927,19 +22240,27 @@
 	    if (currentPage) {
 	      point = Utils.framePointForOrigin(currentPage, this.originX, this.originY);
 	    }
+	    if (!withoutCurrentPage) {
+	      point = {
+	        x: this.scrollX + (this.originX * this.width),
+	        y: this.scrollY + (this.originY * this.height)
+	      };
+	    }
 	    if (direction === "up" || direction === "top" || direction === "north") {
-	      layers = this.content.subLayersAbove(point, this.originX, this.originY);
+	      layers = this.content.childrenAbove(point, this.originX, this.originY);
 	    }
 	    if (direction === "down" || direction === "bottom" || direction === "south") {
-	      layers = this.content.subLayersBelow(point, this.originX, this.originY);
+	      layers = this.content.childrenBelow(point, this.originX, this.originY);
 	    }
 	    if (direction === "left" || direction === "west") {
-	      layers = this.content.subLayersLeft(point, this.originX, this.originY);
+	      layers = this.content.childrenLeft(point, this.originX, this.originY);
 	    }
 	    if (direction === "right" || direction === "east") {
-	      layers = this.content.subLayersRight(point, this.originX, this.originY);
+	      layers = this.content.childrenRight(point, this.originX, this.originY);
 	    }
-	    layers = _.without(layers, currentPage);
+	    if (withoutCurrentPage) {
+	      layers = _.without(layers, currentPage);
+	    }
 	    layers = Utils.frameSortByAbsoluteDistance(point, layers, this.originX, this.originY);
 	    return _.first(layers);
 	  };
@@ -18998,11 +22319,8 @@
 	      direction = "right";
 	      throw new Error(direction + " should be in " + directions);
 	    }
-	    point = {
-	      x: 0,
-	      y: 0
-	    };
-	    if (this.content.subLayers.length) {
+	    point = page.point;
+	    if (this.content.children.length) {
 	      if (direction === "right" || direction === "east") {
 	        point.x = Utils.frameGetMaxX(this.content.contentFrame());
 	      }
@@ -19011,8 +22329,8 @@
 	      }
 	    }
 	    page.point = point;
-	    if (page.superLayer !== this.content) {
-	      return page.superLayer = this.content;
+	    if (page.parent !== this.content) {
+	      return page.parent = this.content;
 	    } else {
 	      return this.updateContent();
 	    }
@@ -19020,23 +22338,23 @@
 	
 	  PageComponent.prototype.setContentLayer = function(contentLayer) {
 	    if (this.content) {
-	      this._onAminateStop();
-	      this.content.off(Events.AnimationStart, this._onAminationStart);
-	      this.content.off(Events.AnimationStop, this._onAminationEnd);
+	      this._onAnimationStop();
+	      this.content.off(Events.AnimationStart, this._onAnimationStart);
+	      this.content.off(Events.AnimationStop, this._onAnimationStop);
 	    }
 	    PageComponent.__super__.setContentLayer.call(this, contentLayer);
-	    this.content.on(Events.AnimationStart, this._onAminationStart);
-	    return this.content.on(Events.AnimationStop, this._onAminationEnd);
+	    this.content.on(Events.AnimationStart, this._onAnimationStart);
+	    return this.content.on(Events.AnimationStop, this._onAnimationStop);
 	  };
 	
 	  PageComponent.prototype.horizontalPageIndex = function(page) {
-	    return (_.sortBy(this.content.subLayers, function(l) {
+	    return (_.sortBy(this.content.children, function(l) {
 	      return l.x;
 	    })).indexOf(page);
 	  };
 	
 	  PageComponent.prototype.verticalPageIndex = function(page) {
-	    return (_.sortBy(this.content.subLayers, function(l) {
+	    return (_.sortBy(this.content.children, function(l) {
 	      return l.y;
 	    })).indexOf(page);
 	  };
@@ -19057,32 +22375,38 @@
 	    }
 	  };
 	
-	  PageComponent.prototype._onAminationStart = function() {
+	  PageComponent.prototype._onAnimationStart = function() {
 	    this._isMoving = true;
 	    this._isAnimating = true;
-	    return this.content.on("change:frame", this._onAminationStep);
+	    return this.content.on("change:frame", this._onAnimationStep);
 	  };
 	
-	  PageComponent.prototype._onAminationStep = function() {
+	  PageComponent.prototype._onAnimationStep = function() {
 	    return this.emit(Events.Move, this.content.point);
 	  };
 	
-	  PageComponent.prototype._onAminationEnd = function() {
+	  PageComponent.prototype._onAnimationStop = function() {
 	    this._isMoving = false;
 	    this._isAnimating = false;
-	    return this.content.off("change:frame", this._onAminationStep);
+	    return this.content.off("change:frame", this._onAnimationStep);
 	  };
 	
 	  PageComponent.prototype._scrollEnd = function() {
-	    var nextPage, velocity, xLock, yLock;
+	    var end, nextPage, start, velocity, xDisabled, xLock, yDisabled, yLock;
 	    velocity = this.content.draggable.velocity;
+	    xDisabled = !this.scrollHorizontal && (this.direction === "right" || this.direction === "left");
+	    yDisabled = !this.scrollVertical && (this.direction === "down" || this.direction === "up");
 	    xLock = this.content.draggable._directionLockEnabledX && (this.direction === "right" || this.direction === "left");
 	    yLock = this.content.draggable._directionLockEnabledY && (this.direction === "down" || this.direction === "up");
-	    if (Math.max(Math.abs(velocity.x), Math.abs(velocity.y)) < this.velocityThreshold || xLock || yLock) {
-	      this.snapToPage(this.closestPage, true, this.animationOptions);
+	    if (Math.max(Math.abs(velocity.x), Math.abs(velocity.y)) < this.velocityThreshold || xLock || yLock || xDisabled || yDisabled) {
+	      start = this.content.draggable._layerStartPoint;
+	      end = this.content.draggable.layer.point;
+	      if (start.x !== end.x || start.y !== end.y) {
+	        this.snapToPage(this.closestPage, true, this.animationOptions);
+	      }
 	      return;
 	    }
-	    nextPage = this.nextPage(this.direction, this._currentPage);
+	    nextPage = this.nextPage(this.direction, this._currentPage, false);
 	    if (nextPage == null) {
 	      nextPage = this.closestPage;
 	    }
@@ -19108,21 +22432,36 @@
 
 
 /***/ },
-/* 38 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Events, Layer, Utils,
-	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+	var Events, Knob, Layer, Utils,
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty;
+	  hasProp = {}.hasOwnProperty,
+	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Layer = __webpack_require__(12).Layer;
+	Layer = __webpack_require__(13).Layer;
 	
-	Events = __webpack_require__(23).Events;
+	Events = __webpack_require__(15).Events;
 	
 	"SliderComponent\n\nknob <layer>\nknobSize <width, height>\nfill <layer>\nmin <number>\nmax <number>\n\npointForValue(<n>)\nvalueForPoint(<n>)\n\nanimateToValue(value, animationOptions={})";
+	
+	Events.SliderValueChange = "sliderValueChange";
+	
+	Knob = (function(superClass) {
+	  extend(Knob, superClass);
+	
+	  function Knob(options) {
+	    Knob.__super__.constructor.call(this, options);
+	  }
+	
+	  Knob.define("constrained", Knob.simpleProperty("constrained", false));
+	
+	  return Knob;
+	
+	})(Layer);
 	
 	exports.SliderComponent = (function(superClass) {
 	  extend(SliderComponent, superClass);
@@ -19132,11 +22471,14 @@
 	      options = {};
 	    }
 	    this._updateValue = bind(this._updateValue, this);
+	    this._setOverlayRadius = bind(this._setOverlayRadius, this);
 	    this._setRadius = bind(this._setRadius, this);
 	    this._updateFrame = bind(this._updateFrame, this);
 	    this._updateKnob = bind(this._updateKnob, this);
 	    this._updateFill = bind(this._updateFill, this);
-	    this._touchDown = bind(this._touchDown, this);
+	    this._touchEnd = bind(this._touchEnd, this);
+	    this._touchMove = bind(this._touchMove, this);
+	    this._touchStart = bind(this._touchStart, this);
 	    if (options.backgroundColor == null) {
 	      options.backgroundColor = "#ccc";
 	    }
@@ -19155,26 +22497,43 @@
 	    if (options.value == null) {
 	      options.value = 0;
 	    }
-	    this.knob = new Layer({
+	    this.knob = new Knob({
 	      backgroundColor: "#fff",
 	      shadowY: 1,
 	      shadowBlur: 3,
-	      shadowColor: "rgba(0,0,0,0.35)"
+	      shadowColor: "rgba(0,0,0,0.35)",
+	      name: "knob"
 	    });
 	    this.fill = new Layer({
 	      backgroundColor: "#333",
 	      width: 0,
-	      force2d: true
+	      force2d: true,
+	      name: "fill"
+	    });
+	    this.knobOverlay = new Layer({
+	      backgroundColor: null,
+	      name: "knobOverlay"
+	    });
+	    this.sliderOverlay = new Layer({
+	      backgroundColor: null,
+	      name: "sliderOverlay"
 	    });
 	    SliderComponent.__super__.constructor.call(this, options);
 	    this.knobSize = options.knobSize || 30;
-	    this.knob.superLayer = this.fill.superLayer = this;
+	    this.knob.parent = this.fill.parent = this.knobOverlay.parent = this.sliderOverlay.parent = this;
 	    if (this.width > this.height) {
 	      this.fill.height = this.height;
 	    } else {
 	      this.fill.width = this.width;
 	    }
-	    this.fill.borderRadius = this.borderRadius;
+	    this.knobOverlay.on(Events.Move, function() {
+	      if (this.width > this.height) {
+	        return this.knob.x = this.x;
+	      } else {
+	        return this.knob.y = this.y;
+	      }
+	    });
+	    this.fill.borderRadius = this.sliderOverlay.borderRadius = this.borderRadius;
 	    this.knob.draggable.enabled = true;
 	    this.knob.draggable.overdrag = false;
 	    this.knob.draggable.momentum = true;
@@ -19183,13 +22542,18 @@
 	      tolerance: 0.25
 	    };
 	    this.knob.draggable.bounce = false;
-	    this.knob.draggable.propagateEvents = false;
-	    this.knob.borderRadius = "50%";
+	    this.knob.borderRadius = this.knobSize / 2;
+	    this.knobOverlay.borderRadius = (this.knob.borderRadius * 2) + (this.hitArea / 4);
+	    if (!this.hitArea) {
+	      this.knobOverlay.destroy();
+	      this.sliderOverlay.destroy();
+	    }
 	    this._updateFrame();
 	    this._updateKnob();
 	    this._updateFill();
 	    this.on("change:size", this._updateFrame);
 	    this.on("change:borderRadius", this._setRadius);
+	    this.knob.on("change:borderRadius", this._setOverlayRadius);
 	    if (this.width > this.height) {
 	      this.knob.draggable.speedY = 0;
 	      this.knob.on("change:x", this._updateFill);
@@ -19204,13 +22568,14 @@
 	        return _this._updateValue();
 	      };
 	    })(this));
-	    this.on(Events.TouchStart, this._touchDown);
+	    this.on(Events.TapStart, this._touchStart);
+	    this.on(Events.Pan, this._touchMove);
+	    this.on(Events.TapEnd, this._touchEnd);
 	  }
 	
-	  SliderComponent.prototype._touchDown = function(event) {
+	  SliderComponent.prototype._touchStart = function(event) {
 	    var offsetX, offsetY;
 	    event.preventDefault();
-	    event.stopPropagation();
 	    offsetX = (this.min / this.canvasScaleX()) - this.min;
 	    offsetY = (this.min / this.canvasScaleY()) - this.min;
 	    if (this.width > this.height) {
@@ -19222,21 +22587,34 @@
 	    return this._updateValue();
 	  };
 	
+	  SliderComponent.prototype._touchMove = function(event) {
+	    if (event.target === this._element) {
+	      return this.knob.draggable._touchMove(event);
+	    }
+	  };
+	
+	  SliderComponent.prototype._touchEnd = function(event) {
+	    if (event.target === this._element) {
+	      return this.knob.draggable._touchEnd(event);
+	    }
+	  };
+	
 	  SliderComponent.prototype._updateFill = function() {
 	    if (this.width > this.height) {
-	      return this.fill.width = this.knob.midX;
+	      return this.fill.width = this.knobOverlay.midX = this.knob.midX;
 	    } else {
-	      return this.fill.height = this.knob.midY;
+	      return this.fill.height = this.knobOverlay.midY = this.knob.midY;
 	    }
 	  };
 	
 	  SliderComponent.prototype._updateKnob = function() {
 	    if (this.width > this.height) {
-	      this.knob.midX = this.fill.width;
+	      this.knob.midX = this.knobOverlay.midX = this.fill.width;
 	      return this.knob.centerY();
 	    } else {
-	      this.knob.midY = this.fill.height;
-	      return this.knob.centerX();
+	      this.knob.midY = this.knobOverlay.midX = this.fill.height;
+	      this.knob.centerX();
+	      return this.knobOverlay.midY = this.knob.midY;
 	    }
 	  };
 	
@@ -19247,19 +22625,34 @@
 	      width: this.width + this.knob.width,
 	      height: this.height + this.knob.height
 	    };
+	    if (this.knob.constrained) {
+	      this.knob.draggable.constraints = {
+	        x: 0,
+	        y: 0,
+	        width: this.width,
+	        height: this.height
+	      };
+	    }
 	    if (this.width > this.height) {
 	      this.fill.height = this.height;
-	      return this.knob.centerY();
+	      this.knob.centerY();
+	      this.knobOverlay.centerY();
 	    } else {
 	      this.fill.width = this.width;
-	      return this.knob.centerX();
+	      this.knob.centerX();
+	      this.knobOverlay.centerX();
 	    }
+	    return this.sliderOverlay.center();
 	  };
 	
 	  SliderComponent.prototype._setRadius = function() {
 	    var radius;
 	    radius = this.borderRadius;
 	    return this.fill.style.borderRadius = radius + "px 0 0 " + radius + "px";
+	  };
+	
+	  SliderComponent.prototype._setOverlayRadius = function() {
+	    return this.knobOverlay.borderRadius = (this.knob.borderRadius * 2) + (this.hitArea / 4);
 	  };
 	
 	  SliderComponent.define("knobSize", {
@@ -19271,6 +22664,23 @@
 	      this.knob.width = this._knobSize;
 	      this.knob.height = this._knobSize;
 	      return this._updateFrame();
+	    }
+	  });
+	
+	  SliderComponent.define("hitArea", {
+	    get: function() {
+	      return this._hitArea;
+	    },
+	    set: function(value) {
+	      this._hitArea = value;
+	      this.knobOverlay.props = {
+	        width: this.knobSize || 30 + this._hitArea,
+	        height: this.knobSize || 30 + this._hitArea
+	      };
+	      return this.sliderOverlay.props = {
+	        width: this.width + this._hitArea,
+	        height: this.height + this._hitArea
+	      };
 	    }
 	  });
 	
@@ -19303,31 +22713,48 @@
 	    set: function(value) {
 	      if (this.width > this.height) {
 	        this.knob.midX = this.pointForValue(value);
-	        return this._updateFill();
 	      } else {
 	        this.knob.midY = this.pointForValue(value);
-	        return this._updateFill();
 	      }
+	      this._updateFill();
+	      return this._updateValue();
 	    }
 	  });
 	
 	  SliderComponent.prototype._updateValue = function() {
-	    return this.emit("change:value", this.value);
+	    this.emit("change:value", this.value);
+	    return this.emit(Events.SliderValueChange, this.value);
 	  };
 	
 	  SliderComponent.prototype.pointForValue = function(value) {
 	    if (this.width > this.height) {
-	      return Utils.modulate(value, [this.min, this.max], [0, this.width], true);
+	      if (this.knob.constrained) {
+	        return Utils.modulate(value, [this.min, this.max], [0 + (this.knob.width / 2), this.width - (this.knob.width / 2)], true);
+	      } else {
+	        return Utils.modulate(value, [this.min, this.max], [0, this.width], true);
+	      }
 	    } else {
-	      return Utils.modulate(value, [this.min, this.max], [0, this.height], true);
+	      if (this.knob.constrained) {
+	        return Utils.modulate(value, [this.min, this.max], [0 + (this.knob.height / 2), this.height - (this.knob.height / 2)], true);
+	      } else {
+	        return Utils.modulate(value, [this.min, this.max], [0, this.height], true);
+	      }
 	    }
 	  };
 	
 	  SliderComponent.prototype.valueForPoint = function(value) {
 	    if (this.width > this.height) {
-	      return Utils.modulate(value, [0, this.width], [this.min, this.max], true);
+	      if (this.knob.constrained) {
+	        return Utils.modulate(value, [0 + (this.knob.width / 2), this.width - (this.knob.width / 2)], [this.min, this.max], true);
+	      } else {
+	        return Utils.modulate(value, [0, this.width], [this.min, this.max], true);
+	      }
 	    } else {
-	      return Utils.modulate(value, [0, this.height], [this.min, this.max], true);
+	      if (this.knob.constrained) {
+	        return Utils.modulate(value, [0 + (this.knob.height / 2), this.height - (this.knob.height / 2)], [this.min, this.max], true);
+	      } else {
+	        return Utils.modulate(value, [0, this.height], [this.min, this.max], true);
+	      }
 	    }
 	  };
 	
@@ -19351,33 +22778,36 @@
 	    return this.knob.animate(animationOptions);
 	  };
 	
+	  SliderComponent.prototype.onValueChange = function(cb) {
+	    return this.on(Events.SliderValueChange, cb);
+	  };
+	
 	  return SliderComponent;
 	
 	})(Layer);
 
 
 /***/ },
-/* 39 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppleWatch38Device, AppleWatch42Device, BaseClass, Defaults, DeviceComponentDefaultDevice, Devices, Events, Layer, Nexus5BaseDevice, Nexus5BaseDeviceHand, Nexus9BaseDevice, Utils, _, iPadAirBaseDevice, iPadAirBaseDeviceHand, iPadMiniBaseDevice, iPadMiniBaseDeviceHand, iPhone5BaseDevice, iPhone5BaseDeviceHand, iPhone5CBaseDevice, iPhone5CBaseDeviceHand, iPhone6BaseDevice, iPhone6BaseDeviceHand, iPhone6PlusBaseDevice, iPhone6PlusBaseDeviceHand,
+	var AppleWatch38BlackLeatherDevice, AppleWatch38Device, AppleWatch42Device, BaseClass, BuiltInDevices, Defaults, Devices, Events, HTCa9BaseDevice, HTCm8BaseDevice, Layer, MSFTLumia950BaseDevice, Nexus4BaseDevice, Nexus5BaseDevice, Nexus6BaseDevice, Nexus9BaseDevice, SamsungGalaxyNote5BaseDevice, Utils, _, iPadAir2BaseDevice, iPadMini4BaseDevice, iPadProBaseDevice, iPhone5BaseDevice, iPhone5CBaseDevice, iPhone6BaseDevice, iPhone6PlusBaseDevice, newDeviceMinVersion, oldDeviceMaxVersion, old_AppleWatch38Device, old_AppleWatch42Device, old_Nexus5BaseDevice, old_Nexus5BaseDeviceHand, old_Nexus9BaseDevice, old_iPadAirBaseDevice, old_iPadAirBaseDeviceHand, old_iPadMiniBaseDevice, old_iPadMiniBaseDeviceHand, old_iPhone5BaseDevice, old_iPhone5BaseDeviceHand, old_iPhone5CBaseDevice, old_iPhone5CBaseDeviceHand, old_iPhone6BaseDevice, old_iPhone6BaseDeviceHand, old_iPhone6PlusBaseDevice, old_iPhone6PlusBaseDeviceHand,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty;
+	  hasProp = {}.hasOwnProperty,
+	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	DeviceComponentDefaultDevice = "iphone-6-silver";
+	BaseClass = __webpack_require__(6).BaseClass;
 	
-	BaseClass = __webpack_require__(7).BaseClass;
+	Layer = __webpack_require__(13).Layer;
 	
-	Layer = __webpack_require__(12).Layer;
+	Defaults = __webpack_require__(17).Defaults;
 	
-	Defaults = __webpack_require__(13).Defaults;
-	
-	Events = __webpack_require__(23).Events;
+	Events = __webpack_require__(15).Events;
 	
 	
 	/*
@@ -19398,18 +22828,11 @@
 	Device.setDeviceScale(zoom:float, animate:bool)
 	Device.setContentScale(zoom:float, animate:bool)
 	
-	Device.keyboard bool
-	Device.setKeyboard(visible:bool, animate:bool)
-	Device.showKeyboard(animate:bool)
-	Device.hideKeyboard(animate:bool)
-	Device.toggleKeyboard(animate:bool)
-	
+	Device.nextHand()
 	
 	 * Events
 	Events.DeviceTypeDidChange
 	Events.DeviceFullScreenDidChange
-	Events.DeviceKeyboardWillShow
-	Events.DeviceKeyboardDidShow
 	 */
 	
 	exports.DeviceComponent = (function(superClass) {
@@ -19426,7 +22849,7 @@
 	    if (options == null) {
 	      options = {};
 	    }
-	    this._animateKeyboard = bind(this._animateKeyboard, this);
+	    this._orientationChange = bind(this._orientationChange, this);
 	    this._updateDeviceImage = bind(this._updateDeviceImage, this);
 	    this._update = bind(this._update, this);
 	    defaults = Defaults.getDefaults("DeviceComponent", options);
@@ -19437,6 +22860,7 @@
 	    this.animationOptions = defaults.animationOptions;
 	    this.deviceType = defaults.deviceType;
 	    _.extend(this, _.defaults(options, defaults));
+	    window.addEventListener("orientationchange", this._orientationChange, true);
 	  }
 	
 	  DeviceComponent.prototype._setup = function() {
@@ -19449,37 +22873,38 @@
 	    this.background.clip = true;
 	    this.background.backgroundColor = "transparent";
 	    this.background.classList.add("DeviceBackground");
-	    this.phone = new Layer;
+	    this.hands = new Layer;
+	    this.handsImageLayer = new Layer({
+	      parent: this.hands
+	    });
+	    this.phone = new Layer({
+	      parent: this.hands
+	    });
 	    this.screen = new Layer({
-	      superLayer: this.phone
+	      parent: this.phone
 	    });
 	    this.viewport = new Layer({
-	      superLayer: this.screen
+	      parent: this.screen
 	    });
 	    this.content = new Layer({
-	      superLayer: this.viewport
+	      parent: this.viewport
 	    });
+	    this.hands.backgroundColor = "transparent";
+	    this.hands._alwaysUseImageCache = true;
+	    this.handsImageLayer.backgroundColor = "transparent";
 	    this.phone.backgroundColor = "transparent";
 	    this.phone.classList.add("DevicePhone");
-	    this.screen.backgroundColor = "transparent";
 	    this.screen.classList.add("DeviceScreen");
+	    this.screen.clip = true;
 	    this.viewport.backgroundColor = "transparent";
 	    this.viewport.classList.add("DeviceComponentPort");
 	    this.content.backgroundColor = "transparent";
 	    this.content.classList.add("DeviceContent");
 	    this.content.originX = 0;
 	    this.content.originY = 0;
-	    this.keyboardLayer = new Layer({
-	      superLayer: this.viewport
-	    });
-	    this.keyboardLayer.on("click", (function(_this) {
-	      return function() {
-	        return _this.toggleKeyboard();
-	      };
-	    })(this));
-	    this.keyboardLayer.classList.add("DeviceKeyboard");
-	    this.keyboardLayer.backgroundColor = "transparent";
-	    Framer.CurrentContext.eventManager.wrap(window).addEventListener("resize", this._update);
+	    if (!Utils.isMobile()) {
+	      Framer.CurrentContext.domEventManager.wrap(window).addEventListener("resize", this._update);
+	    }
 	    ref = [this.background, this.phone, this.viewport, this.content, this.screen];
 	    for (i = 0, len = ref.length; i < len; i++) {
 	      layer = ref[i];
@@ -19487,10 +22912,11 @@
 	        return event.preventDefault();
 	      });
 	    }
-	    return this._context = new Framer.Context({
-	      parentLayer: this.content,
+	    this._context = new Framer.Context({
+	      parent: this.content,
 	      name: "Device"
 	    });
+	    return this._context.perspective = 1200;
 	  };
 	
 	  DeviceComponent.prototype._update = function() {
@@ -19500,7 +22926,7 @@
 	      contentScaleFactor = 1;
 	    }
 	    if (this._shouldRenderFullScreen()) {
-	      ref = [this.background, this.phone, this.viewport, this.content, this.screen];
+	      ref = [this.background, this.hands, this.phone, this.viewport, this.content, this.screen];
 	      for (i = 0, len = ref.length; i < len; i++) {
 	        layer = ref[i];
 	        layer.x = layer.y = 0;
@@ -19508,22 +22934,25 @@
 	        layer.height = window.innerHeight / contentScaleFactor;
 	        layer.scale = 1;
 	      }
-	      this.content.scale = contentScaleFactor;
-	      return this._positionKeyboard();
+	      return this.content.scale = contentScaleFactor;
 	    } else {
 	      backgroundOverlap = 100;
 	      this.background.x = 0 - backgroundOverlap;
 	      this.background.y = 0 - backgroundOverlap;
 	      this.background.width = window.innerWidth + (2 * backgroundOverlap);
 	      this.background.height = window.innerHeight + (2 * backgroundOverlap);
-	      this.phone.scale = this._calculatePhoneScale();
+	      this.hands.scale = this._calculatePhoneScale();
+	      this.hands.center();
 	      this.phone.center();
 	      ref1 = this._getOrientationDimensions(this._device.screenWidth / contentScaleFactor, this._device.screenHeight / contentScaleFactor), width = ref1[0], height = ref1[1];
-	      this.screen.width = this._device.screenWidth;
-	      this.screen.height = this._device.screenHeight;
-	      this.viewport.width = this.content.width = width;
-	      this.viewport.height = this.content.height = height;
-	      return this.screen.center();
+	      this.screen.width = this.viewport.width = this._device.screenWidth;
+	      this.screen.height = this.viewport.height = this._device.screenHeight;
+	      this.content.width = width;
+	      this.content.height = height;
+	      this.screen.center();
+	      if (this.selectedHand && this._orientation === 0) {
+	        return this.setHand(this.selectedHand);
+	      }
 	    }
 	  };
 	
@@ -19575,12 +23004,11 @@
 	    this._fullScreen = fullScreen;
 	    if (fullScreen === true) {
 	      this.phone.image = "";
+	      this.hands.image = "";
 	    } else {
 	      this._updateDeviceImage();
 	    }
 	    this._update();
-	    this.keyboard = false;
-	    this._positionKeyboard();
 	    return this.emit("change:fullScreen");
 	  };
 	
@@ -19589,13 +23017,21 @@
 	      return this._deviceType;
 	    },
 	    set: function(deviceType) {
-	      var device, shouldZoomToFit;
+	      var device, i, key, lDevicetype, lKey, len, ref, shouldZoomToFit;
 	      if (deviceType === this._deviceType) {
 	        return;
 	      }
 	      device = null;
 	      if (_.isString(deviceType)) {
-	        device = Devices[deviceType.toLowerCase()];
+	        lDevicetype = deviceType.toLowerCase();
+	        ref = _.keys(Devices);
+	        for (i = 0, len = ref.length; i < len; i++) {
+	          key = ref[i];
+	          lKey = key.toLowerCase();
+	          if (lDevicetype === lKey) {
+	            device = Devices[key];
+	          }
+	        }
 	      }
 	      if (!device) {
 	        throw Error("No device named " + deviceType + ". Options are: " + (_.keys(Devices)));
@@ -19604,13 +23040,15 @@
 	        return;
 	      }
 	      shouldZoomToFit = this._deviceType === "fullscreen";
+	      this.screen.backgroundColor = "black";
+	      if (device.backgroundColor != null) {
+	        this.screen.backgroundColor = device.backgroundColor;
+	      }
 	      this._device = _.clone(device);
 	      this._deviceType = deviceType;
 	      this.fullscreen = false;
 	      this._updateDeviceImage();
 	      this._update();
-	      this.keyboard = false;
-	      this._positionKeyboard();
 	      this.emit("change:deviceType");
 	      if (shouldZoomToFit) {
 	        return this.deviceScale = "fit";
@@ -19623,14 +23061,17 @@
 	      return;
 	    }
 	    if (this._shouldRenderFullScreen()) {
-	      return this.phone.image = "";
+	      this.phone.image = "";
+	      return this.hands.image = "";
 	    } else if (!this._deviceImageUrl(this._deviceImageName())) {
 	      return this.phone.image = "";
 	    } else {
-	      this.phone._cacheImage = true;
+	      this.phone._alwaysUseImageCache = true;
 	      this.phone.image = this._deviceImageUrl(this._deviceImageName());
 	      this.phone.width = this._device.deviceImageWidth;
-	      return this.phone.height = this._device.deviceImageHeight;
+	      this.phone.height = this._device.deviceImageHeight;
+	      this.hands.width = this.phone.width;
+	      return this.hands.height = this.phone.height;
 	    }
 	  };
 	
@@ -19642,23 +23083,28 @@
 	  };
 	
 	  DeviceComponent.prototype._deviceImageUrl = function(name) {
-	    var resourceUrl;
+	    var ref, resourceUrl;
 	    if (!name) {
 	      return null;
 	    }
 	    if (_.startsWith(name, "http://") || _.startsWith(name, "https://")) {
 	      return name;
 	    }
+	    if (ref = this._deviceType, indexOf.call(BuiltInDevices, ref) < 0) {
+	      return name;
+	    }
+	    resourceUrl = "//resources.framerjs.com/static/DeviceResources";
 	    if (Utils.isFramerStudio() && window.FramerStudioInfo) {
-	      resourceUrl = window.FramerStudioInfo.deviceImagesUrl;
-	    } else {
-	      resourceUrl = "//resources.framerjs.com/static/DeviceResources";
+	      if (this._device.minStudioVersion && Utils.framerStudioVersion() >= this._device.minStudioVersion || !this._device.minStudioVersion) {
+	        if (this._device.maxStudioVersion && Utils.framerStudioVersion() <= this._device.maxStudioVersion || !this._device.maxStudioVersion) {
+	          resourceUrl = window.FramerStudioInfo.deviceImagesUrl;
+	        }
+	      }
 	    }
-	    if (Utils.isJP2Supported() && (this._device.deviceImageJP2 != null) === true) {
+	    if (Utils.isJP2Supported() && this._device.deviceImageJP2 === true) {
 	      return resourceUrl + "/" + (name.replace(".png", ".jp2"));
-	    } else {
-	      return resourceUrl + "/" + name;
 	    }
+	    return resourceUrl + "/" + name;
 	  };
 	
 	  DeviceComponent.define("deviceScale", {
@@ -19695,28 +23141,32 @@
 	    } else {
 	      phoneScale = deviceScale;
 	    }
-	    this.phone.animateStop();
+	    this.hands.animateStop();
 	    if (animate) {
-	      this.phone.animate(_.extend(this.animationOptions, {
+	      this.hands.animate(_.extend(this.animationOptions, {
 	        properties: {
 	          scale: phoneScale
 	        }
 	      }));
 	    } else {
-	      this.phone.scale = phoneScale;
-	      this.phone.center();
+	      this.hands.scale = phoneScale;
+	      this.hands.center();
 	    }
 	    return this.emit("change:deviceScale");
 	  };
 	
 	  DeviceComponent.prototype._calculatePhoneScale = function() {
 	    var height, paddingOffset, phoneScale, ref, ref1, width;
-	    if (this._deviceScale && this._deviceScale !== "fit") {
-	      return this._deviceScale;
-	    }
 	    ref = this._getOrientationDimensions(this.phone.width, this.phone.height), width = ref[0], height = ref[1];
 	    paddingOffset = ((ref1 = this._device) != null ? ref1.paddingOffset : void 0) || 0;
 	    phoneScale = _.min([(window.innerWidth - ((this.padding + paddingOffset) * 2)) / width, (window.innerHeight - ((this.padding + paddingOffset) * 2)) / height]);
+	    if (phoneScale > 1) {
+	      phoneScale = 1;
+	    }
+	    this.emit("change:phoneScale", phoneScale);
+	    if (this._deviceScale && this._deviceScale !== "fit") {
+	      return this._deviceScale;
+	    }
 	    return phoneScale;
 	  };
 	
@@ -19756,6 +23206,9 @@
 	
 	  DeviceComponent.define("orientation", {
 	    get: function() {
+	      if (Utils.isMobile()) {
+	        return window.orientation;
+	      }
 	      return this._orientation || 0;
 	    },
 	    set: function(orientation) {
@@ -19764,9 +23217,12 @@
 	  });
 	
 	  DeviceComponent.prototype.setOrientation = function(orientation, animate) {
-	    var _hadKeyboard, animation, contentProperties, height, phoneProperties, ref, ref1, width, x, y;
+	    var animation, contentProperties, height, offset, phoneProperties, ref, ref1, width, x, y;
 	    if (animate == null) {
 	      animate = false;
+	    }
+	    if (Utils.framerStudioVersion() === oldDeviceMaxVersion) {
+	      orientation *= -1;
 	    }
 	    if (orientation === "portrait") {
 	      orientation = 0;
@@ -19786,26 +23242,30 @@
 	    }
 	    this._orientation = orientation;
 	    phoneProperties = {
-	      rotationZ: this._orientation,
+	      rotationZ: -this._orientation,
 	      scale: this._calculatePhoneScale()
 	    };
 	    ref = this._getOrientationDimensions(this._device.screenWidth, this._device.screenHeight), width = ref[0], height = ref[1];
-	    ref1 = [(this.screen.width - width) / 2, (this.screen.height - height) / 2], x = ref1[0], y = ref1[1];
+	    this.content.width = width;
+	    this.content.height = height;
+	    offset = (this.screen.width - width) / 2;
+	    if (this._orientation === -90) {
+	      offset *= -1;
+	    }
+	    ref1 = [0, 0], x = ref1[0], y = ref1[1];
+	    if (this.isLandscape()) {
+	      x = offset;
+	      y = offset;
+	    }
 	    contentProperties = {
-	      rotationZ: -this._orientation,
-	      width: width,
-	      height: height,
+	      rotationZ: this._orientation,
 	      x: x,
 	      y: y
 	    };
-	    _hadKeyboard = this.keyboard;
-	    if (_hadKeyboard) {
-	      this.hideKeyboard(false);
-	    }
-	    this.phone.animateStop();
+	    this.hands.animateStop();
 	    this.viewport.animateStop();
 	    if (animate) {
-	      animation = this.phone.animate(_.extend(this.animationOptions, {
+	      animation = this.hands.animate(_.extend(this.animationOptions, {
 	        properties: phoneProperties
 	      }));
 	      this.viewport.animate(_.extend(this.animationOptions, {
@@ -19816,27 +23276,25 @@
 	          return _this._update();
 	        };
 	      })(this));
-	      if (_hadKeyboard) {
-	        animation.on(Events.AnimationEnd, (function(_this) {
-	          return function() {
-	            return _this.showKeyboard(true);
-	          };
-	        })(this));
-	      }
 	    } else {
-	      this.phone.props = phoneProperties;
+	      this.hands.props = phoneProperties;
 	      this.viewport.props = contentProperties;
 	      this._update();
-	      if (_hadKeyboard) {
-	        this.showKeyboard(true);
-	      }
 	    }
-	    this._renderKeyboard();
-	    return this.emit("change:orientation");
+	    if (this._orientation !== 0) {
+	      this.handsImageLayer.image = "";
+	    }
+	    return this.emit("change:orientation", this._orientation);
+	  };
+	
+	  DeviceComponent.prototype._orientationChange = function() {
+	    this._orientation = window.orientation;
+	    this._update();
+	    return this.emit("change:orientation", window.orientation);
 	  };
 	
 	  DeviceComponent.prototype.isPortrait = function() {
-	    return Math.abs(this._orientation) !== 90;
+	    return Math.abs(this._orientation) === 0;
 	  };
 	
 	  DeviceComponent.prototype.isLandscape = function() {
@@ -19885,267 +23343,606 @@
 	    }
 	  };
 	
-	  DeviceComponent.define("keyboard", {
-	    get: function() {
-	      return this._keyboard;
-	    },
-	    set: function(keyboard) {
-	      return this.setKeyboard(keyboard, false);
-	    }
-	  });
+	  DeviceComponent.prototype.handSwitchingSupported = function() {
+	    return this._device.hands !== void 0;
+	  };
 	
-	  DeviceComponent.prototype.setKeyboard = function(keyboard, animate) {
-	    var ref, ref1;
-	    if (animate == null) {
-	      animate = false;
-	    }
-	    if (!this._device.hasOwnProperty("keyboards")) {
+	  DeviceComponent.prototype.nextHand = function() {
+	    var hand, hands, nextHand, nextHandIndex;
+	    if (this.hands.rotationZ !== 0) {
 	      return;
 	    }
-	    if (_.isString(keyboard)) {
-	      if ((ref = keyboard.toLowerCase()) === "1" || ref === "true") {
-	        keyboard = true;
-	      } else if ((ref1 = keyboard.toLowerCase()) === "0" || ref1 === "false") {
-	        keyboard = false;
-	      } else {
-	        return;
+	    if (this.handSwitchingSupported()) {
+	      hands = _.keys(this._device.hands);
+	      if (hands.length > 0) {
+	        nextHandIndex = hands.indexOf(this.selectedHand) + 1;
+	        nextHand = "";
+	        if (nextHandIndex < hands.length) {
+	          nextHand = hands[nextHandIndex];
+	        }
+	        hand = this.setHand(nextHand);
+	        this._update();
+	        return hand;
 	      }
 	    }
-	    if (!_.isBoolean(keyboard)) {
-	      return;
+	    return false;
+	  };
+	
+	  DeviceComponent.prototype.setHand = function(hand) {
+	    var handData;
+	    this.selectedHand = hand;
+	    if (!hand || !this.handSwitchingSupported()) {
+	      return this.handsImageLayer.image = "";
 	    }
-	    if (keyboard === this._keyboard) {
-	      return;
-	    }
-	    this._keyboard = keyboard;
-	    this.emit("change:keyboard");
-	    if (keyboard === true) {
-	      this.emit("keyboard:show:start");
-	      return this._animateKeyboard(this._keyboardShowY(), animate, (function(_this) {
-	        return function() {
-	          return _this.emit("keyboard:show:end");
-	        };
-	      })(this));
-	    } else {
-	      this.emit("keyboard:hide:start");
-	      return this._animateKeyboard(this._keyboardHideY(), animate, (function(_this) {
-	        return function() {
-	          return _this.emit("keyboard:hide:end");
-	        };
-	      })(this));
+	    handData = this._device.hands[hand];
+	    if (handData) {
+	      this.hands.width = handData.width;
+	      this.hands.height = handData.height;
+	      this.hands.center();
+	      this.phone.center();
+	      this.handsImageLayer.size = this.hands.size;
+	      this.handsImageLayer.y = 0;
+	      if (handData.offset) {
+	        this.handsImageLayer.y = handData.offset;
+	      }
+	      this.handsImageLayer.image = this.handImageUrl(hand);
+	      return hand;
 	    }
 	  };
 	
-	  DeviceComponent.prototype.showKeyboard = function(animate) {
-	    if (animate == null) {
-	      animate = true;
+	  DeviceComponent.prototype.handImageUrl = function(hand) {
+	    var resourceUrl;
+	    resourceUrl = "//resources.framerjs.com/static/DeviceResources";
+	    if (Utils.isFramerStudio() && window.FramerStudioInfo && Utils.framerStudioVersion() >= newDeviceMinVersion) {
+	      resourceUrl = window.FramerStudioInfo.deviceImagesUrl;
 	    }
-	    return this.setKeyboard(true, animate);
-	  };
-	
-	  DeviceComponent.prototype.hideKeyboard = function(animate) {
-	    if (animate == null) {
-	      animate = true;
-	    }
-	    return this.setKeyboard(false, animate);
-	  };
-	
-	  DeviceComponent.prototype.toggleKeyboard = function(animate) {
-	    if (animate == null) {
-	      animate = true;
-	    }
-	    return this.setKeyboard(!this.keyboard, animate);
-	  };
-	
-	  DeviceComponent.prototype._renderKeyboard = function() {
-	    if (!this._device.keyboards) {
-	      return;
-	    }
-	    this.keyboardLayer.image = this._deviceImageUrl(this._device.keyboards[this.orientationName].image);
-	    this.keyboardLayer.width = this._device.keyboards[this.orientationName].width;
-	    return this.keyboardLayer.height = this._device.keyboards[this.orientationName].height;
-	  };
-	
-	  DeviceComponent.prototype._positionKeyboard = function() {
-	    this.keyboardLayer.centerX();
-	    if (this.keyboard) {
-	      return this._animateKeyboard(this._keyboardShowY(), false);
-	    } else {
-	      return this._animateKeyboard(this._keyboardHideY(), false);
-	    }
-	  };
-	
-	  DeviceComponent.prototype._animateKeyboard = function(y, animate, callback) {
-	    var animation;
-	    this.keyboardLayer.bringToFront();
-	    this.keyboardLayer.animateStop();
-	    if (animate === false) {
-	      this.keyboardLayer.y = y;
-	      return typeof callback === "function" ? callback() : void 0;
-	    } else {
-	      animation = this.keyboardLayer.animate(_.extend(this.animationOptions, {
-	        properties: {
-	          y: y
-	        }
-	      }));
-	      return animation.on(Events.AnimationEnd, callback);
-	    }
-	  };
-	
-	  DeviceComponent.prototype._keyboardShowY = function() {
-	    return this.viewport.height - this.keyboardLayer.height;
-	  };
-	
-	  DeviceComponent.prototype._keyboardHideY = function() {
-	    return this.viewport.height;
+	    return resourceUrl + "/" + hand + ".png";
 	  };
 	
 	  return DeviceComponent;
 	
 	})(BaseClass);
 	
+	newDeviceMinVersion = 53;
+	
+	oldDeviceMaxVersion = 52;
+	
+	iPadAir2BaseDevice = {
+	  deviceImageWidth: 1856,
+	  deviceImageHeight: 2608,
+	  deviceImageJP2: true,
+	  screenWidth: 1536,
+	  screenHeight: 2048,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion
+	};
+	
+	iPadMini4BaseDevice = {
+	  deviceImageWidth: 1936,
+	  deviceImageHeight: 2688,
+	  deviceImageJP2: true,
+	  screenWidth: 1536,
+	  screenHeight: 2048,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion
+	};
+	
+	iPadProBaseDevice = {
+	  deviceImageWidth: 2448,
+	  deviceImageHeight: 3432,
+	  deviceImageJP2: true,
+	  screenWidth: 2048,
+	  screenHeight: 2732,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion
+	};
+	
 	iPhone6BaseDevice = {
+	  deviceImageWidth: 874,
+	  deviceImageHeight: 1792,
+	  deviceImageJP2: true,
+	  screenWidth: 750,
+	  screenHeight: 1334,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion,
+	  hands: {
+	    "iphone-hands-2": {
+	      width: 2400,
+	      height: 3740
+	    },
+	    "iphone-hands-1": {
+	      width: 2400,
+	      height: 3740
+	    }
+	  }
+	};
+	
+	iPhone6PlusBaseDevice = {
+	  deviceImageWidth: 1452,
+	  deviceImageHeight: 2968,
+	  deviceImageJP2: true,
+	  screenWidth: 1242,
+	  screenHeight: 2208,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion,
+	  hands: {
+	    "iphone-hands-2": {
+	      width: 3987,
+	      height: 6212
+	    },
+	    "iphone-hands-1": {
+	      width: 3987,
+	      height: 6212
+	    }
+	  }
+	};
+	
+	iPhone5BaseDevice = {
+	  deviceImageWidth: 768,
+	  deviceImageHeight: 1612,
+	  deviceImageJP2: true,
+	  screenWidth: 640,
+	  screenHeight: 1136,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion,
+	  hands: {
+	    "iphone-hands-2": {
+	      width: 2098,
+	      height: 3269,
+	      offset: 19
+	    },
+	    "iphone-hands-1": {
+	      width: 2098,
+	      height: 3269,
+	      offset: 19
+	    }
+	  }
+	};
+	
+	iPhone5CBaseDevice = {
+	  deviceImageWidth: 776,
+	  deviceImageHeight: 1620,
+	  deviceImageJP2: true,
+	  screenWidth: 640,
+	  screenHeight: 1136,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion,
+	  hands: {
+	    "iphone-hands-2": {
+	      width: 2098,
+	      height: 3269,
+	      offset: 28
+	    },
+	    "iphone-hands-1": {
+	      width: 2098,
+	      height: 3269,
+	      offset: 28
+	    }
+	  }
+	};
+	
+	Nexus4BaseDevice = {
+	  deviceImageWidth: 860,
+	  deviceImageHeight: 1668,
+	  deviceImageJP2: true,
+	  screenWidth: 768,
+	  screenHeight: 1280,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion,
+	  hands: {
+	    "iphone-hands-2": {
+	      width: 2362,
+	      height: 3681,
+	      offset: -52
+	    },
+	    "iphone-hands-1": {
+	      width: 2362,
+	      height: 3681,
+	      offset: -52
+	    }
+	  }
+	};
+	
+	Nexus5BaseDevice = {
+	  deviceImageWidth: 1204,
+	  deviceImageHeight: 2432,
+	  deviceImageJP2: true,
+	  screenWidth: 1080,
+	  screenHeight: 1920,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion,
+	  hands: {
+	    "iphone-hands-2": {
+	      width: 3292,
+	      height: 5130,
+	      offset: 8
+	    },
+	    "iphone-hands-1": {
+	      width: 3292,
+	      height: 5130,
+	      offset: 8
+	    }
+	  }
+	};
+	
+	Nexus6BaseDevice = {
+	  deviceImageWidth: 1576,
+	  deviceImageHeight: 3220,
+	  deviceImageJP2: true,
+	  screenWidth: 1440,
+	  screenHeight: 2560,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion,
+	  hands: {
+	    "iphone-hands-2": {
+	      width: 4304,
+	      height: 6707,
+	      offset: 8
+	    },
+	    "iphone-hands-1": {
+	      width: 4304,
+	      height: 6707,
+	      offset: 8
+	    }
+	  }
+	};
+	
+	Nexus9BaseDevice = {
+	  deviceImageWidth: 1896,
+	  deviceImageHeight: 2648,
+	  deviceImageJP2: true,
+	  screenWidth: 1536,
+	  screenHeight: 2048,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion
+	};
+	
+	HTCa9BaseDevice = {
+	  deviceImageWidth: 1252,
+	  deviceImageHeight: 2592,
+	  deviceImageJP2: true,
+	  screenWidth: 1080,
+	  screenHeight: 1920,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion,
+	  hands: {
+	    "iphone-hands-2": {
+	      width: 3436,
+	      height: 5354,
+	      offset: 36
+	    },
+	    "iphone-hands-1": {
+	      width: 3436,
+	      height: 5354,
+	      offset: 36
+	    }
+	  }
+	};
+	
+	HTCm8BaseDevice = {
+	  deviceImageWidth: 1232,
+	  deviceImageHeight: 2572,
+	  deviceImageJP2: true,
+	  screenWidth: 1080,
+	  screenHeight: 1920,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion,
+	  hands: {
+	    "iphone-hands-2": {
+	      width: 3436,
+	      height: 5354,
+	      offset: 12
+	    },
+	    "iphone-hands-1": {
+	      width: 3436,
+	      height: 5354,
+	      offset: 12
+	    }
+	  }
+	};
+	
+	MSFTLumia950BaseDevice = {
+	  deviceImageWidth: 1660,
+	  deviceImageHeight: 3292,
+	  deviceImageJP2: true,
+	  screenWidth: 1440,
+	  screenHeight: 2560,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion,
+	  hands: {
+	    "iphone-hands-2": {
+	      width: 4494,
+	      height: 7003,
+	      offset: -84
+	    },
+	    "iphone-hands-1": {
+	      width: 4494,
+	      height: 7003,
+	      offset: -84
+	    }
+	  }
+	};
+	
+	SamsungGalaxyNote5BaseDevice = {
+	  deviceImageWidth: 1572,
+	  deviceImageHeight: 3140,
+	  deviceImageJP2: true,
+	  screenWidth: 1440,
+	  screenHeight: 2560,
+	  deviceType: "phone",
+	  minStudioVersion: newDeviceMinVersion,
+	  hands: {
+	    "iphone-hands-2": {
+	      width: 4279,
+	      height: 6668,
+	      offset: -24
+	    },
+	    "iphone-hands-1": {
+	      width: 4279,
+	      height: 6668,
+	      offset: -84
+	    }
+	  }
+	};
+	
+	AppleWatch42Device = {
+	  deviceImageWidth: 512,
+	  deviceImageHeight: 990,
+	  deviceImageJP2: true,
+	  screenWidth: 312,
+	  screenHeight: 390,
+	  minStudioVersion: newDeviceMinVersion
+	};
+	
+	AppleWatch38Device = {
+	  deviceImageWidth: 472,
+	  deviceImageHeight: 772,
+	  deviceImageJP2: true,
+	  screenWidth: 272,
+	  screenHeight: 340,
+	  minStudioVersion: newDeviceMinVersion
+	};
+	
+	AppleWatch38BlackLeatherDevice = {
+	  deviceImageWidth: 472,
+	  deviceImageHeight: 796,
+	  deviceImageJP2: true,
+	  screenWidth: 272,
+	  screenHeight: 340,
+	  minStudioVersion: newDeviceMinVersion
+	};
+	
+	old_iPhone6BaseDevice = {
 	  deviceImageWidth: 870,
 	  deviceImageHeight: 1738,
 	  deviceImageJP2: true,
 	  screenWidth: 750,
 	  screenHeight: 1334,
-	  deviceType: "phone"
+	  deviceType: "phone",
+	  maxStudioVersion: oldDeviceMaxVersion
 	};
 	
-	iPhone6BaseDeviceHand = _.extend({}, iPhone6BaseDevice, {
+	old_iPhone6BaseDeviceHand = _.extend({}, old_iPhone6BaseDevice, {
 	  deviceImageWidth: 1988,
 	  deviceImageHeight: 2368,
 	  deviceImageJP2: true,
-	  paddingOffset: -150
+	  paddingOffset: -150,
+	  maxStudioVersion: oldDeviceMaxVersion
 	});
 	
-	iPhone6PlusBaseDevice = {
+	old_iPhone6PlusBaseDevice = {
 	  deviceImageWidth: 1460,
 	  deviceImageHeight: 2900,
 	  deviceImageJP2: true,
 	  screenWidth: 1242,
 	  screenHeight: 2208,
-	  deviceType: "phone"
+	  deviceType: "phone",
+	  maxStudioVersion: oldDeviceMaxVersion
 	};
 	
-	iPhone6PlusBaseDeviceHand = _.extend({}, iPhone6PlusBaseDevice, {
+	old_iPhone6PlusBaseDeviceHand = _.extend({}, old_iPhone6PlusBaseDevice, {
 	  deviceImageWidth: 3128,
 	  deviceImageHeight: 3487,
 	  deviceImageJP2: true,
-	  paddingOffset: -150
+	  paddingOffset: -150,
+	  maxStudioVersion: oldDeviceMaxVersion
 	});
 	
-	iPhone5BaseDevice = {
+	old_iPhone5BaseDevice = {
 	  deviceImageWidth: 780,
 	  deviceImageHeight: 1608,
 	  deviceImageJP2: true,
 	  screenWidth: 640,
 	  screenHeight: 1136,
-	  deviceType: "phone"
+	  deviceType: "phone",
+	  maxStudioVersion: oldDeviceMaxVersion
 	};
 	
-	iPhone5BaseDeviceHand = _.extend({}, iPhone5BaseDevice, {
+	old_iPhone5BaseDeviceHand = _.extend({}, old_iPhone5BaseDevice, {
 	  deviceImageWidth: 1884,
 	  deviceImageHeight: 2234,
 	  deviceImageJP2: true,
-	  paddingOffset: -200
+	  paddingOffset: -200,
+	  maxStudioVersion: oldDeviceMaxVersion
 	});
 	
-	iPhone5CBaseDevice = {
+	old_iPhone5CBaseDevice = {
 	  deviceImageWidth: 776,
 	  deviceImageHeight: 1612,
 	  deviceImageJP2: true,
 	  screenWidth: 640,
 	  screenHeight: 1136,
-	  deviceType: "phone"
+	  deviceType: "phone",
+	  maxStudioVersion: oldDeviceMaxVersion
 	};
 	
-	iPhone5CBaseDeviceHand = _.extend({}, iPhone5CBaseDevice, {
+	old_iPhone5CBaseDeviceHand = _.extend({}, old_iPhone5CBaseDevice, {
 	  deviceImageWidth: 1894,
 	  deviceImageHeight: 2244,
 	  deviceImageJP2: true,
-	  paddingOffset: -200
+	  paddingOffset: -200,
+	  maxStudioVersion: oldDeviceMaxVersion
 	});
 	
-	iPadMiniBaseDevice = {
+	old_iPadMiniBaseDevice = {
 	  deviceImageWidth: 872,
 	  deviceImageHeight: 1292,
 	  deviceImageJP2: true,
 	  screenWidth: 768,
 	  screenHeight: 1024,
-	  deviceType: "tablet"
+	  deviceType: "tablet",
+	  maxStudioVersion: oldDeviceMaxVersion
 	};
 	
-	iPadMiniBaseDeviceHand = _.extend({}, iPadMiniBaseDevice, {
+	old_iPadMiniBaseDeviceHand = _.extend({}, old_iPadMiniBaseDevice, {
 	  deviceImageWidth: 1380,
 	  deviceImageHeight: 2072,
 	  deviceImageJP2: true,
-	  paddingOffset: -120
+	  paddingOffset: -120,
+	  maxStudioVersion: oldDeviceMaxVersion
 	});
 	
-	iPadAirBaseDevice = {
+	old_iPadAirBaseDevice = {
 	  deviceImageWidth: 1769,
 	  deviceImageHeight: 2509,
 	  deviceImageJP2: true,
 	  screenWidth: 1536,
 	  screenHeight: 2048,
-	  deviceType: "tablet"
+	  deviceType: "tablet",
+	  maxStudioVersion: oldDeviceMaxVersion
 	};
 	
-	iPadAirBaseDeviceHand = _.extend({}, iPadAirBaseDevice, {
+	old_iPadAirBaseDeviceHand = _.extend({}, old_iPadAirBaseDevice, {
 	  deviceImageWidth: 4744,
 	  deviceImageHeight: 4101,
 	  deviceImageJP2: true,
-	  paddingOffset: -120
+	  paddingOffset: -120,
+	  maxStudioVersion: oldDeviceMaxVersion
 	});
 	
-	Nexus5BaseDevice = {
+	old_Nexus5BaseDevice = {
 	  deviceImageWidth: 1208,
 	  deviceImageHeight: 2440,
 	  deviceImageJP2: true,
 	  screenWidth: 1080,
 	  screenHeight: 1920,
-	  deviceType: "phone"
+	  deviceType: "phone",
+	  maxStudioVersion: oldDeviceMaxVersion
 	};
 	
-	Nexus5BaseDeviceHand = _.extend({}, Nexus5BaseDevice, {
+	old_Nexus5BaseDeviceHand = _.extend({}, old_Nexus5BaseDevice, {
 	  deviceImageWidth: 2692,
 	  deviceImageHeight: 2996,
 	  deviceImageJP2: true,
-	  paddingOffset: -120
+	  paddingOffset: -120,
+	  maxStudioVersion: oldDeviceMaxVersion
 	});
 	
-	Nexus9BaseDevice = {
+	old_Nexus9BaseDevice = {
 	  deviceImageWidth: 1733,
 	  deviceImageHeight: 2575,
 	  deviceImageJP2: true,
 	  screenWidth: 1536,
 	  screenHeight: 2048,
-	  deviceType: "tablet"
+	  deviceType: "tablet",
+	  maxStudioVersion: oldDeviceMaxVersion
 	};
 	
-	AppleWatch42Device = {
+	old_AppleWatch42Device = {
 	  deviceImageWidth: 552,
 	  deviceImageHeight: 938,
 	  deviceImageJP2: true,
 	  screenWidth: 312,
-	  screenHeight: 390
+	  screenHeight: 390,
+	  maxStudioVersion: oldDeviceMaxVersion
 	};
 	
-	AppleWatch38Device = {
+	old_AppleWatch38Device = {
 	  deviceImageWidth: 508,
 	  deviceImageHeight: 900,
 	  deviceImageJP2: true,
 	  screenWidth: 272,
-	  screenHeight: 340
+	  screenHeight: 340,
+	  maxStudioVersion: oldDeviceMaxVersion
 	};
 	
 	Devices = {
 	  "fullscreen": {
 	    name: "Fullscreen",
-	    deviceType: "desktop"
+	    deviceType: "desktop",
+	    backgroundColor: "white"
 	  },
+	  "apple-ipad-air-2-silver": _.clone(iPadAir2BaseDevice),
+	  "apple-ipad-air-2-gold": _.clone(iPadAir2BaseDevice),
+	  "apple-ipad-air-2-space-gray": _.clone(iPadAir2BaseDevice),
+	  "apple-ipad-mini-4-silver": _.clone(iPadMini4BaseDevice),
+	  "apple-ipad-mini-4-gold": _.clone(iPadMini4BaseDevice),
+	  "apple-ipad-mini-4-space-gray": _.clone(iPadMini4BaseDevice),
+	  "apple-ipad-pro-silver": _.clone(iPadProBaseDevice),
+	  "apple-ipad-pro-gold": _.clone(iPadProBaseDevice),
+	  "apple-ipad-pro-space-gray": _.clone(iPadProBaseDevice),
+	  "apple-iphone-6s-gold": _.clone(iPhone6BaseDevice),
+	  "apple-iphone-6s-rose-gold": _.clone(iPhone6BaseDevice),
+	  "apple-iphone-6s-silver": _.clone(iPhone6BaseDevice),
+	  "apple-iphone-6s-space-gray": _.clone(iPhone6BaseDevice),
+	  "apple-iphone-6s-plus-gold": _.clone(iPhone6PlusBaseDevice),
+	  "apple-iphone-6s-plus-rose-gold": _.clone(iPhone6PlusBaseDevice),
+	  "apple-iphone-6s-plus-silver": _.clone(iPhone6PlusBaseDevice),
+	  "apple-iphone-6s-plus-space-gray": _.clone(iPhone6PlusBaseDevice),
+	  "apple-iphone-5s-gold": _.clone(iPhone5BaseDevice),
+	  "apple-iphone-5s-silver": _.clone(iPhone5BaseDevice),
+	  "apple-iphone-5s-space-gray": _.clone(iPhone5BaseDevice),
+	  "apple-iphone-5c-blue": _.clone(iPhone5CBaseDevice),
+	  "apple-iphone-5c-green": _.clone(iPhone5CBaseDevice),
+	  "apple-iphone-5c-red": _.clone(iPhone5CBaseDevice),
+	  "apple-iphone-5c-white": _.clone(iPhone5CBaseDevice),
+	  "apple-iphone-5c-yellow": _.clone(iPhone5CBaseDevice),
+	  "apple-watch-38mm-gold-black-leather-closed": _.clone(AppleWatch38BlackLeatherDevice),
+	  "apple-watch-38mm-rose-gold-black-leather-closed": _.clone(AppleWatch38BlackLeatherDevice),
+	  "apple-watch-38mm-stainless-steel-black-leather-closed": _.clone(AppleWatch38BlackLeatherDevice),
+	  "apple-watch-38mm-black-steel-black-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-38mm-gold-midnight-blue-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-38mm-rose-gold-lavender-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-38mm-sport-aluminum-blue-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-38mm-sport-aluminum-fog-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-38mm-sport-aluminum-green-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-38mm-sport-aluminum-red-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-38mm-sport-aluminum-walnut-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-38mm-sport-aluminum-white-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-38mm-sport-aluminum-gold-antique-white-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-38mm-sport-aluminum-rose-gold-stone-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-38mm-sport-space-gray-black-closed": _.clone(AppleWatch38Device),
+	  "apple-watch-42mm-black-steel-black-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-gold-black-leather-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-gold-midnight-blue-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-rose-gold-black-leather-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-rose-gold-lavender-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-sport-aluminum-blue-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-sport-aluminum-fog-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-sport-aluminum-green-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-sport-aluminum-red-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-sport-aluminum-walnut-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-sport-aluminum-white-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-sport-aluminum-gold-antique-white-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-sport-aluminum-rose-gold-stone-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-sport-space-gray-black-closed": _.clone(AppleWatch42Device),
+	  "apple-watch-42mm-stainless-steel-black-leather-closed": _.clone(AppleWatch42Device),
+	  "google-nexus-4": _.clone(Nexus4BaseDevice),
+	  "google-nexus-5x": _.clone(Nexus5BaseDevice),
+	  "google-nexus-6p": _.clone(Nexus6BaseDevice),
+	  "google-nexus-9": _.clone(Nexus9BaseDevice),
+	  "htc-one-a9-black": _.clone(HTCa9BaseDevice),
+	  "htc-one-a9-white": _.clone(HTCa9BaseDevice),
+	  "htc-one-m8-black": _.clone(HTCm8BaseDevice),
+	  "htc-one-m8-gold": _.clone(HTCm8BaseDevice),
+	  "htc-one-m8-silver": _.clone(HTCm8BaseDevice),
+	  "microsoft-lumia-950-black": _.clone(MSFTLumia950BaseDevice),
+	  "microsoft-lumia-950-white": _.clone(MSFTLumia950BaseDevice),
+	  "samsung-galaxy-note-5-black": _.clone(SamsungGalaxyNote5BaseDevice),
+	  "samsung-galaxy-note-5-gold": _.clone(SamsungGalaxyNote5BaseDevice),
+	  "samsung-galaxy-note-5-pink": _.clone(SamsungGalaxyNote5BaseDevice),
+	  "samsung-galaxy-note-5-silver-titanium": _.clone(SamsungGalaxyNote5BaseDevice),
+	  "samsung-galaxy-note-5-white": _.clone(SamsungGalaxyNote5BaseDevice),
 	  "desktop-safari-1024-600": {
 	    deviceType: "browser",
 	    name: "Desktop Safari 1024 x 600",
@@ -20153,7 +23950,8 @@
 	    screenHeight: 600,
 	    deviceImageWidth: 1136,
 	    deviceImageHeight: 760,
-	    deviceImageJP2: true
+	    deviceImageJP2: true,
+	    backgroundColor: "white"
 	  },
 	  "desktop-safari-1280-800": {
 	    deviceType: "browser",
@@ -20162,7 +23960,8 @@
 	    screenHeight: 800,
 	    deviceImageWidth: 1392,
 	    deviceImageHeight: 960,
-	    deviceImageJP2: true
+	    deviceImageJP2: true,
+	    backgroundColor: "white"
 	  },
 	  "desktop-safari-1440-900": {
 	    deviceType: "browser",
@@ -20171,78 +23970,81 @@
 	    screenHeight: 900,
 	    deviceImageWidth: 1552,
 	    deviceImageHeight: 1060,
-	    deviceImageJP2: true
+	    deviceImageJP2: true,
+	    backgroundColor: "white"
 	  },
-	  "iphone-6-spacegray": iPhone6BaseDevice,
-	  "iphone-6-spacegray-hand": iPhone6BaseDeviceHand,
-	  "iphone-6-silver": iPhone6BaseDevice,
-	  "iphone-6-silver-hand": iPhone6BaseDeviceHand,
-	  "iphone-6-gold": iPhone6BaseDevice,
-	  "iphone-6-gold-hand": iPhone6BaseDeviceHand,
-	  "iphone-6plus-spacegray": iPhone6PlusBaseDevice,
-	  "iphone-6plus-spacegray-hand": iPhone6PlusBaseDeviceHand,
-	  "iphone-6plus-silver": iPhone6PlusBaseDevice,
-	  "iphone-6plus-silver-hand": iPhone6PlusBaseDeviceHand,
-	  "iphone-6plus-gold": iPhone6PlusBaseDevice,
-	  "iphone-6plus-gold-hand": iPhone6PlusBaseDeviceHand,
-	  "iphone-5s-spacegray": iPhone5BaseDevice,
-	  "iphone-5s-spacegray-hand": iPhone5BaseDeviceHand,
-	  "iphone-5s-silver": iPhone5BaseDevice,
-	  "iphone-5s-silver-hand": iPhone5BaseDeviceHand,
-	  "iphone-5s-gold": iPhone5BaseDevice,
-	  "iphone-5s-gold-hand": iPhone5BaseDeviceHand,
-	  "iphone-5c-green": iPhone5CBaseDevice,
-	  "iphone-5c-green-hand": iPhone5CBaseDeviceHand,
-	  "iphone-5c-blue": iPhone5CBaseDevice,
-	  "iphone-5c-blue-hand": iPhone5CBaseDeviceHand,
-	  "iphone-5c-pink": iPhone5CBaseDevice,
-	  "iphone-5c-pink-hand": iPhone5CBaseDeviceHand,
-	  "iphone-5c-white": iPhone5CBaseDevice,
-	  "iphone-5c-white-hand": iPhone5CBaseDeviceHand,
-	  "iphone-5c-yellow": iPhone5CBaseDevice,
-	  "iphone-5c-yellow-hand": iPhone5CBaseDeviceHand,
-	  "ipad-mini-spacegray": iPadMiniBaseDevice,
-	  "ipad-mini-spacegray-hand": iPadMiniBaseDeviceHand,
-	  "ipad-mini-silver": iPadMiniBaseDevice,
-	  "ipad-mini-silver-hand": iPadMiniBaseDeviceHand,
-	  "ipad-air-spacegray": iPadAirBaseDevice,
-	  "ipad-air-spacegray-hand": iPadAirBaseDeviceHand,
-	  "ipad-air-silver": iPadAirBaseDevice,
-	  "ipad-air-silver-hand": iPadAirBaseDeviceHand,
-	  "nexus-5-black": Nexus5BaseDevice,
-	  "nexus-5-black-hand": Nexus5BaseDeviceHand,
-	  "nexus-9": Nexus9BaseDevice,
-	  "applewatchsport-38-aluminum-sportband-black": AppleWatch38Device,
-	  "applewatchsport-38-aluminum-sportband-blue": AppleWatch38Device,
-	  "applewatchsport-38-aluminum-sportband-green": AppleWatch38Device,
-	  "applewatchsport-38-aluminum-sportband-pink": AppleWatch38Device,
-	  "applewatchsport-38-aluminum-sportband-white": AppleWatch38Device,
-	  "applewatch-38-black-bracelet": AppleWatch38Device,
-	  "applewatch-38-steel-bracelet": AppleWatch38Device,
-	  "applewatchedition-38-gold-buckle-blue": AppleWatch38Device,
-	  "applewatchedition-38-gold-buckle-gray": AppleWatch38Device,
-	  "applewatchedition-38-gold-buckle-red": AppleWatch38Device,
-	  "applewatchedition-38-gold-sportband-black": AppleWatch38Device,
-	  "applewatchedition-38-gold-sportband-white": AppleWatch38Device,
-	  "applewatchsport-42-aluminum-sportband-black": AppleWatch42Device,
-	  "applewatchsport-42-aluminum-sportband-blue": AppleWatch42Device,
-	  "applewatchsport-42-aluminum-sportband-green": AppleWatch42Device,
-	  "applewatchsport-42-aluminum-sportband-pink": AppleWatch42Device,
-	  "applewatchsport-42-aluminum-sportband-white": AppleWatch42Device,
-	  "applewatch-42-black-bracelet": AppleWatch42Device,
-	  "applewatch-42-steel-bracelet": AppleWatch42Device,
-	  "applewatchedition-42-gold-buckle-blue": AppleWatch42Device,
-	  "applewatchedition-42-gold-buckle-gray": AppleWatch42Device,
-	  "applewatchedition-42-gold-buckle-red": AppleWatch42Device,
-	  "applewatchedition-42-gold-sportband-black": AppleWatch42Device,
-	  "applewatchedition-42-gold-sportband-white": AppleWatch42Device
+	  "iphone-6-spacegray": _.clone(old_iPhone6BaseDevice),
+	  "iphone-6-spacegray-hand": _.clone(old_iPhone6BaseDeviceHand),
+	  "iphone-6-silver": _.clone(old_iPhone6BaseDevice),
+	  "iphone-6-silver-hand": _.clone(old_iPhone6BaseDeviceHand),
+	  "iphone-6-gold": _.clone(old_iPhone6BaseDevice),
+	  "iphone-6-gold-hand": _.clone(old_iPhone6BaseDeviceHand),
+	  "iphone-6plus-spacegray": _.clone(old_iPhone6PlusBaseDevice),
+	  "iphone-6plus-spacegray-hand": _.clone(old_iPhone6PlusBaseDeviceHand),
+	  "iphone-6plus-silver": _.clone(old_iPhone6PlusBaseDevice),
+	  "iphone-6plus-silver-hand": _.clone(old_iPhone6PlusBaseDeviceHand),
+	  "iphone-6plus-gold": _.clone(old_iPhone6PlusBaseDevice),
+	  "iphone-6plus-gold-hand": _.clone(old_iPhone6PlusBaseDeviceHand),
+	  "iphone-5s-spacegray": _.clone(old_iPhone5BaseDevice),
+	  "iphone-5s-spacegray-hand": _.clone(old_iPhone5BaseDeviceHand),
+	  "iphone-5s-silver": _.clone(old_iPhone5BaseDevice),
+	  "iphone-5s-silver-hand": _.clone(old_iPhone5BaseDeviceHand),
+	  "iphone-5s-gold": _.clone(old_iPhone5BaseDevice),
+	  "iphone-5s-gold-hand": _.clone(old_iPhone5BaseDeviceHand),
+	  "iphone-5c-green": _.clone(old_iPhone5CBaseDevice),
+	  "iphone-5c-green-hand": _.clone(old_iPhone5CBaseDeviceHand),
+	  "iphone-5c-blue": _.clone(old_iPhone5CBaseDevice),
+	  "iphone-5c-blue-hand": _.clone(old_iPhone5CBaseDeviceHand),
+	  "iphone-5c-pink": _.clone(old_iPhone5CBaseDevice),
+	  "iphone-5c-pink-hand": _.clone(old_iPhone5CBaseDeviceHand),
+	  "iphone-5c-white": _.clone(old_iPhone5CBaseDevice),
+	  "iphone-5c-white-hand": _.clone(old_iPhone5CBaseDeviceHand),
+	  "iphone-5c-yellow": _.clone(old_iPhone5CBaseDevice),
+	  "iphone-5c-yellow-hand": _.clone(old_iPhone5CBaseDeviceHand),
+	  "ipad-mini-spacegray": _.clone(old_iPadMiniBaseDevice),
+	  "ipad-mini-spacegray-hand": _.clone(old_iPadMiniBaseDeviceHand),
+	  "ipad-mini-silver": _.clone(old_iPadMiniBaseDevice),
+	  "ipad-mini-silver-hand": _.clone(old_iPadMiniBaseDeviceHand),
+	  "ipad-air-spacegray": _.clone(old_iPadAirBaseDevice),
+	  "ipad-air-spacegray-hand": _.clone(old_iPadAirBaseDeviceHand),
+	  "ipad-air-silver": _.clone(old_iPadAirBaseDevice),
+	  "ipad-air-silver-hand": _.clone(old_iPadAirBaseDeviceHand),
+	  "nexus-5-black": _.clone(old_Nexus5BaseDevice),
+	  "nexus-5-black-hand": _.clone(old_Nexus5BaseDeviceHand),
+	  "nexus-9": _.clone(old_Nexus9BaseDevice),
+	  "applewatchsport-38-aluminum-sportband-black": _.clone(old_AppleWatch38Device),
+	  "applewatchsport-38-aluminum-sportband-blue": _.clone(old_AppleWatch38Device),
+	  "applewatchsport-38-aluminum-sportband-green": _.clone(old_AppleWatch38Device),
+	  "applewatchsport-38-aluminum-sportband-pink": _.clone(old_AppleWatch38Device),
+	  "applewatchsport-38-aluminum-sportband-white": _.clone(old_AppleWatch38Device),
+	  "applewatch-38-black-bracelet": _.clone(old_AppleWatch38Device),
+	  "applewatch-38-steel-bracelet": _.clone(old_AppleWatch38Device),
+	  "applewatchedition-38-gold-buckle-blue": _.clone(old_AppleWatch38Device),
+	  "applewatchedition-38-gold-buckle-gray": _.clone(old_AppleWatch38Device),
+	  "applewatchedition-38-gold-buckle-red": _.clone(old_AppleWatch38Device),
+	  "applewatchedition-38-gold-sportband-black": _.clone(old_AppleWatch38Device),
+	  "applewatchedition-38-gold-sportband-white": _.clone(old_AppleWatch38Device),
+	  "applewatchsport-42-aluminum-sportband-black": _.clone(old_AppleWatch42Device),
+	  "applewatchsport-42-aluminum-sportband-blue": _.clone(old_AppleWatch42Device),
+	  "applewatchsport-42-aluminum-sportband-green": _.clone(old_AppleWatch42Device),
+	  "applewatchsport-42-aluminum-sportband-pink": _.clone(old_AppleWatch42Device),
+	  "applewatchsport-42-aluminum-sportband-white": _.clone(old_AppleWatch42Device),
+	  "applewatch-42-black-bracelet": _.clone(old_AppleWatch42Device),
+	  "applewatch-42-steel-bracelet": _.clone(old_AppleWatch42Device),
+	  "applewatchedition-42-gold-buckle-blue": _.clone(old_AppleWatch42Device),
+	  "applewatchedition-42-gold-buckle-gray": _.clone(old_AppleWatch42Device),
+	  "applewatchedition-42-gold-buckle-red": _.clone(old_AppleWatch42Device),
+	  "applewatchedition-42-gold-sportband-black": _.clone(old_AppleWatch42Device),
+	  "applewatchedition-42-gold-sportband-white": _.clone(old_AppleWatch42Device)
 	};
 	
 	exports.DeviceComponent.Devices = Devices;
+	
+	BuiltInDevices = _.keys(Devices);
 
 
 /***/ },
-/* 40 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Config, EventEmitter, Utils, _, getTime,
@@ -20250,13 +24052,13 @@
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
-	Config = __webpack_require__(10).Config;
+	Config = __webpack_require__(14).Config;
 	
-	EventEmitter = __webpack_require__(8).EventEmitter;
+	EventEmitter = __webpack_require__(7).EventEmitter;
 	
 	getTime = function() {
 	  return Utils.getTime() * 1000;
@@ -20269,12 +24071,12 @@
 	    this.start = bind(this.start, this);
 	    this.delta = 1 / 60;
 	    this.raf = true;
-	    if (Utils.webkitVersion() > 600 && Utils.isDesktop()) {
-	      this.raf = false;
+	    if (Utils.webkitVersion() > 600 && Utils.webkitVersion() < 601) {
+	      if (Utils.isFramerStudio() || Utils.isDesktop()) {
+	        this.raf = false;
+	      }
 	    }
-	    if (Utils.webkitVersion() > 600 && Utils.isFramerStudio()) {
-	      this.raf = false;
-	    }
+	    this.maximumListeners = Infinity;
 	  }
 	
 	  AnimationLoop.prototype.start = function() {
@@ -20313,21 +24115,53 @@
 
 
 /***/ },
-/* 41 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ChromeAlert, Utils, _,
-	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+	var ChromeAlert, Utils, _, getScaleFromName, resizeFrame, startsWithNumber;
 	
-	_ = __webpack_require__(3)._;
+	_ = __webpack_require__(1)._;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
 	ChromeAlert = "Importing layers is currently only supported on Safari. If you really want it to work with Chrome quit it, open a terminal and run:\nopen -a Google\ Chrome -–allow-file-access-from-files";
 	
+	resizeFrame = function(scale, frame) {
+	  var i, key, len, ref, result;
+	  if (scale === 1) {
+	    return frame;
+	  }
+	  result = {};
+	  ref = ["x", "y", "width", "height"];
+	  for (i = 0, len = ref.length; i < len; i++) {
+	    key = ref[i];
+	    if (frame.hasOwnProperty(key)) {
+	      result[key] = frame[key] * scale;
+	    }
+	  }
+	  return result;
+	};
+	
+	getScaleFromName = function(str) {
+	  var m, re;
+	  re = /@([\d]+|[\d]+.[\d]+)x/;
+	  m = void 0;
+	  if ((m = re.exec(str)) !== null) {
+	    if (m[1]) {
+	      return parseFloat(m[1]);
+	    }
+	  }
+	  return null;
+	};
+	
+	startsWithNumber = function(str) {
+	  return (new RegExp("^[0-9]")).test(str);
+	};
+	
 	exports.Importer = (function() {
-	  function Importer(path1, extraLayerProperties) {
+	  function Importer(path1, scale1, extraLayerProperties) {
 	    this.path = path1;
+	    this.scale = scale1 != null ? scale1 : 1;
 	    this.extraLayerProperties = extraLayerProperties != null ? extraLayerProperties : {};
 	    this.paths = {
 	      layerInfo: Utils.pathJoin(this.path, "layers.json"),
@@ -20342,6 +24176,9 @@
 	    var i, j, layer, layerInfo, layersByName, len, len1, ref, ref1;
 	    layersByName = {};
 	    layerInfo = this._loadlayerInfo();
+	    if (layerInfo.length === 0) {
+	      throw new Error("Importer: no layers. Do you have at least one layer group?");
+	    }
 	    layerInfo.map((function(_this) {
 	      return function(layerItemInfo) {
 	        return _this._createLayer(layerItemInfo);
@@ -20352,11 +24189,12 @@
 	      layer = ref[i];
 	      this._correctLayer(layer);
 	    }
+	    this._correctArtboards(this._createdLayers);
 	    ref1 = this._createdLayers;
 	    for (j = 0, len1 = ref1.length; j < len1; j++) {
 	      layer = ref1[j];
-	      if (!layer.superLayer) {
-	        layer.superLayer = null;
+	      if (!layer.parent) {
+	        layer.parent = null;
 	      }
 	    }
 	    return this._createdLayersByName;
@@ -20366,13 +24204,25 @@
 	    var importedKey, ref;
 	    importedKey = this.paths.documentName + "/layers.json.js";
 	    if ((ref = window.__imported__) != null ? ref.hasOwnProperty(importedKey) : void 0) {
-	      return window.__imported__[importedKey];
+	      return _.cloneDeep(window.__imported__[importedKey]);
 	    }
 	    return Framer.Utils.domLoadJSONSync(this.paths.layerInfo);
 	  };
 	
-	  Importer.prototype._createLayer = function(info, superLayer) {
-	    var LayerClass, layer, layerInfo, ref;
+	  Importer.prototype._createLayer = function(info, parent) {
+	    var LayerClass, layer, layerInfo, ref, ref1;
+	    if (info.layerFrame) {
+	      info.layerFrame = resizeFrame(this.scale, info.layerFrame);
+	    }
+	    if (info.maskFrame) {
+	      info.maskFrame = resizeFrame(this.scale, info.maskFrame);
+	    }
+	    if (((ref = info.image) != null ? ref.frame : void 0) != null) {
+	      info.image.frame = resizeFrame(this.scale, info.image.frame);
+	    }
+	    if (!info.children) {
+	      info.children = [];
+	    }
 	    LayerClass = Layer;
 	    layerInfo = {
 	      shadow: true,
@@ -20380,7 +24230,7 @@
 	      frame: info.layerFrame,
 	      clip: false,
 	      backgroundColor: null,
-	      visible: (ref = info.visible) != null ? ref : true
+	      visible: (ref1 = info.visible) != null ? ref1 : true
 	    };
 	    _.extend(layerInfo, this.extraLayerProperties);
 	    if (info.image) {
@@ -20388,20 +24238,23 @@
 	      layerInfo.image = Utils.pathJoin(this.path, info.image.path);
 	    }
 	    if (info.maskFrame) {
-	      layerInfo.frame = info.maskFrame;
 	      layerInfo.clip = true;
 	    }
-	    if (info.children.length === 0 && indexOf.call(_.pluck(superLayer != null ? superLayer.superLayers() : void 0, "clip"), true) >= 0) {
-	      layerInfo.frame = info.image.frame;
-	      layerInfo.clip = false;
+	    if (layerInfo.kind === "artboard") {
+	      layerInfo.frame.x = 0;
+	      layerInfo.frame.y = 0;
 	    }
-	    if (superLayer != null ? superLayer.contentLayer : void 0) {
-	      layerInfo.superLayer = superLayer.contentLayer;
-	    } else if (superLayer) {
-	      layerInfo.superLayer = superLayer;
+	    if (parent != null ? parent.contentLayer : void 0) {
+	      layerInfo.parent = parent.contentLayer;
+	    } else if (parent) {
+	      layerInfo.parent = parent;
+	    }
+	    if (startsWithNumber(layerInfo.name)) {
+	      throw new Error("(" + layerInfo.name + ") Layer or Artboard names can not start with a number");
 	    }
 	    layer = new LayerClass(layerInfo);
 	    layer.name = layerInfo.name;
+	    layer.__framerImportedFromPath = this.path;
 	    if (layerInfo.name.toLowerCase().indexOf("scroll") !== -1) {
 	      layer.scroll = true;
 	    }
@@ -20416,7 +24269,12 @@
 	        return _this._createLayer(info, layer);
 	      };
 	    })(this));
-	    if (!layer.image && !info.maskFrame) {
+	    if (info.kind === "artboard") {
+	      layer.point = {
+	        x: 0,
+	        y: 0
+	      };
+	    } else if (!layer.image && !info.maskFrame) {
 	      layer.frame = layer.contentFrame();
 	    }
 	    layer._info = info;
@@ -20424,22 +24282,52 @@
 	    return this._createdLayersByName[layer.name] = layer;
 	  };
 	
+	  Importer.prototype._correctArtboards = function(layers) {
+	    var i, j, layer, leftMostLayer, len, len1, pointOffset, results;
+	    leftMostLayer = null;
+	    for (i = 0, len = layers.length; i < len; i++) {
+	      layer = layers[i];
+	      if (layer._info.kind === "artboard") {
+	        layer.point = layer._info.layerFrame;
+	        layer.visible = true;
+	        if (leftMostLayer === null || layer.x < leftMostLayer.x) {
+	          leftMostLayer = layer;
+	        }
+	      }
+	    }
+	    if (!leftMostLayer) {
+	      return;
+	    }
+	    pointOffset = leftMostLayer.point;
+	    results = [];
+	    for (j = 0, len1 = layers.length; j < len1; j++) {
+	      layer = layers[j];
+	      if (layer._info.kind === "artboard") {
+	        layer.x -= pointOffset.x;
+	        results.push(layer.y -= pointOffset.y);
+	      } else {
+	        results.push(void 0);
+	      }
+	    }
+	    return results;
+	  };
+	
 	  Importer.prototype._correctLayer = function(layer) {
 	    var traverse;
 	    traverse = function(layer) {
-	      var i, len, ref, results, subLayer;
-	      if (layer.superLayer) {
-	        layer.frame = Utils.convertPoint(layer.frame, null, layer.superLayer);
+	      var child, i, len, ref, results;
+	      if (layer.parent) {
+	        layer.frame = Utils.convertPoint(layer.frame, null, layer.parent);
 	      }
-	      ref = layer.subLayers;
+	      ref = layer.children;
 	      results = [];
 	      for (i = 0, len = ref.length; i < len; i++) {
-	        subLayer = ref[i];
-	        results.push(traverse(subLayer));
+	        child = ref[i];
+	        results.push(traverse(child));
 	      }
 	      return results;
 	    };
-	    if (!layer.superLayer) {
+	    if (!layer.parent) {
 	      return traverse(layer);
 	    }
 	  };
@@ -20448,130 +24336,306 @@
 	
 	})();
 	
-	exports.Importer.load = function(path) {
+	exports.Importer.load = function(path, scale) {
 	  var importer;
-	  importer = new exports.Importer(path);
+	  if (scale == null) {
+	    scale = getScaleFromName(path);
+	  }
+	  if (scale == null) {
+	    scale = 1;
+	  }
+	  importer = new exports.Importer(path, scale);
 	  return importer.load();
 	};
 
 
 /***/ },
-/* 42 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Context, EventKeys, Utils, _debugStyle, _errorContext, _errorShown, errorWarning, hideDebug, showDebug, toggleDebug;
+	exports.TouchEmulator = __webpack_require__(49);
 	
-	Utils = __webpack_require__(2);
+	exports.MobileScrollFix = __webpack_require__(50);
 	
-	Context = __webpack_require__(1).Context;
+	exports.OmitNew = __webpack_require__(51);
+
+
+/***/ },
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var BaseClass, TouchEmulator, Utils, cancelEvent, createTouch, dispatchTouchEvent, touchEmulator,
+	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
 	
-	_debugStyle = {
-	  border: "1px solid rgba(50,150,200,.35)",
-	  backgroundColor: "rgba(50,150,200,.35)"
-	};
+	Utils = __webpack_require__(4);
 	
-	showDebug = function() {
-	  var i, layer, len, ref, results;
-	  ref = Framer.CurrentContext.getLayers();
-	  results = [];
-	  for (i = 0, len = ref.length; i < len; i++) {
-	    layer = ref[i];
-	    layer._debugStyle = _.pick(layer.style, _.keys(_debugStyle));
-	    layer.style = _debugStyle;
-	    layer._debugElement = document.createElement("div");
-	    layer._debugElement.innerHTML = layer.name || layer.id;
-	    layer._debugElement.classList.add("framerDebug");
-	    results.push(layer._element.appendChild(layer._debugElement));
+	BaseClass = __webpack_require__(6).BaseClass;
+	
+	createTouch = function(event, identifier, offset) {
+	  var touch;
+	  if (offset == null) {
+	    offset = {
+	      x: 0,
+	      y: 0
+	    };
 	  }
-	  return results;
+	  return touch = {
+	    identifier: identifier,
+	    target: event.target,
+	    pageX: event.pageX - offset.x,
+	    pageY: event.pageY - offset.y,
+	    clientX: event.clientX - offset.x,
+	    clientY: event.clientY - offset.y,
+	    screenX: event.screenX - offset.x,
+	    screenY: event.screenY - offset.y
+	  };
 	};
 	
-	hideDebug = function() {
-	  var i, layer, len, ref, results;
-	  ref = Framer.CurrentContext.getLayers();
-	  results = [];
-	  for (i = 0, len = ref.length; i < len; i++) {
-	    layer = ref[i];
-	    layer.style = layer._debugStyle;
-	    layer._debugElement.parentElement.removeChild(layer._debugElement);
-	    results.push(layer._debugElement = null);
+	dispatchTouchEvent = function(type, target, event, offset) {
+	  var touchEvent, touches;
+	  if (target == null) {
+	    target = event.target;
 	  }
-	  return results;
+	  touchEvent = document.createEvent("MouseEvent");
+	  touchEvent.initMouseEvent(type, true, true, window, event.detail, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.shiftKey, event.altKey, event.metaKey, event.button, event.relatedTarget);
+	  touches = [];
+	  touches.push(createTouch(event, 1));
+	  if (offset) {
+	    touches.push(createTouch(event, 2, offset));
+	  }
+	  touchEvent.touches = touchEvent.changedTouches = touchEvent.targetTouches = touches;
+	  return target.dispatchEvent(touchEvent);
 	};
 	
-	toggleDebug = Utils.toggle(showDebug, hideDebug);
-	
-	EventKeys = {
-	  Shift: 16,
-	  Escape: 27
+	cancelEvent = function(event) {
+	  event.preventDefault();
+	  return event.stopPropagation();
 	};
 	
-	_errorContext = null;
+	TouchEmulator = (function(superClass) {
+	  extend(TouchEmulator, superClass);
 	
-	_errorShown = false;
-	
-	errorWarning = function(event) {
-	  var _errorWarningLayer, layer;
-	  if (!_errorContext) {
-	    _errorContext = new Context({
-	      name: "Error"
+	  function TouchEmulator() {
+	    this.mousemovePosition = bind(this.mousemovePosition, this);
+	    this.mouseout = bind(this.mouseout, this);
+	    this.mouseup = bind(this.mouseup, this);
+	    this.mousemove = bind(this.mousemove, this);
+	    this.mousedown = bind(this.mousedown, this);
+	    this.keyup = bind(this.keyup, this);
+	    this.keydown = bind(this.keydown, this);
+	    var touchPointerInitialOffset;
+	    this.touchPointerImage = "url('data:image/png;base64,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')";
+	    this.touchPointerImageActive = "url('data:image/png;base64,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')";
+	    this.touchPointerImageSize = 64;
+	    this.touchPointerInitialOffset = {
+	      x: 0,
+	      y: 0
+	    };
+	    this.keyPinchCode = 18;
+	    this.keyPanCode = 91;
+	    this.context = new Framer.Context({
+	      name: "TouchEmulator"
 	    });
+	    this.context._element.style.zIndex = 10000;
+	    this.wrap = this.context.domEventManager.wrap;
+	    this.wrap(document).addEventListener("mousedown", this.mousedown, true);
+	    this.wrap(document).addEventListener("mousemove", this.mousemove, true);
+	    this.wrap(document).addEventListener("mouseup", this.mouseup, true);
+	    this.wrap(document).addEventListener("keydown", this.keydown, true);
+	    this.wrap(document).addEventListener("keyup", this.keyup, true);
+	    this.wrap(document).addEventListener("mouseout", this.mouseout, true);
+	    this.isMouseDown = false;
+	    this.isPinchKeyDown = false;
+	    this.isPanKeyDown = false;
+	    touchPointerInitialOffset = this.touchPointerInitialOffset;
+	    this.context.run((function(_this) {
+	      return function() {
+	        _this.touchPointLayer = new Layer({
+	          width: _this.touchPointerImageSize,
+	          height: _this.touchPointerImageSize,
+	          backgroundColor: null,
+	          opacity: 0
+	        });
+	        return _this.touchPointLayer.style.backgroundImage = _this.touchPointerImage;
+	      };
+	    })(this));
 	  }
-	  if (_errorShown) {
+	
+	  TouchEmulator.prototype.destroy = function() {
+	    this.context.reset();
+	    return this.context = null;
+	  };
+	
+	  TouchEmulator.prototype.keydown = function(event) {
+	    if (event.keyCode === this.keyPinchCode) {
+	      this.isPinchKeyDown = true;
+	      this.startPoint = this.centerPoint = null;
+	      this.showTouchCursor();
+	      this.touchPointLayer.midX = this.point.x;
+	      this.touchPointLayer.midY = this.point.y;
+	    }
+	    if (event.keyCode === this.keyPanCode) {
+	      this.isPanKeyDown = true;
+	      return cancelEvent(event);
+	    }
+	  };
+	
+	  TouchEmulator.prototype.keyup = function(event) {
+	    if (event.keyCode === this.keyPinchCode) {
+	      cancelEvent(event);
+	      this.isPinchKeyDown = false;
+	      this.hideTouchCursor();
+	    }
+	    if (event.keyCode === this.keyPanCode) {
+	      cancelEvent(event);
+	      if (this.touchPoint && this.point) {
+	        this.centerPoint = Utils.pointCenter(this.touchPoint, this.point);
+	        return this.isPanKeyDown = false;
+	      }
+	    }
+	  };
+	
+	  TouchEmulator.prototype.mousedown = function(event) {
+	    this.isMouseDown = true;
+	    this.target = event.target;
+	    if (this.isPinchKeyDown) {
+	      dispatchTouchEvent("touchstart", this.target, event, this.touchPointDelta);
+	    } else {
+	      dispatchTouchEvent("touchstart", this.target, event);
+	    }
+	    return this.touchPointLayer.style.backgroundImage = this.touchPointerImageActive;
+	  };
+	
+	  TouchEmulator.prototype.mousemove = function(event) {
+	    this.point = {
+	      x: event.pageX,
+	      y: event.pageY
+	    };
+	    if (this.startPoint == null) {
+	      this.startPoint = this.point;
+	    }
+	    if (this.centerPoint == null) {
+	      this.centerPoint = this.point;
+	    }
+	    if (this.isPinchKeyDown && !this.isPanKeyDown) {
+	      if (this.touchPointerInitialOffset && this.centerPoint) {
+	        this.touchPoint = Utils.pointAdd(this.touchPointerInitialOffset, this.pinchPoint(this.point, this.centerPoint));
+	        this.touchPointDelta = Utils.pointSubtract(this.point, this.touchPoint);
+	      }
+	    }
+	    if (this.isPinchKeyDown && this.isPanKeyDown) {
+	      if (this.touchPoint && this.touchPointDelta) {
+	        this.touchPoint = this.panPoint(this.point, this.touchPointDelta);
+	      }
+	    }
+	    if (this.isPinchKeyDown || this.isPanKeyDown) {
+	      if (this.touchPoint) {
+	        this.touchPointLayer.visible = true;
+	        this.touchPointLayer.midX = this.touchPoint.x;
+	        this.touchPointLayer.midY = this.touchPoint.y;
+	      }
+	    }
+	    if (this.isMouseDown) {
+	      if ((this.isPinchKeyDown || this.isPanKeyDown) && this.touchPointDelta) {
+	        return dispatchTouchEvent("touchmove", this.target, event, this.touchPointDelta);
+	      } else {
+	        return dispatchTouchEvent("touchmove", this.target, event);
+	      }
+	    }
+	  };
+	
+	  TouchEmulator.prototype.mouseup = function(event) {
+	    if (this.isPinchKeyDown || this.isPanKeyDown) {
+	      dispatchTouchEvent("touchend", this.target, event, this.touchPointDelta);
+	    } else {
+	      dispatchTouchEvent("touchend", this.target, event);
+	    }
+	    return this.endMultiTouch();
+	  };
+	
+	  TouchEmulator.prototype.mouseout = function(event) {
+	    var fromElement;
+	    if (this.isMouseDown) {
+	      return;
+	    }
+	    fromElement = event.relatedTarget || event.toElement;
+	    if (!fromElement || fromElement.nodeName === "HTML") {
+	      return this.endMultiTouch();
+	    }
+	  };
+	
+	  TouchEmulator.prototype.showTouchCursor = function() {
+	    this.touchPointLayer.animateStop();
+	    this.touchPointLayer.midX = this.point.x;
+	    this.touchPointLayer.midY = this.point.y;
+	    this.touchPointLayer.scale = 1.8;
+	    return this.touchPointLayer.animate({
+	      properties: {
+	        opacity: 1,
+	        scale: 1
+	      },
+	      time: 0.1,
+	      curve: "ease-out"
+	    });
+	  };
+	
+	  TouchEmulator.prototype.hideTouchCursor = function() {
+	    this.touchPointLayer.animateStop();
+	    return this.touchPointLayer.animate({
+	      properties: {
+	        opacity: 0,
+	        scale: 1.2
+	      },
+	      time: 0.08
+	    });
+	  };
+	
+	  TouchEmulator.prototype.mousemovePosition = function(event) {
+	    return this.point = {
+	      x: event.pageX,
+	      y: event.pageY
+	    };
+	  };
+	
+	  TouchEmulator.prototype.endMultiTouch = function() {
+	    this.isMouseDown = false;
+	    this.touchPointLayer.style.backgroundImage = this.touchPointerImage;
+	    return this.hideTouchCursor();
+	  };
+	
+	  TouchEmulator.prototype.pinchPoint = function(point, centerPoint) {
+	    return Utils.pointSubtract(centerPoint, Utils.pointSubtract(point, centerPoint));
+	  };
+	
+	  TouchEmulator.prototype.panPoint = function(point, offsetPoint) {
+	    return Utils.pointSubtract(point, offsetPoint);
+	  };
+	
+	  return TouchEmulator;
+	
+	})(BaseClass);
+	
+	touchEmulator = null;
+	
+	exports.enable = function() {
+	  if (Utils.isTouch()) {
 	    return;
 	  }
-	  _errorShown = true;
-	  layer = new Layer({
-	    x: 20,
-	    y: -50,
-	    width: 300,
-	    height: 40
-	  });
-	  layer.states.add({
-	    visible: {
-	      x: 20,
-	      y: 20,
-	      width: 300,
-	      height: 40
-	    }
-	  });
-	  layer.html = "Javascript Error, see the console";
-	  layer.style = {
-	    font: "12px/1.35em Menlo",
-	    color: "white",
-	    textAlign: "center",
-	    lineHeight: layer.height + "px",
-	    borderRadius: "5px",
-	    backgroundColor: "rgba(255,0,0,.8)"
-	  };
-	  layer.states.animationOptions = {
-	    curve: "spring",
-	    curveOptions: {
-	      tension: 1000,
-	      friction: 30
-	    }
-	  };
-	  layer.states["switch"]("visible");
-	  layer.on(Events.Click, function() {
-	    return this.states["switch"]("default");
-	  });
-	  return _errorWarningLayer = layer;
+	  return touchEmulator != null ? touchEmulator : touchEmulator = new TouchEmulator();
 	};
 	
-	window.error = errorWarning;
+	exports.disable = function() {
+	  if (!touchEmulator) {
+	    return;
+	  }
+	  return touchEmulator.destroy();
+	};
 
 
 /***/ },
-/* 43 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports.MobileScrollFix = __webpack_require__(44);
-	
-	exports.OmitNew = __webpack_require__(45);
-
-
-/***/ },
-/* 44 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Utils,
@@ -20579,7 +24643,7 @@
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty;
 	
-	Utils = __webpack_require__(2);
+	Utils = __webpack_require__(4);
 	
 	exports.enable = function() {
 	  var MobileScrollFixLayer, handleScrollingLayerTouchMove, handleScrollingLayerTouchStart;
@@ -20632,8 +24696,8 @@
 
 
 /***/ },
-/* 45 */
-/***/ function(module, exports, __webpack_require__) {
+/* 51 */
+/***/ function(module, exports) {
 
 	var slice = [].slice;
 	
@@ -20659,6 +24723,682 @@
 	  module.VideoLayer = ClassWrapper(Framer.VideoLayer);
 	  return module.Animation = ClassWrapper(Framer.Animation);
 	};
+
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var DOMEventManager, GestureInputDoubleTapTime, GestureInputEdgeSwipeDistance, GestureInputForceTapDesktop, GestureInputForceTapMobile, GestureInputForceTapMobilePollTime, GestureInputLongPressTime, GestureInputMinimumFingerDistance, GestureInputSwipeThreshold, GestureInputVelocityTime, Utils,
+	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+	
+	Utils = __webpack_require__(4);
+	
+	GestureInputLongPressTime = 0.5;
+	
+	GestureInputDoubleTapTime = 0.25;
+	
+	GestureInputSwipeThreshold = 30;
+	
+	GestureInputEdgeSwipeDistance = 30;
+	
+	GestureInputVelocityTime = 0.1;
+	
+	GestureInputForceTapDesktop = MouseEvent.WEBKIT_FORCE_AT_FORCE_MOUSE_DOWN;
+	
+	GestureInputForceTapMobile = 0.7;
+	
+	GestureInputForceTapMobilePollTime = 1 / 30;
+	
+	GestureInputMinimumFingerDistance = 30;
+	
+	DOMEventManager = __webpack_require__(41).DOMEventManager;
+	
+	Utils.sanitizeRotation = function() {
+	  var previous, sanitize;
+	  previous = null;
+	  return sanitize = function(value) {
+	    if (previous == null) {
+	      previous = value;
+	    }
+	    return value;
+	  };
+	};
+	
+	exports.GestureInputRecognizer = (function() {
+	  function GestureInputRecognizer() {
+	    this._process = bind(this._process, this);
+	    this.edgeswipedirectionend = bind(this.edgeswipedirectionend, this);
+	    this.edgeswipedirectionstart = bind(this.edgeswipedirectionstart, this);
+	    this.edgeswipedirection = bind(this.edgeswipedirection, this);
+	    this.swipedirectionend = bind(this.swipedirectionend, this);
+	    this.swipedirection = bind(this.swipedirection, this);
+	    this.swipedirectionstart = bind(this.swipedirectionstart, this);
+	    this.swipeend = bind(this.swipeend, this);
+	    this.swipe = bind(this.swipe, this);
+	    this.swipestart = bind(this.swipestart, this);
+	    this.rotateend = bind(this.rotateend, this);
+	    this.rotate = bind(this.rotate, this);
+	    this.rotatestart = bind(this.rotatestart, this);
+	    this.scaleend = bind(this.scaleend, this);
+	    this.scale = bind(this.scale, this);
+	    this.scalestart = bind(this.scalestart, this);
+	    this.pinchend = bind(this.pinchend, this);
+	    this.pinch = bind(this.pinch, this);
+	    this.pinchstart = bind(this.pinchstart, this);
+	    this.panright = bind(this.panright, this);
+	    this.panleft = bind(this.panleft, this);
+	    this.pandown = bind(this.pandown, this);
+	    this.panup = bind(this.panup, this);
+	    this.panend = bind(this.panend, this);
+	    this.pan = bind(this.pan, this);
+	    this.panstart = bind(this.panstart, this);
+	    this.forcetapend = bind(this.forcetapend, this);
+	    this.forcetapstart = bind(this.forcetapstart, this);
+	    this.forcetapchange = bind(this.forcetapchange, this);
+	    this._updateMacForce = bind(this._updateMacForce, this);
+	    this._updateTouchForce = bind(this._updateTouchForce, this);
+	    this.longpressend = bind(this.longpressend, this);
+	    this.longpressstart = bind(this.longpressstart, this);
+	    this.doubletap = bind(this.doubletap, this);
+	    this.tapend = bind(this.tapend, this);
+	    this.tapstart = bind(this.tapstart, this);
+	    this.tap = bind(this.tap, this);
+	    this.touchend = bind(this.touchend, this);
+	    this.touchmove = bind(this.touchmove, this);
+	    this.touchstart = bind(this.touchstart, this);
+	    this.em = new DOMEventManager();
+	    this.em.wrap(window).addEventListener("touchstart", this.touchstart);
+	  }
+	
+	  GestureInputRecognizer.prototype.destroy = function() {
+	    return this.em.removeAllListeners();
+	  };
+	
+	  GestureInputRecognizer.prototype.cancel = function() {
+	    window.clearTimeout(this.session.pressTimer);
+	    return this.session = null;
+	  };
+	
+	  GestureInputRecognizer.prototype.touchstart = function(event) {
+	    if (this.session) {
+	      return;
+	    }
+	    this.em.wrap(window).addEventListener("touchmove", this.touchmove);
+	    this.em.wrap(window).addEventListener("touchend", this.touchend);
+	    this.em.wrap(window).addEventListener("webkitmouseforcechanged", this._updateMacForce);
+	    this.session = {
+	      startEvent: this._getGestureEvent(event),
+	      lastEvent: null,
+	      startMultiEvent: null,
+	      startTime: Date.now(),
+	      pressTimer: window.setTimeout(this.longpressstart, GestureInputLongPressTime * 1000),
+	      started: {},
+	      events: [],
+	      sanitizeRotation: Utils.sanitizeRotation(),
+	      eventCount: 0
+	    };
+	    event = this._getGestureEvent(event);
+	    this.tapstart(event);
+	    if (Date.now() - this.doubleTapTime < (GestureInputDoubleTapTime * 1000)) {
+	      this.doubletap(event);
+	    } else {
+	      this.doubleTapTime = Date.now();
+	    }
+	    this._process(event);
+	    if (Utils.isTouch()) {
+	      return this._updateTouchForce();
+	    }
+	  };
+	
+	  GestureInputRecognizer.prototype.touchmove = function(event) {
+	    return this._process(this._getGestureEvent(event));
+	  };
+	
+	  GestureInputRecognizer.prototype.touchend = function(event) {
+	    var eventName, ref, value;
+	    if (Utils.isTouch()) {
+	      if (!(event.touches.length === 0)) {
+	        return;
+	      }
+	    } else {
+	      if (!(event.touches.length === event.changedTouches.length)) {
+	        return;
+	      }
+	    }
+	    this.em.wrap(window).removeEventListener("touchmove", this.touchmove);
+	    this.em.wrap(window).removeEventListener("touchend", this.touchend);
+	    this.em.wrap(window).removeEventListener("webkitmouseforcechanged", this._updateMacForce);
+	    event = this._getGestureEvent(event);
+	    ref = this.session.started;
+	    for (eventName in ref) {
+	      value = ref[eventName];
+	      if (value) {
+	        this[eventName + "end"](event);
+	      }
+	    }
+	    this.tap(event);
+	    this.tapend(event);
+	    return this.cancel();
+	  };
+	
+	  GestureInputRecognizer.prototype.tap = function(event) {
+	    return this._dispatchEvent("tap", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.tapstart = function(event) {
+	    return this._dispatchEvent("tapstart", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.tapend = function(event) {
+	    return this._dispatchEvent("tapend", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.doubletap = function(event) {
+	    return this._dispatchEvent("doubletap", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.longpressstart = function() {
+	    var event;
+	    if (!this.session) {
+	      return;
+	    }
+	    if (this.session.started.longpress) {
+	      return;
+	    }
+	    event = this._getGestureEvent(this.session.startEvent);
+	    this.session.started.longpress = event;
+	    this._dispatchEvent("longpressstart", event);
+	    return this._dispatchEvent("longpress", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.longpressend = function(event) {
+	    return this._dispatchEvent("longpressend", event);
+	  };
+	
+	  GestureInputRecognizer.prototype._updateTouchForce = function() {
+	    var event, ref, ref1;
+	    if (!((ref = this.session) != null ? (ref1 = ref.lastEvent) != null ? ref1.touches.length : void 0 : void 0)) {
+	      return;
+	    }
+	    this.session.force = this.session.lastEvent.touches[0].force || 0;
+	    event = this._getGestureEvent(this.session.lastEvent);
+	    this.forcetapchange(event);
+	    if (this.session.force >= GestureInputForceTapMobile) {
+	      this.forcetapstart(event);
+	    } else {
+	      this.forcetapend(event);
+	    }
+	    return setTimeout(this._updateTouchForce, GestureInputForceTapMobilePollTime);
+	  };
+	
+	  GestureInputRecognizer.prototype._updateMacForce = function(event) {
+	    if (!this.session) {
+	      return;
+	    }
+	    this.session.force = Utils.modulate(event.webkitForce, [0, 3], [0, 1]);
+	    this.forcetapchange(this._getGestureEvent(event));
+	    if (event.webkitForce >= GestureInputForceTapDesktop) {
+	      return this.forcetapstart(event);
+	    } else {
+	      return this.forcetapend(event);
+	    }
+	  };
+	
+	  GestureInputRecognizer.prototype.forcetapchange = function(event) {
+	    return this._dispatchEvent("forcetapchange", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.forcetapstart = function(event) {
+	    if (!this.session) {
+	      return;
+	    }
+	    if (this.session.started.forcetap) {
+	      return;
+	    }
+	    this.session.started.forcetap = event;
+	    this._dispatchEvent("forcetapstart", event);
+	    return this._dispatchEvent("forcetap", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.forcetapend = function(event) {
+	    if (!this.session) {
+	      return;
+	    }
+	    if (!this.session.started.forcetap) {
+	      return;
+	    }
+	    this.session.started.forcetap = null;
+	    return this._dispatchEvent("forcetapend", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.panstart = function(event) {
+	    this.session.started.pan = event;
+	    return this._dispatchEvent("panstart", event, this.session.started.pan.target);
+	  };
+	
+	  GestureInputRecognizer.prototype.pan = function(event) {
+	    var direction;
+	    this._dispatchEvent("pan", event, this.session.started.pan.target);
+	    direction = this._getDirection(event.delta);
+	    if (direction) {
+	      return this["pan" + direction](event);
+	    }
+	  };
+	
+	  GestureInputRecognizer.prototype.panend = function(event) {
+	    this._dispatchEvent("panend", event, this.session.started.pan.target);
+	    return this.session.started.pan = null;
+	  };
+	
+	  GestureInputRecognizer.prototype.panup = function(event) {
+	    return this._dispatchEvent("panup", event, this.session.started.pan.target);
+	  };
+	
+	  GestureInputRecognizer.prototype.pandown = function(event) {
+	    return this._dispatchEvent("pandown", event, this.session.started.pan.target);
+	  };
+	
+	  GestureInputRecognizer.prototype.panleft = function(event) {
+	    return this._dispatchEvent("panleft", event, this.session.started.pan.target);
+	  };
+	
+	  GestureInputRecognizer.prototype.panright = function(event) {
+	    return this._dispatchEvent("panright", event, this.session.started.pan.target);
+	  };
+	
+	  GestureInputRecognizer.prototype.pinchstart = function(event) {
+	    this.session.started.pinch = event;
+	    this.scalestart(event, this.session.started.pinch.target);
+	    this.rotatestart(event, this.session.started.pinch.target);
+	    return this._dispatchEvent("pinchstart", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.pinch = function(event) {
+	    this._dispatchEvent("pinch", event);
+	    this.scale(event, this.session.started.pinch.target);
+	    return this.rotate(event, this.session.started.pinch.target);
+	  };
+	
+	  GestureInputRecognizer.prototype.pinchend = function(event) {
+	    this._dispatchEvent("pinchend", event);
+	    this.scaleend(event, this.session.started.pinch.target);
+	    this.rotateend(event, this.session.started.pinch.target);
+	    return this.session.started.pinch = null;
+	  };
+	
+	  GestureInputRecognizer.prototype.scalestart = function(event) {
+	    return this._dispatchEvent("scalestart", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.scale = function(event) {
+	    return this._dispatchEvent("scale", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.scaleend = function(event) {
+	    return this._dispatchEvent("scaleend", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.rotatestart = function(event) {
+	    return this._dispatchEvent("rotatestart", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.rotate = function(event) {
+	    return this._dispatchEvent("rotate", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.rotateend = function(event) {
+	    return this._dispatchEvent("rotateend", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.swipestart = function(event) {
+	    this._dispatchEvent("swipestart", event);
+	    this.session.started.swipe = event;
+	    return this.swipedirectionstart(event);
+	  };
+	
+	  GestureInputRecognizer.prototype.swipe = function(event) {
+	    this._dispatchEvent("swipe", event);
+	    return this.swipedirection(event);
+	  };
+	
+	  GestureInputRecognizer.prototype.swipeend = function(event) {
+	    return this._dispatchEvent("swipeend", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.swipedirectionstart = function(event) {
+	    var direction, maxX, maxY, ref, ref1, ref2, ref3, swipeEdge;
+	    if (!event.offsetDirection) {
+	      return;
+	    }
+	    if (this.session.started.swipedirection) {
+	      return;
+	    }
+	    this.session.started.swipedirection = event;
+	    direction = this.session.started.swipedirection.offsetDirection;
+	    this._dispatchEvent("swipe" + direction + "start", event);
+	    swipeEdge = this._edgeForSwipeDirection(direction);
+	    maxX = Utils.frameGetMaxX(Screen.canvasFrame);
+	    maxY = Utils.frameGetMaxY(Screen.canvasFrame);
+	    if (swipeEdge === "top" && (0 < (ref = event.start.y - Screen.canvasFrame.y) && ref < GestureInputEdgeSwipeDistance)) {
+	      this.edgeswipedirectionstart(event);
+	    }
+	    if (swipeEdge === "right" && (maxX - GestureInputEdgeSwipeDistance < (ref1 = event.start.x) && ref1 < maxX)) {
+	      this.edgeswipedirectionstart(event);
+	    }
+	    if (swipeEdge === "bottom" && (maxY - GestureInputEdgeSwipeDistance < (ref2 = event.start.y) && ref2 < maxY)) {
+	      this.edgeswipedirectionstart(event);
+	    }
+	    if (swipeEdge === "left" && (0 < (ref3 = event.start.x - Screen.canvasFrame.x) && ref3 < GestureInputEdgeSwipeDistance)) {
+	      return this.edgeswipedirectionstart(event);
+	    }
+	  };
+	
+	  GestureInputRecognizer.prototype.swipedirection = function(event) {
+	    var direction;
+	    if (!this.session.started.swipedirection) {
+	      return;
+	    }
+	    direction = this.session.started.swipedirection.offsetDirection;
+	    this._dispatchEvent("swipe" + direction, event);
+	    if (this.session.started.edgeswipedirection) {
+	      return this.edgeswipedirection(event);
+	    }
+	  };
+	
+	  GestureInputRecognizer.prototype.swipedirectionend = function(event) {
+	    var direction;
+	    if (!this.session.started.swipedirection) {
+	      return;
+	    }
+	    direction = this.session.started.swipedirection.offsetDirection;
+	    return this._dispatchEvent("swipe" + direction + "end", event);
+	  };
+	
+	  GestureInputRecognizer.prototype.edgeswipedirection = function(event) {
+	    var swipeEdge;
+	    swipeEdge = this._edgeForSwipeDirection(this.session.started.edgeswipedirection.offsetDirection);
+	    Screen.emit("edgeswipe", this._createEvent("edgeswipe", event));
+	    return Screen.emit("edgeswipe" + swipeEdge, this._createEvent("edgeswipe" + swipeEdge, event));
+	  };
+	
+	  GestureInputRecognizer.prototype.edgeswipedirectionstart = function(event) {
+	    var swipeEdge;
+	    if (this.session.started.edgeswipedirection) {
+	      return;
+	    }
+	    this.session.started.edgeswipedirection = event;
+	    swipeEdge = this._edgeForSwipeDirection(this.session.started.edgeswipedirection.offsetDirection);
+	    Screen.emit("edgeswipestart", this._createEvent("edgeswipestart", event));
+	    return Screen.emit("edgeswipe" + swipeEdge + "start", this._createEvent("edgeswipe" + swipeEdge + "start", event));
+	  };
+	
+	  GestureInputRecognizer.prototype.edgeswipedirectionend = function(event) {
+	    var swipeEdge;
+	    swipeEdge = this._edgeForSwipeDirection(this.session.started.edgeswipedirection.offsetDirection);
+	    Screen.emit("edgeswipeend", this._createEvent("edgeswipeend", event));
+	    return Screen.emit("edgeswipe" + swipeEdge + "end", this._createEvent("edgeswipe" + swipeEdge + "end", event));
+	  };
+	
+	  GestureInputRecognizer.prototype._process = function(event) {
+	    if (!this.session) {
+	      return;
+	    }
+	    this.session.events.push(event);
+	    event.eventCount = this.session.eventCount++;
+	    if (Math.abs(event.delta.x) > 0 || Math.abs(event.delta.y) > 0) {
+	      if (!this.session.started.pan) {
+	        this.panstart(event);
+	      } else {
+	        this.pan(event);
+	      }
+	    }
+	    if (this.session.started.pinch && event.fingers === 1) {
+	      this.pinchend(event);
+	    } else if (!this.session.started.pinch && event.fingers === 2) {
+	      this.pinchstart(event);
+	    } else if (this.session.started.pinch) {
+	      this.pinch(event);
+	    }
+	    if (!this.session.started.swipe && (Math.abs(event.offset.x) > GestureInputSwipeThreshold || Math.abs(event.offset.y) > GestureInputSwipeThreshold)) {
+	      this.swipestart(event);
+	    } else if (this.session.started.swipe) {
+	      this.swipe(event);
+	    }
+	    return this.session.lastEvent = event;
+	  };
+	
+	  GestureInputRecognizer.prototype._getEventPoint = function(event) {
+	    var ref;
+	    if ((ref = event.touches) != null ? ref.length : void 0) {
+	      return this._getTouchPoint(event, 0);
+	    }
+	    return {
+	      x: event.pageX,
+	      y: event.pageY
+	    };
+	  };
+	
+	  GestureInputRecognizer.prototype._getGestureEvent = function(event) {
+	    var events, i, len, pointKey, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, touchPointA, touchPointB;
+	    _.extend(event, {
+	      time: Date.now(),
+	      point: this._getEventPoint(event),
+	      start: this._getEventPoint(event),
+	      previous: this._getEventPoint(event),
+	      offset: {
+	        x: 0,
+	        y: 0
+	      },
+	      offsetTime: 0,
+	      offsetAngle: 0,
+	      offsetDirection: null,
+	      delta: {
+	        x: 0,
+	        y: 0
+	      },
+	      deltaTime: 0,
+	      deltaAngle: 0,
+	      deltaDirection: null,
+	      force: 0,
+	      velocity: {
+	        x: 0,
+	        y: 0
+	      },
+	      fingers: ((ref = event.touches) != null ? ref.length : void 0) || 0,
+	      touchCenter: this._getEventPoint(event),
+	      touchOffset: {
+	        x: 0,
+	        y: 0
+	      },
+	      touchDistance: 0,
+	      scale: 1,
+	      scaleDirection: null,
+	      rotation: 0
+	    });
+	    if ((ref1 = this.session) != null ? ref1.startEvent : void 0) {
+	      event.start = this.session.startEvent.point;
+	      event.offset = Utils.pointSubtract(event.point, event.start);
+	      event.offsetTime = event.time - this.session.startEvent.time;
+	      event.offsetAngle = Utils.pointAngle(this.session.startEvent.point, event.point);
+	      event.offsetDirection = this._getDirection(event.offset);
+	      event.touchCenterStart = this.session.startEvent.touchCenter;
+	    }
+	    if ((ref2 = this.session) != null ? ref2.lastEvent : void 0) {
+	      event.previous = this.session.lastEvent.point;
+	      event.deltaTime = event.time - this.session.lastEvent.time;
+	      event.delta = Utils.pointSubtract(event.point, this.session.lastEvent.point);
+	      event.deltaAngle = Utils.pointAngle(event.point, this.session.lastEvent.point);
+	      event.deltaDirection = this._getDirection(event.delta);
+	    }
+	    if (event.fingers > 1) {
+	      touchPointA = this._getTouchPoint(event, 0);
+	      touchPointB = this._getTouchPoint(event, 1);
+	      event.touchCenter = Utils.pointCenter(touchPointB, touchPointA);
+	      event.touchOffset = Utils.pointSubtract(touchPointB, touchPointA);
+	      event.touchDistance = _.max([GestureInputMinimumFingerDistance, Utils.pointDistance(touchPointA, touchPointB)]);
+	      event.rotation = Utils.pointAngle(touchPointA, touchPointB);
+	    }
+	    if ((ref3 = this.session) != null ? ref3.events : void 0) {
+	      events = _.filter(this.session.events, function(e) {
+	        if (e.eventCount === 0) {
+	          return false;
+	        }
+	        return e.time > (event.time - (GestureInputVelocityTime * 1000));
+	      });
+	      event.velocity = this._getVelocity(events);
+	    }
+	    if ((ref4 = this.session) != null ? ref4.started.pinch : void 0) {
+	      event.scale = event.touchDistance / this.session.started.pinch.touchDistance;
+	      event.scaleDirection = this._getScaleDirection(event.scale - this.session.lastEvent.scale);
+	      if (!event.scaleDirection && ((ref5 = this.session) != null ? ref5.lastEvent : void 0)) {
+	        event.scaleDirection = this.session.lastEvent.scaleDirection;
+	      }
+	    }
+	    if ((ref6 = this.session) != null ? ref6.lastEvent : void 0) {
+	      if ((event.fingers !== (ref7 = this.session.lastEvent.fingers) && ref7 === 2)) {
+	        event.delta = {
+	          x: 0,
+	          y: 0
+	        };
+	      }
+	      if (event.fingers === 2 && this.session.lastEvent.fingers === 2) {
+	        event.delta = Utils.pointSubtract(event.touchCenter, this.session.lastEvent.touchCenter);
+	      }
+	    }
+	    if ((ref8 = this.session) != null ? ref8.lastEvent : void 0) {
+	      if (this.session.force) {
+	        event.force = this.session.force;
+	      }
+	    }
+	    ref9 = ["point", "start", "previous", "offset", "delta", "velocity", "touchCenter", "touchOffset"];
+	    for (i = 0, len = ref9.length; i < len; i++) {
+	      pointKey = ref9[i];
+	      event[pointKey + "X"] = event[pointKey].x;
+	      event[pointKey + "Y"] = event[pointKey].y;
+	    }
+	    return event;
+	  };
+	
+	  GestureInputRecognizer.prototype._getTouchPoint = function(event, index) {
+	    var point;
+	    return point = {
+	      x: event.touches[index].pageX,
+	      y: event.touches[index].pageY
+	    };
+	  };
+	
+	  GestureInputRecognizer.prototype._getDirection = function(offset) {
+	    if (Math.abs(offset.x) > Math.abs(offset.y)) {
+	      if (offset.x > 0) {
+	        return "right";
+	      }
+	      if (offset.x < 0) {
+	        return "left";
+	      }
+	    }
+	    if (Math.abs(offset.x) < Math.abs(offset.y)) {
+	      if (offset.y < 0) {
+	        return "up";
+	      }
+	      if (offset.y > 0) {
+	        return "down";
+	      }
+	    }
+	    return null;
+	  };
+	
+	  GestureInputRecognizer.prototype._edgeForSwipeDirection = function(direction) {
+	    if (direction === "down") {
+	      return "top";
+	    }
+	    if (direction === "left") {
+	      return "right";
+	    }
+	    if (direction === "up") {
+	      return "bottom";
+	    }
+	    if (direction === "right") {
+	      return "left";
+	    }
+	    return null;
+	  };
+	
+	  GestureInputRecognizer.prototype._getScaleDirection = function(offset) {
+	    if (offset > 0) {
+	      return "up";
+	    }
+	    if (offset < 0) {
+	      return "down";
+	    }
+	    return null;
+	  };
+	
+	  GestureInputRecognizer.prototype._createEvent = function(type, event) {
+	    var k, touchEvent, v;
+	    touchEvent = document.createEvent("MouseEvent");
+	    touchEvent.initMouseEvent(type, true, true, window, event.detail, event.screenX, event.screenY, event.clientX, event.clientY, event.ctrlKey, event.shiftKey, event.altKey, event.metaKey, event.button, event.relatedTarget);
+	    touchEvent.touches = event.touches;
+	    touchEvent.changedTouches = event.touches;
+	    touchEvent.targetTouches = event.touches;
+	    for (k in event) {
+	      v = event[k];
+	      touchEvent[k] = v;
+	    }
+	    return touchEvent;
+	  };
+	
+	  GestureInputRecognizer.prototype._dispatchEvent = function(type, event, target) {
+	    var touchEvent;
+	    touchEvent = this._createEvent(type, event);
+	    if (target == null) {
+	      target = event.target;
+	    }
+	    return target.dispatchEvent(touchEvent);
+	  };
+	
+	  GestureInputRecognizer.prototype._getVelocity = function(events) {
+	    var current, first, time, velocity;
+	    if (events.length < 2) {
+	      return {
+	        x: 0,
+	        y: 0
+	      };
+	    }
+	    current = events[events.length - 1];
+	    first = events[0];
+	    time = current.time - first.time;
+	    velocity = {
+	      x: (current.point.x - first.point.x) / time,
+	      y: (current.point.y - first.point.y) / time
+	    };
+	    if (velocity.x === Infinity) {
+	      velocity.x = 0;
+	    }
+	    if (velocity.y === Infinity) {
+	      velocity.y = 0;
+	    }
+	    return velocity;
+	  };
+	
+	  return GestureInputRecognizer;
+
+	})();
+
+
+/***/ },
+/* 53 */
+/***/ function(module, exports) {
+
+	exports.date = 1456230683;
+	
+	exports.branch = "master";
+	
+	exports.hash = "4f9f713";
+	
+	exports.build = 1587;
+	
+	exports.version = exports.branch + "/" + exports.hash;
 
 
 /***/ }

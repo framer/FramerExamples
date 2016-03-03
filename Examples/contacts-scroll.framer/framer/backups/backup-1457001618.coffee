@@ -157,6 +157,8 @@ showSections = ->
 # Connect scrolling to the slider
 slider.on "change:value", ->
 	
+	print "change"
+	
 	# Scroll to the correct sections
 	scrollValue = Utils.modulate(this.value, [0, 100], [0, scroll.content.height - scroll.height + 320], true)
 	scroll.scrollY = round(scrollValue, nearest)
@@ -168,6 +170,7 @@ slider.on "change:value", ->
 
 # Connect the slider to the scroll event
 scroll.on Events.Move, ->
+		
 	slider.value = slider.valueForPoint(scroll.scrollY / 3)
 	showSections()
 	
