@@ -3,7 +3,7 @@
   "sharedPrototype" : 1,
   "contentScale" : 1,
   "deviceType" : "apple-iphone-6s-silver",
-  "selectedHand" : "iphone-hands-1",
+  "selectedHand" : "",
   "updateDelay" : 0.3,
   "deviceScale" : "fit",
   "orientation" : 0,
