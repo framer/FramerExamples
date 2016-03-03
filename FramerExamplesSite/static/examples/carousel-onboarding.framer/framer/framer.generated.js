@@ -745,9 +745,9 @@ window.__imported__["carousel-onboarding/layers.json.js"] = [
 	}
 ]
 if (typeof(DeviceComponent) !== "undefined") {DeviceComponent.Devices["iphone-6-silver"].deviceImageJP2 = false};
-window.Framer.Defaults.DeviceView = {"deviceScale":"fit","selectedHand":"iphone-hands-1","deviceType":"apple-iphone-5s-silver","contentScale":1,"orientation":0};
+window.Framer.Defaults.DeviceView = {"deviceScale":"fit","selectedHand":"","deviceType":"apple-iphone-5s-silver","contentScale":1,"orientation":0};
 
-window.Framer.Defaults.DeviceComponent = {"deviceScale":"fit","selectedHand":"iphone-hands-1","deviceType":"apple-iphone-5s-silver","contentScale":1,"orientation":0};
+window.Framer.Defaults.DeviceComponent = {"deviceScale":"fit","selectedHand":"","deviceType":"apple-iphone-5s-silver","contentScale":1,"orientation":0};
 
 window.FramerStudioInfo = {"deviceImagesUrl":"\/_server\/resources\/DeviceImages","documentTitle":"carousel-onboarding.framer"};
 

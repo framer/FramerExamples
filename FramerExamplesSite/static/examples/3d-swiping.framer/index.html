@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-
+		
 		<meta name="format-detection" content="telephone=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -11,7 +11,10 @@
 		// This automatically sets the right viewport scale on mobile devices
 		(function() {
  		var scale = 1 / window.devicePixelRatio
- 		document.write("<meta name=\"viewport\" content=\"width=device-width, height=device-height, initial-scale=" + scale + ", maximum-scale=" + scale + ", user-scalable=no\">")
+ 		var viewport = "width=device-width, height=device-height, initial-scale=" + scale + ", maximum-scale=" + scale + ", user-scalable=no"
+ 		var iOS = /iPad|iPhone|iPod/.test(navigator.platform)
+ 		if (iOS) { viewport += ", shrink-to-fit=no" }
+ 		document.write("<meta name=\"viewport\" content=\"" + viewport + "\">")
 		})()
 		</script>
 
@@ -28,7 +31,7 @@
 		<script src="framer/framer.js"></script>
 		<script src="framer/framer.generated.js"></script>
 		<script src="framer/framer.modules.js"></script>
-
+		<script src="framer/framer.init.js"></script>
 
 	</head>
 	<body>

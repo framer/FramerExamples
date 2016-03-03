@@ -142,6 +142,8 @@
 	  name: "Default"
 	});
 	
+	Framer.DefaultContext.backgroundColor = "white";
+	
 	Framer.CurrentContext = Framer.DefaultContext;
 	
 	if (Utils.isMobile()) {
@@ -19248,6 +19250,8 @@
 	
 	Events.DragAnimationDidEnd = Events.DragAnimationEnd;
 	
+	Events.DirectionLockDidStart = Events.DirectionLockStart;
+	
 	"\n┌──────┐                   │\n│      │\n│      │  ───────────────▶ │ ◀────▶\n│      │\n└──────┘                   │\n\n════════  ═════════════════ ═══════\n\n  Drag         Momentum      Bounce\n";
 	
 	exports.LayerDraggable = (function(superClass) {
@@ -19409,9 +19413,16 @@
 	  };
 	
 	  LayerDraggable.prototype._touchStart = function(event) {
-	    var touchEvent;
+	    var animation, i, len, properties, ref, touchEvent;
 	    this._isMoving = this.isAnimating;
-	    this.layer.animateStop();
+	    ref = this.layer.animations();
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      animation = ref[i];
+	      properties = animation.options.properties;
+	      if (properties.hasOwnProperty("x") || properties.hasOwnProperty("y")) {
+	        animation.stop();
+	      }
+	    }
 	    this._stopSimulation();
 	    this._resetdirectionLock();
 	    event.preventDefault();
@@ -21638,7 +21649,7 @@
 	    this._contentInset = options.contentInset || Utils.rectZero();
 	    this.setContentLayer(new Layer);
 	    this._applyOptionsAndDefaults(options);
-	    this._enableMouseWheelHandling();
+	    this._enableMouseWheelHandling(options.mouseWheelEnabled);
 	    if (options.hasOwnProperty("wrap")) {
 	      wrapComponent(this, options.wrap);
 	    }
@@ -22439,6 +22450,8 @@
 	
 	"SliderComponent\n\nknob <layer>\nknobSize <width, height>\nfill <layer>\nmin <number>\nmax <number>\n\npointForValue(<n>)\nvalueForPoint(<n>)\n\nanimateToValue(value, animationOptions={})";
 	
+	Events.SliderValueChange = "sliderValueChange";
+	
 	Knob = (function(superClass) {
 	  extend(Knob, superClass);
 	
@@ -22711,7 +22724,8 @@
 	  });
 	
 	  SliderComponent.prototype._updateValue = function() {
-	    return this.emit("change:value", this.value);
+	    this.emit("change:value", this.value);
+	    return this.emit(Events.SliderValueChange, this.value);
 	  };
 	
 	  SliderComponent.prototype.pointForValue = function(value) {
@@ -22764,6 +22778,10 @@
 	      this.knob.on("change:y", this._updateValue);
 	    }
 	    return this.knob.animate(animationOptions);
+	  };
+	
+	  SliderComponent.prototype.onValueChange = function(cb) {
+	    return this.on(Events.SliderValueChange, cb);
 	  };
 	
 	  return SliderComponent;
@@ -22886,7 +22904,9 @@
 	    this.content.classList.add("DeviceContent");
 	    this.content.originX = 0;
 	    this.content.originY = 0;
-	    Framer.CurrentContext.domEventManager.wrap(window).addEventListener("resize", this._update);
+	    if (!Utils.isMobile()) {
+	      Framer.CurrentContext.domEventManager.wrap(window).addEventListener("resize", this._update);
+	    }
 	    ref = [this.background, this.phone, this.viewport, this.content, this.screen];
 	    for (i = 0, len = ref.length; i < len; i++) {
 	      layer = ref[i];
@@ -22927,10 +22947,10 @@
 	      this.hands.center();
 	      this.phone.center();
 	      ref1 = this._getOrientationDimensions(this._device.screenWidth / contentScaleFactor, this._device.screenHeight / contentScaleFactor), width = ref1[0], height = ref1[1];
-	      this.screen.width = this._device.screenWidth;
-	      this.screen.height = this._device.screenHeight;
-	      this.viewport.width = this.content.width = width;
-	      this.viewport.height = this.content.height = height;
+	      this.screen.width = this.viewport.width = this._device.screenWidth;
+	      this.screen.height = this.viewport.height = this._device.screenHeight;
+	      this.content.width = width;
+	      this.content.height = height;
 	      this.screen.center();
 	      if (this.selectedHand && this._orientation === 0) {
 	        return this.setHand(this.selectedHand);
@@ -23199,7 +23219,7 @@
 	  });
 	
 	  DeviceComponent.prototype.setOrientation = function(orientation, animate) {
-	    var animation, contentProperties, height, phoneProperties, ref, ref1, width, x, y;
+	    var animation, contentProperties, height, offset, phoneProperties, ref, ref1, width, x, y;
 	    if (animate == null) {
 	      animate = false;
 	    }
@@ -23228,11 +23248,19 @@
 	      scale: this._calculatePhoneScale()
 	    };
 	    ref = this._getOrientationDimensions(this._device.screenWidth, this._device.screenHeight), width = ref[0], height = ref[1];
-	    ref1 = [(this.screen.width - width) / 2, (this.screen.height - height) / 2], x = ref1[0], y = ref1[1];
+	    this.content.width = width;
+	    this.content.height = height;
+	    offset = (this.screen.width - width) / 2;
+	    if (this._orientation === -90) {
+	      offset *= -1;
+	    }
+	    ref1 = [0, 0], x = ref1[0], y = ref1[1];
+	    if (this.isLandscape()) {
+	      x = offset;
+	      y = offset;
+	    }
 	    contentProperties = {
 	      rotationZ: this._orientation,
-	      width: width,
-	      height: height,
 	      x: x,
 	      y: y
 	    };
@@ -23262,11 +23290,13 @@
 	  };
 	
 	  DeviceComponent.prototype._orientationChange = function() {
+	    this._orientation = window.orientation;
+	    this._update();
 	    return this.emit("change:orientation", window.orientation);
 	  };
 	
 	  DeviceComponent.prototype.isPortrait = function() {
-	    return Math.abs(this._orientation) !== 90;
+	    return Math.abs(this.orientation) === 0;
 	  };
 	
 	  DeviceComponent.prototype.isLandscape = function() {
@@ -24602,7 +24632,8 @@
 	  if (!touchEmulator) {
 	    return;
 	  }
-	  return touchEmulator.destroy();
+	  touchEmulator.destroy();
+	  return touchEmulator = null;
 	};
 
 
@@ -24701,7 +24732,7 @@
 /* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var DOMEventManager, GestureInputDoubleTapTime, GestureInputEdgeSwipeDistance, GestureInputForceTapDesktop, GestureInputForceTapMobile, GestureInputForceTapMobilePollTime, GestureInputLongPressTime, GestureInputMinimumFingerDistance, GestureInputSwipeThreshold, GestureInputVelocityTime, Utils,
+	var DOMEventManager, GestureInputDoubleTapTime, GestureInputEdgeSwipeDistance, GestureInputForceTapDesktop, GestureInputForceTapMobile, GestureInputForceTapMobilePollTime, GestureInputLongPressTime, GestureInputMinimumFingerDistance, GestureInputSwipeThreshold, GestureInputVelocityTime, TouchEnd, TouchMove, TouchStart, Utils,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 	
 	Utils = __webpack_require__(4);
@@ -24726,16 +24757,17 @@
 	
 	DOMEventManager = __webpack_require__(41).DOMEventManager;
 	
-	Utils.sanitizeRotation = function() {
-	  var previous, sanitize;
-	  previous = null;
-	  return sanitize = function(value) {
-	    if (previous == null) {
-	      previous = value;
-	    }
-	    return value;
-	  };
-	};
+	TouchStart = "touchstart";
+	
+	TouchMove = "touchmove";
+	
+	TouchEnd = "touchend";
+	
+	if (!Utils.isTouch()) {
+	  TouchStart = "mousedown";
+	  TouchMove = "mousemove";
+	  TouchEnd = "mouseup";
+	}
 	
 	exports.GestureInputRecognizer = (function() {
 	  function GestureInputRecognizer() {
@@ -24780,7 +24812,7 @@
 	    this.touchmove = bind(this.touchmove, this);
 	    this.touchstart = bind(this.touchstart, this);
 	    this.em = new DOMEventManager();
-	    this.em.wrap(window).addEventListener("touchstart", this.touchstart);
+	    this.em.wrap(window).addEventListener(TouchStart, this.touchstart);
 	  }
 	
 	  GestureInputRecognizer.prototype.destroy = function() {
@@ -24796,8 +24828,8 @@
 	    if (this.session) {
 	      return;
 	    }
-	    this.em.wrap(window).addEventListener("touchmove", this.touchmove);
-	    this.em.wrap(window).addEventListener("touchend", this.touchend);
+	    this.em.wrap(window).addEventListener(TouchMove, this.touchmove);
+	    this.em.wrap(window).addEventListener(TouchEnd, this.touchend);
 	    this.em.wrap(window).addEventListener("webkitmouseforcechanged", this._updateMacForce);
 	    this.session = {
 	      startEvent: this._getGestureEvent(event),
@@ -24807,7 +24839,6 @@
 	      pressTimer: window.setTimeout(this.longpressstart, GestureInputLongPressTime * 1000),
 	      started: {},
 	      events: [],
-	      sanitizeRotation: Utils.sanitizeRotation(),
 	      eventCount: 0
 	    };
 	    event = this._getGestureEvent(event);
@@ -24828,18 +24859,20 @@
 	  };
 	
 	  GestureInputRecognizer.prototype.touchend = function(event) {
-	    var eventName, ref, value;
-	    if (Utils.isTouch()) {
-	      if (!(event.touches.length === 0)) {
-	        return;
-	      }
-	    } else {
-	      if (!(event.touches.length === event.changedTouches.length)) {
-	        return;
+	    var eventName, ref, ref1, value;
+	    if (event.touches != null) {
+	      if (Utils.isTouch()) {
+	        if (!(event.touches.length === 0)) {
+	          return;
+	        }
+	      } else {
+	        if (!(event.touches.length === event.changedTouches.length)) {
+	          return;
+	        }
 	      }
 	    }
-	    this.em.wrap(window).removeEventListener("touchmove", this.touchmove);
-	    this.em.wrap(window).removeEventListener("touchend", this.touchend);
+	    this.em.wrap(window).removeEventListener(TouchMove, this.touchmove);
+	    this.em.wrap(window).removeEventListener(TouchEnd, this.touchend);
 	    this.em.wrap(window).removeEventListener("webkitmouseforcechanged", this._updateMacForce);
 	    event = this._getGestureEvent(event);
 	    ref = this.session.started;
@@ -24849,7 +24882,11 @@
 	        this[eventName + "end"](event);
 	      }
 	    }
-	    this.tap(event);
+	    if (!((ref1 = this.session) != null ? ref1.startEvent : void 0)) {
+	      this.tap(event);
+	    } else if (this.session.startEvent.target === event.target) {
+	      this.tap(event);
+	    }
 	    this.tapend(event);
 	    return this.cancel();
 	  };
@@ -25321,8 +25358,11 @@
 	  };
 	
 	  GestureInputRecognizer.prototype._dispatchEvent = function(type, event, target) {
-	    var touchEvent;
+	    var ref, ref1, touchEvent;
 	    touchEvent = this._createEvent(type, event);
+	    if (target == null) {
+	      target = (ref = this.session) != null ? (ref1 = ref.startEvent) != null ? ref1.target : void 0 : void 0;
+	    }
 	    if (target == null) {
 	      target = event.target;
 	    }
@@ -25362,13 +25402,13 @@
 /* 53 */
 /***/ function(module, exports) {
 
-	exports.date = 1455723391;
+	exports.date = 1456873918;
 	
 	exports.branch = "master";
 	
-	exports.hash = "195bc4d";
+	exports.hash = "35a1e52";
 	
-	exports.build = 1580;
+	exports.build = 1596;
 	
 	exports.version = exports.branch + "/" + exports.hash;
 

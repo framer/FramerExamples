@@ -220,7 +220,8 @@ searchfield = new Layer({
 
 searchfield.style = {
   color: '#7D7D7D',
-  fontFamily: 'Roboto'
+  fontFamily: 'Roboto',
+  outline: "none"
 };
 
 searchicn = new Layer({

@@ -159,7 +159,8 @@ setupCard = function(dataObj, index) {
     width: 620,
     height: 630,
     backgroundColor: null,
-    name: "card" + index
+    name: "card" + index,
+    clip: true
   });
   card.containerY = yPos;
   card.titleData = dataObj.shortTitle ? dataObj.shortTitle : dataObj.title;

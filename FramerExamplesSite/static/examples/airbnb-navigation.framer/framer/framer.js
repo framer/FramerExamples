@@ -142,6 +142,8 @@
 	  name: "Default"
 	});
 	
+	Framer.DefaultContext.backgroundColor = "white";
+	
 	Framer.CurrentContext = Framer.DefaultContext;
 	
 	if (Utils.isMobile()) {
@@ -18042,7 +18044,7 @@
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AnimatorClassBezierPresets, AnimatorClasses, BezierCurveAnimator, Config, Defaults, EventEmitter, LinearAnimator, SpringDHOAnimator, SpringRK4Animator, Utils, _, evaluateRelativeProperty, isRelativeProperty, numberRE, relativePropertyRE,
+	var AnimatorClassBezierPresets, AnimatorClasses, BaseClass, BezierCurveAnimator, Config, Defaults, LinearAnimator, SpringDHOAnimator, SpringRK4Animator, Utils, _, evaluateRelativeProperty, isRelativeProperty, numberRE, relativePropertyRE,
 	  slice = [].slice,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -18057,7 +18059,7 @@
 	
 	Defaults = __webpack_require__(17).Defaults;
 	
-	EventEmitter = __webpack_require__(7).EventEmitter;
+	BaseClass = __webpack_require__(6).BaseClass;
 	
 	LinearAnimator = __webpack_require__(19).LinearAnimator;
 	
@@ -18129,6 +18131,12 @@
 	    this._originalState = this._currentState();
 	    this._repeatCounter = this.options.repeat;
 	  }
+	
+	  Animation.define("isAnimating", {
+	    get: function() {
+	      return indexOf.call(this.options.layer.context.animations, this) >= 0;
+	    }
+	  });
 	
 	  Animation.prototype.start = function() {
 	    var AnimatorClass, animation, k, property, ref, ref1, ref2, v;
@@ -18368,6 +18376,10 @@
 	    return animatableProperties;
 	  };
 	
+	  Animation.prototype.toInspect = function() {
+	    return "<" + this.constructor.name + " id:" + this.id + " isAnimating:" + this.isAnimating + " [" + (_.keys(this.options.properties)) + "]>";
+	  };
+	
 	  Animation.prototype.onAnimationStart = function(cb) {
 	    return this.on(Events.AnimationStart, cb);
 	  };
@@ -18394,7 +18406,7 @@
 	
 	  return Animation;
 	
-	})(EventEmitter);
+	})(BaseClass);
 
 
 /***/ },
@@ -19399,9 +19411,16 @@
 	  };
 	
 	  LayerDraggable.prototype._touchStart = function(event) {
-	    var touchEvent;
+	    var animation, i, len, properties, ref, touchEvent;
 	    this._isMoving = this.isAnimating;
-	    this.layer.animateStop();
+	    ref = this.layer.animations();
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      animation = ref[i];
+	      properties = animation.options.properties;
+	      if (properties.hasOwnProperty("x") || properties.hasOwnProperty("y")) {
+	        animation.stop();
+	      }
+	    }
 	    this._stopSimulation();
 	    this._resetdirectionLock();
 	    event.preventDefault();
@@ -19432,7 +19451,7 @@
 	  };
 	
 	  LayerDraggable.prototype._touchMove = function(event) {
-	    var frame, offset, point, scaleX, scaleY, touchEvent;
+	    var offset, point, scaleX, scaleY, touchEvent;
 	    if (!this.enabled) {
 	      return;
 	    }
@@ -19450,21 +19469,6 @@
 	      y: touchEvent.clientY,
 	      t: Date.now()
 	    });
-	    if (this.overdrag === false) {
-	      frame = Utils.convertFrameToContext(this.constraints, this.layer, true, false);
-	      if (event.point.x < Utils.frameGetMinX(frame)) {
-	        return;
-	      }
-	      if (event.point.x > Utils.frameGetMaxX(frame)) {
-	        return;
-	      }
-	      if (event.point.y < Utils.frameGetMinY(frame)) {
-	        return;
-	      }
-	      if (event.point.y > Utils.frameGetMaxY(frame)) {
-	        return;
-	      }
-	    }
 	    point = _.clone(this._point);
 	    scaleX = 1 / this.layer.canvasScaleX() * this.layer.scale * this.layer.scaleX;
 	    scaleY = 1 / this.layer.canvasScaleY() * this.layer.scale * this.layer.scaleY;
@@ -22444,6 +22448,8 @@
 	
 	"SliderComponent\n\nknob <layer>\nknobSize <width, height>\nfill <layer>\nmin <number>\nmax <number>\n\npointForValue(<n>)\nvalueForPoint(<n>)\n\nanimateToValue(value, animationOptions={})";
 	
+	Events.SliderValueChange = "sliderValueChange";
+	
 	Knob = (function(superClass) {
 	  extend(Knob, superClass);
 	
@@ -22716,7 +22722,8 @@
 	  });
 	
 	  SliderComponent.prototype._updateValue = function() {
-	    return this.emit("change:value", this.value);
+	    this.emit("change:value", this.value);
+	    return this.emit(Events.SliderValueChange, this.value);
 	  };
 	
 	  SliderComponent.prototype.pointForValue = function(value) {
@@ -22771,6 +22778,10 @@
 	    return this.knob.animate(animationOptions);
 	  };
 	
+	  SliderComponent.prototype.onValueChange = function(cb) {
+	    return this.on(Events.SliderValueChange, cb);
+	  };
+	
 	  return SliderComponent;
 	
 	})(Layer);
@@ -22817,18 +22828,11 @@
 	Device.setDeviceScale(zoom:float, animate:bool)
 	Device.setContentScale(zoom:float, animate:bool)
 	
-	Device.keyboard bool
-	Device.setKeyboard(visible:bool, animate:bool)
-	Device.showKeyboard(animate:bool)
-	Device.hideKeyboard(animate:bool)
-	Device.toggleKeyboard(animate:bool)
-	
+	Device.nextHand()
 	
 	 * Events
 	Events.DeviceTypeDidChange
 	Events.DeviceFullScreenDidChange
-	Events.DeviceKeyboardWillShow
-	Events.DeviceKeyboardDidShow
 	 */
 	
 	exports.DeviceComponent = (function(superClass) {
@@ -22845,7 +22849,7 @@
 	    if (options == null) {
 	      options = {};
 	    }
-	    this._animateKeyboard = bind(this._animateKeyboard, this);
+	    this._orientationChange = bind(this._orientationChange, this);
 	    this._updateDeviceImage = bind(this._updateDeviceImage, this);
 	    this._update = bind(this._update, this);
 	    defaults = Defaults.getDefaults("DeviceComponent", options);
@@ -22856,6 +22860,7 @@
 	    this.animationOptions = defaults.animationOptions;
 	    this.deviceType = defaults.deviceType;
 	    _.extend(this, _.defaults(options, defaults));
+	    window.addEventListener("orientationchange", this._orientationChange, true);
 	  }
 	
 	  DeviceComponent.prototype._setup = function() {
@@ -22897,17 +22902,9 @@
 	    this.content.classList.add("DeviceContent");
 	    this.content.originX = 0;
 	    this.content.originY = 0;
-	    this.keyboardLayer = new Layer({
-	      parent: this.viewport
-	    });
-	    this.keyboardLayer.on("click", (function(_this) {
-	      return function() {
-	        return _this.toggleKeyboard();
-	      };
-	    })(this));
-	    this.keyboardLayer.classList.add("DeviceKeyboard");
-	    this.keyboardLayer.backgroundColor = "transparent";
-	    Framer.CurrentContext.domEventManager.wrap(window).addEventListener("resize", this._update);
+	    if (!Utils.isMobile()) {
+	      Framer.CurrentContext.domEventManager.wrap(window).addEventListener("resize", this._update);
+	    }
 	    ref = [this.background, this.phone, this.viewport, this.content, this.screen];
 	    for (i = 0, len = ref.length; i < len; i++) {
 	      layer = ref[i];
@@ -22937,8 +22934,7 @@
 	        layer.height = window.innerHeight / contentScaleFactor;
 	        layer.scale = 1;
 	      }
-	      this.content.scale = contentScaleFactor;
-	      return this._positionKeyboard();
+	      return this.content.scale = contentScaleFactor;
 	    } else {
 	      backgroundOverlap = 100;
 	      this.background.x = 0 - backgroundOverlap;
@@ -22949,10 +22945,10 @@
 	      this.hands.center();
 	      this.phone.center();
 	      ref1 = this._getOrientationDimensions(this._device.screenWidth / contentScaleFactor, this._device.screenHeight / contentScaleFactor), width = ref1[0], height = ref1[1];
-	      this.screen.width = this._device.screenWidth;
-	      this.screen.height = this._device.screenHeight;
-	      this.viewport.width = this.content.width = width;
-	      this.viewport.height = this.content.height = height;
+	      this.screen.width = this.viewport.width = this._device.screenWidth;
+	      this.screen.height = this.viewport.height = this._device.screenHeight;
+	      this.content.width = width;
+	      this.content.height = height;
 	      this.screen.center();
 	      if (this.selectedHand && this._orientation === 0) {
 	        return this.setHand(this.selectedHand);
@@ -23013,8 +23009,6 @@
 	      this._updateDeviceImage();
 	    }
 	    this._update();
-	    this.keyboard = false;
-	    this._positionKeyboard();
 	    return this.emit("change:fullScreen");
 	  };
 	
@@ -23055,8 +23049,6 @@
 	      this.fullscreen = false;
 	      this._updateDeviceImage();
 	      this._update();
-	      this.keyboard = false;
-	      this._positionKeyboard();
 	      this.emit("change:deviceType");
 	      if (shouldZoomToFit) {
 	        return this.deviceScale = "fit";
@@ -23214,6 +23206,9 @@
 	
 	  DeviceComponent.define("orientation", {
 	    get: function() {
+	      if (Utils.isMobile()) {
+	        return window.orientation;
+	      }
 	      return this._orientation || 0;
 	    },
 	    set: function(orientation) {
@@ -23222,9 +23217,12 @@
 	  });
 	
 	  DeviceComponent.prototype.setOrientation = function(orientation, animate) {
-	    var _hadKeyboard, animation, contentProperties, height, phoneProperties, ref, ref1, width, x, y;
+	    var animation, contentProperties, height, offset, phoneProperties, ref, ref1, width, x, y;
 	    if (animate == null) {
 	      animate = false;
+	    }
+	    if (Utils.framerStudioVersion() === oldDeviceMaxVersion) {
+	      orientation *= -1;
 	    }
 	    if (orientation === "portrait") {
 	      orientation = 0;
@@ -23244,22 +23242,26 @@
 	    }
 	    this._orientation = orientation;
 	    phoneProperties = {
-	      rotationZ: this._orientation,
+	      rotationZ: -this._orientation,
 	      scale: this._calculatePhoneScale()
 	    };
 	    ref = this._getOrientationDimensions(this._device.screenWidth, this._device.screenHeight), width = ref[0], height = ref[1];
-	    ref1 = [(this.screen.width - width) / 2, (this.screen.height - height) / 2], x = ref1[0], y = ref1[1];
+	    this.content.width = width;
+	    this.content.height = height;
+	    offset = (this.screen.width - width) / 2;
+	    if (this._orientation === -90) {
+	      offset *= -1;
+	    }
+	    ref1 = [0, 0], x = ref1[0], y = ref1[1];
+	    if (this.isLandscape()) {
+	      x = offset;
+	      y = offset;
+	    }
 	    contentProperties = {
-	      rotationZ: -this._orientation,
-	      width: width,
-	      height: height,
+	      rotationZ: this._orientation,
 	      x: x,
 	      y: y
 	    };
-	    _hadKeyboard = this.keyboard;
-	    if (_hadKeyboard) {
-	      this.hideKeyboard(false);
-	    }
 	    this.hands.animateStop();
 	    this.viewport.animateStop();
 	    if (animate) {
@@ -23274,30 +23276,25 @@
 	          return _this._update();
 	        };
 	      })(this));
-	      if (_hadKeyboard) {
-	        animation.on(Events.AnimationEnd, (function(_this) {
-	          return function() {
-	            return _this.showKeyboard(true);
-	          };
-	        })(this));
-	      }
 	    } else {
 	      this.hands.props = phoneProperties;
 	      this.viewport.props = contentProperties;
 	      this._update();
-	      if (_hadKeyboard) {
-	        this.showKeyboard(true);
-	      }
 	    }
 	    if (this._orientation !== 0) {
 	      this.handsImageLayer.image = "";
 	    }
-	    this._renderKeyboard();
-	    return this.emit("change:orientation");
+	    return this.emit("change:orientation", this._orientation);
+	  };
+	
+	  DeviceComponent.prototype._orientationChange = function() {
+	    this._orientation = window.orientation;
+	    this._update();
+	    return this.emit("change:orientation", window.orientation);
 	  };
 	
 	  DeviceComponent.prototype.isPortrait = function() {
-	    return Math.abs(this._orientation) !== 90;
+	    return Math.abs(this._orientation) === 0;
 	  };
 	
 	  DeviceComponent.prototype.isLandscape = function() {
@@ -23344,121 +23341,6 @@
 	    } else {
 	      return [width, height];
 	    }
-	  };
-	
-	  DeviceComponent.define("keyboard", {
-	    get: function() {
-	      return this._keyboard;
-	    },
-	    set: function(keyboard) {
-	      return this.setKeyboard(keyboard, false);
-	    }
-	  });
-	
-	  DeviceComponent.prototype.setKeyboard = function(keyboard, animate) {
-	    var ref, ref1;
-	    if (animate == null) {
-	      animate = false;
-	    }
-	    if (!this._device.hasOwnProperty("keyboards")) {
-	      return;
-	    }
-	    if (_.isString(keyboard)) {
-	      if ((ref = keyboard.toLowerCase()) === "1" || ref === "true") {
-	        keyboard = true;
-	      } else if ((ref1 = keyboard.toLowerCase()) === "0" || ref1 === "false") {
-	        keyboard = false;
-	      } else {
-	        return;
-	      }
-	    }
-	    if (!_.isBoolean(keyboard)) {
-	      return;
-	    }
-	    if (keyboard === this._keyboard) {
-	      return;
-	    }
-	    this._keyboard = keyboard;
-	    this.emit("change:keyboard");
-	    if (keyboard === true) {
-	      this.emit("keyboard:show:start");
-	      return this._animateKeyboard(this._keyboardShowY(), animate, (function(_this) {
-	        return function() {
-	          return _this.emit("keyboard:show:end");
-	        };
-	      })(this));
-	    } else {
-	      this.emit("keyboard:hide:start");
-	      return this._animateKeyboard(this._keyboardHideY(), animate, (function(_this) {
-	        return function() {
-	          return _this.emit("keyboard:hide:end");
-	        };
-	      })(this));
-	    }
-	  };
-	
-	  DeviceComponent.prototype.showKeyboard = function(animate) {
-	    if (animate == null) {
-	      animate = true;
-	    }
-	    return this.setKeyboard(true, animate);
-	  };
-	
-	  DeviceComponent.prototype.hideKeyboard = function(animate) {
-	    if (animate == null) {
-	      animate = true;
-	    }
-	    return this.setKeyboard(false, animate);
-	  };
-	
-	  DeviceComponent.prototype.toggleKeyboard = function(animate) {
-	    if (animate == null) {
-	      animate = true;
-	    }
-	    return this.setKeyboard(!this.keyboard, animate);
-	  };
-	
-	  DeviceComponent.prototype._renderKeyboard = function() {
-	    if (!this._device.keyboards) {
-	      return;
-	    }
-	    this.keyboardLayer.image = this._deviceImageUrl(this._device.keyboards[this.orientationName].image);
-	    this.keyboardLayer.width = this._device.keyboards[this.orientationName].width;
-	    return this.keyboardLayer.height = this._device.keyboards[this.orientationName].height;
-	  };
-	
-	  DeviceComponent.prototype._positionKeyboard = function() {
-	    this.keyboardLayer.centerX();
-	    if (this.keyboard) {
-	      return this._animateKeyboard(this._keyboardShowY(), false);
-	    } else {
-	      return this._animateKeyboard(this._keyboardHideY(), false);
-	    }
-	  };
-	
-	  DeviceComponent.prototype._animateKeyboard = function(y, animate, callback) {
-	    var animation;
-	    this.keyboardLayer.bringToFront();
-	    this.keyboardLayer.animateStop();
-	    if (animate === false) {
-	      this.keyboardLayer.y = y;
-	      return typeof callback === "function" ? callback() : void 0;
-	    } else {
-	      animation = this.keyboardLayer.animate(_.extend(this.animationOptions, {
-	        properties: {
-	          y: y
-	        }
-	      }));
-	      return animation.on(Events.AnimationEnd, callback);
-	    }
-	  };
-	
-	  DeviceComponent.prototype._keyboardShowY = function() {
-	    return this.viewport.height - this.keyboardLayer.height;
-	  };
-	
-	  DeviceComponent.prototype._keyboardHideY = function() {
-	    return this.viewport.height;
 	  };
 	
 	  DeviceComponent.prototype.handSwitchingSupported = function() {
@@ -25508,13 +25390,13 @@
 /* 53 */
 /***/ function(module, exports) {
 
-	exports.date = 1455620853;
+	exports.date = 1456230683;
 	
-	exports.branch = "feature/facebookDevices";
+	exports.branch = "master";
 	
-	exports.hash = "7e878bc";
+	exports.hash = "4f9f713";
 	
-	exports.build = 1571;
+	exports.build = 1587;
 	
 	exports.version = exports.branch + "/" + exports.hash;
 

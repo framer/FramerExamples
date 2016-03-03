@@ -1,7 +1,7 @@
 /* Made with Framer
 by Benjamin den Boer
 www.framerjs.com */
-var bg, canvas, container, count, currentY, i, items, spinner;
+var bg, canvas, container, count, currentY, i, items, mask, spinner;
 
 canvas = new BackgroundLayer({
   backgroundColor: "#f9f9f9"
@@ -34,31 +34,35 @@ container.superLayer = bg.Background;
 
 container.style.boxShadow = "0 3px 6px rgba(0,0,0,0.1)";
 
-/* Spinner made in After Effects */
-
-spinner = new VideoLayer({
-  video: "images/spinner.mov",
-  width: 200,
-  height: 200,
+mask = new Layer({
+  height: 100,
+  width: 100,
+  clip: true,
+  superLayer: container,
   backgroundColor: "#fff",
   rotation: 90,
   opacity: 0
 });
 
-if (Utils.isChrome()) {
-  spinner.video = "images/spinner.mp4";
-}
+mask.center();
 
-spinner.superLayer = container;
+mask.y = mask.y + 100;
+
+/* Spinner made in After Effects */
+
+spinner = new VideoLayer({
+  video: "images/spinner.mp4",
+  width: 200,
+  height: 200,
+  superLayer: mask
+});
 
 spinner.center();
-
-spinner.y = spinner.y + 100;
 
 /* 1s delay for the video to load (for web) */
 
 Utils.delay(1, function() {
-  spinner.opacity = 1;
+  mask.opacity = 1;
   spinner.player.play();
 
   /* Tweaking the playback speed. */
@@ -72,9 +76,9 @@ Utils.delay(1, function() {
 
   /* Spinner moves up */
   Utils.delay(3.6, function() {
-    return spinner.animate({
+    return mask.animate({
       properties: {
-        y: spinner.y - 100
+        y: mask.y - 100
       },
       curve: "spring(100, 70, 0)"
     });
@@ -82,7 +86,7 @@ Utils.delay(1, function() {
 
   /* Spinner fades away */
   return Utils.delay(4.2, function() {
-    return spinner.animate({
+    return mask.animate({
       properties: {
         opacity: 0,
         scale: 0.1

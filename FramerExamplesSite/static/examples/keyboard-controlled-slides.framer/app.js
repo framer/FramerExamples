@@ -118,17 +118,17 @@ prevSlide = function() {
   }
 };
 
-document.addEventListener('keydown', function(event, layer) {
+Events.wrap(document).addEventListener("keydown", function(event) {
   var key, keyCode;
   keyCode = event.which;
   key = String.fromCharCode(keyCode);
   switch (key) {
-    case '\'':
+    case "'":
       if (currentIndex < Layers.length) {
         return nextSlide();
       }
       break;
-    case '\%':
+    case "%":
       if (currentIndex > 1) {
         return prevSlide();
       }

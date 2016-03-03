@@ -168,7 +168,7 @@
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
 	 * @license
-	 * lodash 3.10.1 (Custom Build) <https://lodash.com/>
+	 * lodash 3.10.0 (Custom Build) <https://lodash.com/>
 	 * Build: `lodash modern -d -o ./index.js`
 	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
 	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -181,7 +181,7 @@
 	  var undefined;
 	
 	  /** Used as the semantic version number. */
-	  var VERSION = '3.10.1';
+	  var VERSION = '3.10.0';
 	
 	  /** Used to compose bitmasks for wrapper metadata. */
 	  var BIND_FLAG = 1,
@@ -12805,12 +12805,11 @@
 	};
 	
 	Utils.stringify = function(obj) {
-	  var error;
 	  try {
 	    if (_.isObject(obj)) {
 	      return JSON.stringify(obj);
 	    }
-	  } catch (error) {
+	  } catch (_error) {
 	    "";
 	  }
 	  if (obj === null) {
@@ -13222,13 +13221,13 @@
 	};
 	
 	Utils.domLoadDataSync = function(path) {
-	  var e, error, handleError, ref, request;
+	  var e, handleError, ref, request;
 	  request = new XMLHttpRequest();
 	  request.open("GET", path, false);
 	  try {
 	    request.send(null);
-	  } catch (error) {
-	    e = error;
+	  } catch (_error) {
+	    e = _error;
 	    console.debug("XMLHttpRequest.error", e);
 	  }
 	  handleError = function() {
@@ -22449,6 +22448,8 @@
 	
 	"SliderComponent\n\nknob <layer>\nknobSize <width, height>\nfill <layer>\nmin <number>\nmax <number>\n\npointForValue(<n>)\nvalueForPoint(<n>)\n\nanimateToValue(value, animationOptions={})";
 	
+	Events.SliderValueChange = "sliderValueChange";
+	
 	Knob = (function(superClass) {
 	  extend(Knob, superClass);
 	
@@ -22721,7 +22722,8 @@
 	  });
 	
 	  SliderComponent.prototype._updateValue = function() {
-	    return this.emit("change:value", this.value);
+	    this.emit("change:value", this.value);
+	    return this.emit(Events.SliderValueChange, this.value);
 	  };
 	
 	  SliderComponent.prototype.pointForValue = function(value) {
@@ -22774,6 +22776,10 @@
 	      this.knob.on("change:y", this._updateValue);
 	    }
 	    return this.knob.animate(animationOptions);
+	  };
+	
+	  SliderComponent.prototype.onValueChange = function(cb) {
+	    return this.on(Events.SliderValueChange, cb);
 	  };
 	
 	  return SliderComponent;
@@ -23282,6 +23288,7 @@
 	  };
 	
 	  DeviceComponent.prototype._orientationChange = function() {
+	    this._orientation = window.orientation;
 	    this._update();
 	    return this.emit("change:orientation", window.orientation);
 	  };
@@ -25383,13 +25390,13 @@
 /* 53 */
 /***/ function(module, exports) {
 
-	exports.date = 1456143540;
+	exports.date = 1456230683;
 	
 	exports.branch = "master";
 	
-	exports.hash = "b28335d";
+	exports.hash = "4f9f713";
 	
-	exports.build = 1585;
+	exports.build = 1587;
 	
 	exports.version = exports.branch + "/" + exports.hash;
 
