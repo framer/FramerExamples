@@ -46,7 +46,6 @@ progress.fill.borderRadius = 4
 
 # Disable momentum, hide knob
 progress.knob.draggable.momentum = false
-progress.knob.visible = false
 wasPlaying = false
 
 # Scrubbing interaction
@@ -86,8 +85,7 @@ sketch.pause.visible = false
 time.bringToFront()
 progress.bringToFront()
 
-vid.player.on "timeupdate", ->
-
+Events.wrap(vid.player).addEventListener "timeupdate", ->
 	progress.knob.midX = progress.pointForValue(this.currentTime)
 	time.html = "0:0" + Math.round(this.currentTime)
 	if Math.round(this.currentTime) > 9 then time.html = "0:" + Math.round(this.currentTime)
