@@ -39,15 +39,11 @@ applyCSS = (layer)->
 		
 # Background setup
 bg = new BackgroundLayer
-	backgroundColor: "#ffffff"
+	backgroundColor: "#fff"
 	
 # Feed container setup
-container = new Layer
-	x: 0, y: 0, width: 640, height: 1136, backgroundColor: null
-# Spacer is needed to maintain consistent feed scroll height
-containerSpacer = new Layer
-	x: 0, y: 0, width: 640, height: 10+(630*dataStub.length), backgroundColor: null
-containerSpacer.superLayer = container
+wrapper = new ScrollComponent
+	x: 0, y: 0, size: Screen.size, backgroundColor: null, scrollHorizontal: false
 
 # Detail view setup
 detailView = new Layer
@@ -86,7 +82,7 @@ setupCard = (dataObj, index)->
 		x: 10, y: yPos, width: 620, height: 630, backgroundColor: null, name: "card"+index, clip: true
 	card.containerY = yPos
 	card.titleData = if dataObj.shortTitle then dataObj.shortTitle else dataObj.title
-	card.superLayer = container
+	card.superLayer = wrapper.content
 	# Create and add a video layer to the card 
 	cardVideo = new VideoLayer 
  		x:0, y:0, width:620, height:620, video: dataObj.clipURL, name: "video"
@@ -109,14 +105,14 @@ setupCard = (dataObj, index)->
 # For each card object, create a card
 Utils.domComplete ->
 	setupCard(item, index) for item, index in dataStub 
-	container.scrollVertical = true
+	wrapper.scrollVertical = true
 	
 # Detail view drag event setup
 # Listen for whether the detail view is dragged up or down
 detailView.on Events.DragMove, ()->
 	if @y > 0
 		# If it's moving down, start animating back to feed
-		container.opacity = 0+(@y/500) 
+		wrapper.opacity = 0+(@y/500) 
 		detailContent.visible = false
 		@scale = 1-(@y/5000)
 		backBtn.visible = false
@@ -172,7 +168,7 @@ toDetailView = (sender)->
 		# Set currentCard variable globally
 		currentCard = sender
 		# Hide the other cards in the scroller
-		container.animate
+		wrapper.animate
 			properties:
 				opacity: 0
 			time: .25
@@ -219,7 +215,7 @@ toDetailView = (sender)->
 		# Then play the background video
 		Utils.delay .1, ()->
 			sender.video.player.play()
-			container.scrollVertical = false
+			wrapper.scrollVertical = false
 			backBtn.visible = true
 			backBtn.opacity = 0
 			backBtn.animate
@@ -239,7 +235,7 @@ toDetailView = (sender)->
 exitDetailView = (sender)->
 	# Toggle visibilties of content placeholder and feed
 	detailContent.visible = false
-	container.animate
+	wrapper.animate
 		properties:
 			opacity: 1
 		time: .25
@@ -272,10 +268,10 @@ exitDetailView = (sender)->
 		curveOptions:
 			tension:  200, friction: 25, velocity: 10
 	toFeed.on Events.AnimationEnd, ()->
-		sender.superLayer = container
+		sender.superLayer = wrapper.content
 		sender.x = sender.originalFrame.x
 		sender.y = sender.containerY
-		container.scrollVertical = true
+		wrapper.scrollVertical = true
 		detailView.sendToBack()
 	toFeed.start()
 	sender.isSelected = false
