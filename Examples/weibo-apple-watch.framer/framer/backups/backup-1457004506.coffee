@@ -9,7 +9,7 @@ watch.center()
 
 # 设置屏幕蒙板
 # Set screen mask
-mask = new Layer width: 300, height: 360, backgroundColor: "transparent", superLayer: watch
+mask = new Layer width: 300, height: 360, backgroundColor: "transparent", superLayer: watch, clip: true
 mask.center()
 
 # 装载界面源文件
