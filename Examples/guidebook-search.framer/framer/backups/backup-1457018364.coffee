@@ -198,18 +198,6 @@ cancelSearch.states.animationOptions =
 	curve: "ease"
 	time: animSpeed
 
-header.states.add
-	searching: 
-		y: -(header.height - margin - searchBar.height - margin)
-	redeeming:
-		height: header.height  - useCode.height - margin
-	stickySearch:
-		y: 0
-		height: margin + searchBar.height + margin
-	stickyReturn:
-		y: 0
-		height: 413
-
 # State functions
 resetView = ->
 	searchPlaceholder.states.switch "default"
@@ -285,9 +273,6 @@ searchPlaceholder.on Events.Click, ->
 	
 qrButton.on Events.Click, ->
 	container.scrollVertical = false
-	header.animate
-	  properties: 
-	    y: photoArea.height
 	initScan()
 	
 qr.on Events.Click, ->
@@ -346,7 +331,7 @@ storeStartY = store.y
 limit = header.height - 20 - searchBar.height - 20
 container.on Events.Move, (event) ->
   bg.backgroundColor = "#F6FBFE"
-  ptr.maxY = store.y-container.scrollY
+  ptr.y = store.y - ptr.height
   
   x = Utils.modulate(container.scrollY, [0, limit-100], [1, 0], true)
   y = Utils.modulate(container.scrollY, [0, limit], [1, 0], true)
@@ -358,10 +343,10 @@ container.on Events.Move, (event) ->
 	  	  properties:
 	  	    y: 0
 	  	  time: 0.05
-  else if container.scrollY > header.height-20 && header.y != -header.height+(searchBar.height+55)
+  else if container.scrollY > header.height-20 && header.y != searchBar.height+20-header.height
 	  	header.animate
 	  	  properties:
-	  	    y: -header.height+(searchBar.height+55)
+	  	    y: searchBar.height-20-header.height
 	  	    time: 0.05
   
   if container.scrollY < -60
