@@ -42,8 +42,8 @@ bg = new BackgroundLayer
 	backgroundColor: "#ffffff"
 	
 # Feed container setup
-container = new Layer
-	x: 0, y: 0, width: 640, height: 1136, backgroundColor: null
+container = new ScrollComponent
+	x: 0, y: 0, size: Screen.size, backgroundColor: null
 # Spacer is needed to maintain consistent feed scroll height
 containerSpacer = new Layer
 	x: 0, y: 0, width: 640, height: 10+(630*dataStub.length), backgroundColor: null
@@ -83,7 +83,7 @@ setupCard = (dataObj, index)->
 	# Create the card layer
 	yPos = 10+(630*index)
 	card = new Layer
-		x: 10, y: yPos, width: 620, height: 630, backgroundColor: null, name: "card"+index
+		x: 10, y: yPos, width: 620, height: 630, backgroundColor: null, name: "card"+index, clip: true
 	card.containerY = yPos
 	card.titleData = if dataObj.shortTitle then dataObj.shortTitle else dataObj.title
 	card.superLayer = container
