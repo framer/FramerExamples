@@ -1,6 +1,8 @@
 # Made with Framer
 # by Li Jingyuan
 # www.framerjs.com
+	
+Framer.Defaults.backgroundColor = null	
 		
 # 装载手表图片文件
 # Define watch
@@ -9,7 +11,7 @@ watch.center()
 
 # 设置屏幕蒙板
 # Set screen mask
-mask = new Layer width: 300, height: 360, backgroundColor: "transparent", superLayer: watch
+mask = new Layer width: 300, height: 360, backgroundColor: "transparent", superLayer: watch, clip: true
 mask.center()
 
 # 装载界面源文件
@@ -103,14 +105,18 @@ psd.shade.opacity = 0
 psd.shade.visible = false
 
 # Compose
-psd.compose.x = 240
+psd.compose = new Layer
+  x: 240, y: 0
+  height: 360, width: 300
+  superLayer: mask
+  backgroundColor: null
+  
 psd.compose_icon.x = 300
+psd.compose_icon.superLayer = psd.compose
 psd.compose_words.x = 300
-psd.compose.height = 296
-psd.compose.opacity = 0
-psd.compose.draggable.enabled = true
+psd.compose_words.superLayer = psd.compose
+psd.compose.draggable.enabled = false
 psd.compose.draggable.speedY = 0
-psd.compose.visible = false
 
 # Feed
 psd.b_content.opacity = 0
@@ -174,7 +180,8 @@ psd.launch_icon.on Events.TouchEnd, ->
     time: 0.3
     delay: 0.8
 
-  psd.splash.on Events.AnimationStop, ->      
+  psd.splash.on Events.AnimationStop, ->
+    psd.compose.draggable.enabled = true     
     psd.feed.visible = true
     psd.feed.animate
       properties: {opacity: 1}
@@ -195,7 +202,6 @@ psd.launch_icon.on Events.TouchEnd, ->
     psd.feed_a.draggable.enabled = true 
     psd.feed_b.draggable.enabled = true
     psd.feed_c.draggable.enabled = true
-    psd.compose.visible = true
     psd.splash.visible = false
     psd.desktop.visible = false 
       
@@ -204,14 +210,7 @@ psd.launch_icon.on Events.TouchEnd, ->
 # Picture 1: reduce dragging speed & blur on drag
 psd.feed_a.on Events.DragMove, ->	
   psd.feed_a.blur = psd.feed_a.y * -0.04
-  psd.feed_b.y = psd.feed_a.y + 360 
-  
-  if psd.feed_a.y > 0	
-    psd.feed_a.y = psd.feed_a.y / 4  
-  
-  else
-    psd.feed_a.scale = 1 + (psd.feed_a.y * 0.0003)
-    psd.feed_a.y = psd.feed_a.y / 2
+  psd.feed_b.y = psd.feed_a.maxY
 
 # 图片1，结束拖拽：下拉则返回原位；上推则移至图片2  
 # Picture 1: on DragEnd, return picture to position
@@ -257,17 +256,7 @@ psd.feed_a.on Events.DragEnd, ->
 # Picture 2: on drag, push the two blurred images, then present sharp picture
 psd.feed_b.on Events.DragMove, ->
   psd.feed_b.blur = psd.feed_b.y * -0.04
-          
-  if psd.feed_b.y > 0
-    psd.feed_a.y = psd.feed_b.y - 360
-    psd.feed_a.blur = psd.feed_a.y * -0.04
-    psd.feed_a.scale = 1 + (psd.feed_a.y * 0.0003)
-    psd.feed_a.y = psd.feed_a.y / 2  
-  
-  else
-    psd.feed_c.y = psd.feed_b.y + 360  
-    psd.feed_b.scale = 1 + (psd.feed_b.y * 0.0003)
-    psd.feed_b.y = psd.feed_b.y / 2
+  psd.feed_c.y = psd.feed_b.maxY
 
 # 图片2，结束拖拽：下拉则返回图片1；上推则跳至图片3
 # Picture 2: on DragEnd, the drop-down returns Picture 1 & skips Picture 3
@@ -431,6 +420,11 @@ psd.c_icon_like.on Events.Click, ->
   
 # 设置compose图标 Fade in
 psd.compose.on Events.DragMove, ->  
+  if psd.compose.x < 0 
+  	psd.compose.x = 0
+  else if psd.compose.x > 240
+  	psd.compose.x = 240
+  	
   psd.compose_icon.x = psd.compose.x + 39	
   psd.compose_words.x = psd.compose.x + 24
   psd.compose_icon.opacity = (240 - psd.compose.x) * 0.01
@@ -439,21 +433,22 @@ psd.compose.on Events.DragMove, ->
 
 psd.compose.on Events.DragEnd, ->
   if psd.compose.x > 100
-    psd.compose.height = 296
-    psd.compose.x = 240
+    psd.compose.animate
+      properties: {x: 240}
+      time: 0.1
     psd.feed.animate
       properties: {blur: 0}
       time: 0.1
     psd.compose_icon.animate
-      properties: {x: 300}
+      properties: {x: 240}
       time: 0.1
     psd.compose_words.animate
-      properties: {x: 300}
+      properties: {x: 240}
       time: 0.1
-           
   else
-    psd.compose.height = 360
-    psd.compose.x = 0
+    psd.compose.animate
+      properties: {x: 0}
+      time: 0.1
     psd.feed.animate
       properties: {blur: 20}
       time: 0.01
@@ -466,17 +461,19 @@ psd.compose.on Events.DragEnd, ->
 
 # 设置发布器点击效果
 # Set publisher click effect
-psd.compose.on Events.TouchStart, ->
+psd.compose_icon.on Events.TouchStart, ->
   if -5 < psd.compose.x < 5	
     psd.compose_icon.animate
       properties: {scale: 0.9}
       curve: click 
 
-psd.compose.on Events.TouchEnd, ->
+psd.compose_icon.on Events.TouchEnd, ->
   if -5 < psd.compose.x < 5
     psd.compose_icon.animate
       properties: {scale: 1, opacity: 0}
       time: 0.3
+    recording.superLayer = psd.compose
+    recording.index = 100
     recording.visible = true
     recording.animate
       properties: {opacity: 1}
@@ -495,11 +492,12 @@ recording.on Events.Click, (event) ->
   psd.feed.animate
     properties: {blur: 0}
     time: 0.1
-  psd.compose.x = 240
+  psd.compose.animate
+    properties: {x: 240}
+    time: 0.1
   psd.compose_icon.x = 300
   psd.compose_words.x = 300
   psd.compose.height = 296
-  psd.compose.opacity = 0
   
   if psd.m_avatar.y >= -20 
     message_button.visible = true
@@ -509,7 +507,6 @@ recording.on Events.Click, (event) ->
     psd.compose_icon.x = 300
     psd.compose_words.x = 300
     psd.compose.height = 296
-    psd.compose.opacity = 0  
     
     psd.m_avatar.opacity = 0
     psd.m_avatar.x = 90
@@ -744,11 +741,11 @@ psd.button_follow.on Events.TouchEnd, ->
   message_button.visible = true
   psd.shade_b.visible = false
 
-psd.close.on Events.TouchStart, ->
+recording.on Events.TouchStart, ->
   psd.close_h.opacity = 1
   psd.close_n.opacity = 0	
 
-psd.close.on Events.TouchEnd, ->
+recording.on Events.TouchEnd, ->
   psd.close_h.opacity = 0
   psd.close_n.opacity = 1	   
   
