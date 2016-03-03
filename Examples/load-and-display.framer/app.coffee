@@ -18,19 +18,19 @@ container = new Layer width:640, height:1136, backgroundColor:"#fff"
 container.superLayer = bg.Background
 container.style.boxShadow = "0 3px 6px rgba(0,0,0,0.1)"
 
+mask = new Layer
+	height: 100, width: 100, clip: true
+	superLayer: container
+	backgroundColor: "#fff", rotation: 90, opacity: 0
+mask.center()
+mask.y = mask.y + 100
 # Spinner made in After Effects
-spinner = new VideoLayer video: "images/spinner.mov", width:200, height:200, backgroundColor: "#fff", rotation: 90, opacity:0
-
-if Utils.isChrome()
-	spinner.video = "images/spinner.mp4"
-	
-spinner.superLayer = container
+spinner = new VideoLayer video: "images/spinner.mp4", width:200, height:200, superLayer: mask
 spinner.center()
-spinner.y = spinner.y + 100
 
 # 1s delay for the video to load (for web)
 Utils.delay 1, ->
-	spinner.opacity = 1
+	mask.opacity = 1
 	spinner.player.play()
 	
 	# Tweaking the playback speed.
@@ -43,14 +43,14 @@ Utils.delay 1, ->
 
 	# Spinner moves up
 	Utils.delay 3.6, ->
-		spinner.animate  
+		mask.animate  
 			properties:
-				y: spinner.y - 100
+				y: mask.y - 100
 			curve: "spring(100, 70, 0)"
 		
 	# Spinner fades away			
 	Utils.delay 4.2, ->
-	  spinner.animate 
+	  mask.animate 
 	  	properties:
 	  		opacity:0, scale:0.1
 	  	time: 0.15

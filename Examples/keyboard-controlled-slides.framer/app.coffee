@@ -41,7 +41,7 @@ for i in [0..3]
 	layer.listIndex = i
 	
 	layer.states.add 
-		active:   {scale:1.2, shadowY:6, shadowBlur:16, x:layer.x, opacity:1}
+		active: {scale:1.2, shadowY:6, shadowBlur:16, x:layer.x, opacity:1}
 		inactive: {scale:1, shadowY:1, shadowBlur:3, opacity:.5}
 		
 	layer.states.animationOptions = 
@@ -59,7 +59,8 @@ updateIndex = ->
 	
 nextSlide = ->	
 	for layers in Layers
-		layers.states.switch "inactive"		
+		layers.states.switch "inactive"	
+			
 	if currentLayer
 		currentLayer.states.switch "active"
 	
@@ -72,17 +73,18 @@ prevSlide = ->
 	
 	for layers in Layers
 		layers.states.switch "inactive"
+		
 	if prevLayer
 		prevLayer.states.switch "active"
 	
 						
-document.addEventListener 'keydown', (event, layer) ->
+Events.wrap(document).addEventListener "keydown", (event) ->
 	keyCode = event.which
 	key = String.fromCharCode(keyCode)
 	switch key
-		when '\''
+		when "'"
 			if currentIndex < Layers.length
 				nextSlide()			
-		when '\%'
+		when "%"
 			if currentIndex > 1
 				prevSlide()
