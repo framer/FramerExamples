@@ -23,7 +23,7 @@ mask = new Layer
 avatar = new Layer 
 	image: "images/avatar.png"
 	width: mask.width, height: mask.height
-	superLayer: mask, force2d: true
+	superLayer: mask
 	
 # Hierarchy and placement
 maskY = mask.y
