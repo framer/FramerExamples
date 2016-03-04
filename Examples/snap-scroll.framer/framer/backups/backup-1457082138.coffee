@@ -9,8 +9,6 @@ screenW = Framer.Device.screen.width
 screenH = Framer.Device.screen.height
 bezier = "cubic-bezier(0.19, 1, 0.22, 1)"
 
-
-
 # Classes
 # --------------------
 class App
@@ -219,6 +217,7 @@ class Detail extends Layer
 			width: screenW
 			height: screenH
 			x: screenW
+			clip: true
 			
 		@states.animationOptions =
 			curve: bezier

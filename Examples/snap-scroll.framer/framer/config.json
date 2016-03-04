@@ -1,7 +1,17 @@
 {
-  "deviceScale" : -1,
-  "updateDelay" : 0.3,
+  "propertyPanelToggleStates" : {
+
+  },
   "deviceOrientation" : 0,
+  "sharedPrototype" : 1,
   "contentScale" : 1,
-  "deviceType" : "iphone-6-spacegray-hand"
+  "deviceType" : "apple-iphone-6s-space-gray",
+  "selectedHand" : "iphone-hands-2",
+  "updateDelay" : 0.3,
+  "deviceScale" : "fit",
+  "codeFolds" : [
+
+  ],
+  "orientation" : 0,
+  "fullScreen" : false
 }
