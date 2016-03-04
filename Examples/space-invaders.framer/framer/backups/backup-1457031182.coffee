@@ -1,5 +1,6 @@
-# Created by Balraj Chana
-# @circularchaos | https://dribbble.com/circularchaos
+# Made with Framer
+# by Balraj Chana
+# www.framerjs.com
 
 # Create all of the layers and set their properties
 bg = new BackgroundLayer backgroundColor: "#242939"
@@ -84,7 +85,7 @@ ui = do ->
 				
 		doAgain = Utils.throttle 1, -> animateBgCircles()
 	
-	# Blow circles away before the game begins
+	# Blow circles away from view before the game begins
 	animateAway = ->
 		for layer, i in circles
 			layer.animate time: .4, curve: "ease-in", delay: i * .02, properties: maxX: - 200, scale: 0, opacity: 0
@@ -93,7 +94,7 @@ ui = do ->
 				layer.destroy() for layer in circles
 				circles.length = 0
 	
-	# 	Displays, animates and styles the UI elements on launch/restart. Level, targets and balls are calculated based on current level
+	# 	Display, animate and style the UI elements on launch/restart. Level, targets and balls are calculated based on current level
 	openState = ->
 		styleState(sumResults(mechanics.limit[currentLevel], [mechanics.limit[currentLevel], mechanics.limit[4]],
 		[mechanics.balls[currentLevel], mechanics.balls[4]]))
@@ -114,7 +115,7 @@ ui = do ->
 	styleHeading = (color, icon) -> """<span style= 'border-radius: 50%; height: 300px; width: 300px; border: 5px solid #{color}; 
 	display: inline-block; line-height: 3.4'><i class="material-icons" style="font-size: 120px;">#{icon}</i></span>"""
 	
-	# Displays the results after the current level is completed
+	# Display the results after the current level is completed
 	endState = ->
 		styleState(
 			{ y: Screen.height - 150 }, { superLayer: dialog, width: dialog.width - 200, maxY: dialog.height - 50 }
@@ -126,7 +127,7 @@ ui = do ->
 		scoreHeading.html = if currentLevel > 0 then styleHeading("#78D17B", "done") else styleHeading("#D05050", "clear")
 		subHeading.html = "&#8250; SLIDE TO CONTINUE"
 		
-		# Determine whether the scroll position is enough to progress on to the next screen
+		# Determine whether the scroll position is large enough to progress on to the next screen
 		scroll.on Events.TouchEnd, ->
 			if @scrollX < -200
 				@.states.switch "default"
@@ -136,7 +137,7 @@ ui = do ->
 					subHeading.html = "LEVEL #{mechanics.level[currentLevel]}"
 					openState()
 	
-	# Pre-game function to chain animate the UI elements
+	# Chain animate the UI elements before the game starts
 	startCountDown = ->
 		fab.animate time: .3, curve: "bezier-curve", properties: midY:Screen.height / 2
 		fab.animate time: .3, properties: midX: Screen.width / 2
@@ -153,6 +154,7 @@ ui = do ->
 			timing = Utils.interval 1, ->
 				scoreHeading.html--
 				
+				# Start the game when the counter reaches 0
 				if scoreHeading.html < 1
 					shrinkFab = fab.states.switch "shrinkDown", curve: "ease", time: .4
 					shrinkFab.on "end", -> layer.states.switchInstant("default") for layer in [fab, fabIcon]
@@ -161,7 +163,7 @@ ui = do ->
 					spaceInFramers.startGame(mechanics.speed[currentLevel], mechanics.balls[currentLevel], mechanics.targets[currentLevel],
 					mechanics.limit[currentLevel])
 
-	# Determine whether the score is sufficient in order to progress to the next level, or restart from the beginning
+	# Determine whether the score is sufficient in order to progress onto the next level, or restart the game from the beginning
 	checkLevel = (hits) -> currentLevel = if hits >= mechanics.limit[currentLevel] - 10 then currentLevel + 1 else 0
 	
 	# Calculate the pre-score results (targets to reach) and post-score results (targets hit)
@@ -177,7 +179,7 @@ ui = do ->
 			
 		callback(hits) if callback
 	
-	# Generates the ripple effect when element is pressed
+	# Generate the ripple effect when the FAB is pressed. Mobile and desktop enabled
 	rippleEffect = (ev, layer) ->
 		cursorX = if not Utils.isDesktop() then layer.draggable.layerCursorOffset.x else ev.offsetX
 		cursorY = if not Utils.isDesktop() then layer.draggable.layerCursorOffset.y else ev.offsetY
@@ -226,13 +228,13 @@ spaceInFramers = do ->
 	
 	pushArray = (layer, array) -> array.push layer if layer not in array
 	
-	# Deletes a layer and removes it from their associated array
+	# Delete and remove layer from its associated array
 	deleteObjects = (layer, array) ->
 		pos = array.indexOf(layer)
 		array.splice(pos, 1)
 		layer.destroy()
 	
-	# Calculate the square root of the ball and target positions to determine whether a collision has occured.
+	# Calculate the square root of the ball and target positions to determine whether a collision has occured. Animate after impact
 	collisionDetection = (target, ball) ->
 		dx = (target.x + target.width) - (ball.x + ball.width)
 		dy = (target.y + target.width) - (ball.y + ball.width)
@@ -245,28 +247,27 @@ spaceInFramers = do ->
 			animateTargetEnd(target, activeTargets)
 			pushArray(target, hits)
 	
-	# After a collision has occured or the ball is beyond its contraints, animate, destroy and set the next ball to active
+	# After a collision has occured or the ball is beyond its contraints, animate, destroy and then set the next ball to active
 	animateBallEnd = Utils.throttle 1, (ball) ->
 		setActiveBall(balls[balls.indexOf(ball) + 1])
 		shrinkBall = ball.animate time: .5, properties: scale: 0
 		shrinkBall.on Events.AnimationEnd, -> deleteObjects(ball, balls)
 	
-	# After a collision has occured between the ball and target, animate the target and destroy
+	# After a collision has occured between the ball and target, animate the target before destroying it
 	animateTargetEnd = (target, array) ->
 		target.animateStop()
 		shrinkTarget = target.animate time: .2, properties: scale: 1.5, opacity: 0
 		shrinkTarget.on Events.AnimationEnd, -> deleteObjects(target, array)
 	
-	# If a collision between a ball and the bullet has occured, change the style of the corresponding ball and enable flag for the blast
+	# If a collision between a ball and the bullet has occured, change the style of the corresponding ball and enable flag for bullet blast
 	checkActiveBullet = ->
 		flag = true
 		balls[1].props = backgroundColor: "#F55F6E" if balls.length > 1
 
-	# Convert one of the targets into a bullet
+	# Transform one of the targets into a bullet to enable the bullet blast
 	activateBulletBall = _.debounce((-> activeTargets[4].props = 
 		borderRadius: "50%", borderWidth: 10, borderColor: "white", backgroundColor: "#F55F6E", brightness: 100, name: "activeBullet"), 5000, true)
 
-	# Generate targets, balls and bullets
 	startGame = (mSpeed, mBalls, mTargets, mLimit) ->
 		for rowIndex in [0...mTargets]
 			for colIndex in [0...5]
@@ -281,14 +282,14 @@ spaceInFramers = do ->
 					scoreHeading.html = hits.length
 					totalScore = hits.length + misses.length
 					
-					# Check objects for collisions and push targets into array when target is visible on the screen
+					# Listen to objects for collisions and push targets into array when target is visible on screen
 					activateBulletBall() if activeTargets.length > 5
 					collisionDetection(@, ball) for ball in balls
 					collisionDetection(@, bullet) for bullet in bullets if bullets.length > 0
 					pushArray(@, activeTargets) if @maxY > 0
 					pushArray(@, misses, animateTargetEnd(@, activeTargets)) if @maxY > Screen.height - 500
 					
-					# End the game if the target score has been reached, pass the score and reset the game
+					# End the game if the target score has been reached, pass the score to be displayed and reset the game
 					if totalScore >= mLimit - 1
 						ui.sumResults(hits.length, [hits.length, mLimit], [balls.length, mBalls],
 						ui.checkLevel, chartBg.width - 100)
@@ -303,7 +304,7 @@ spaceInFramers = do ->
 			pushArray(ball, balls)
 			ball.animate curve: "spring(100,15,0)", delay: i * .1, properties: midX: i * 150 + bg.midX, opacity: (5 - i) / 5, scale: (5 - i) / 5
 			
-			# Delete ball after 1 second on drag start. If activeBullet is set then enable the bullet blast for .5 seconds
+			# Delete ball after 1 second after drag start. If activeBullet is set then enable the bulletActive flag for .5 seconds only
 			ball.on Events.DragStart, ->
 				Utils.delay 1, => animateBallEnd(@)
 				if flag
@@ -312,7 +313,7 @@ spaceInFramers = do ->
 						@props = backgroundColor: "#78D17B", scale: 1.5
 					flag = false
 			
-			# If the user releases the ball after .5 seconds and bulletActive is on, then generate the bullet blast
+			# If the user releases the ball before .5 seconds and the bulletActive is still on, then generate the bullet blast
 			ball.on Events.DragEnd,->
 				clearInterval(interval)
 				@ignoreEvents = true

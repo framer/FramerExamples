@@ -1,8 +1,17 @@
 {
-  "updateDelay" : 0.4698084677419355,
-  "deviceScale" : -1,
+  "propertyPanelToggleStates" : {
+
+  },
   "deviceOrientation" : 0,
+  "sharedPrototype" : 1,
   "contentScale" : 1,
-  "sharedPrototype" : 0,
-  "deviceType" : "nexus-5-black"
+  "deviceType" : "google-nexus-5x",
+  "selectedHand" : "",
+  "updateDelay" : 0.3,
+  "deviceScale" : "fit",
+  "codeFolds" : [
+
+  ],
+  "orientation" : 0,
+  "fullScreen" : false
 }
