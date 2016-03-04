@@ -2,13 +2,15 @@
 # by Balraj Chana
 # www.framerjs.com
 
+Framer.Device.background.style.background = "#83899E"
+
 # Create all of the layers and set their properties
 bg = new BackgroundLayer backgroundColor: "#242939"
 
 scroll = new ScrollComponent width: Screen.width, height: Screen.height, scrollVertical: false, x: Screen.width + 200, clip: false
 	
 dialog = new Layer backgroundColor: "rgba(36,41,57,.90)", superLayer: scroll.content, width: scroll.width - 100, height: 1100,
-midY: scroll.midY, borderRadius: 20, shadowY: 5, shadowColor: "rgba(0,0,0,.5)", shadowSpread: 0, shadowBlur: 200, x: 50
+midY: scroll.midY, borderRadius: 20, shadowY: 5, shadowColor: "rgba(0,0,0,.5)", shadowSpread: 0, shadowBlur: 200, x: 50, clip: true
 	
 contentBlock = new Layer height: 650, width: Screen.width, backgroundColor: "white", y: Screen.height, borderRadius: 500, opacity: 0, clip: false
 
@@ -19,14 +21,15 @@ fab.draggable.enabled = false
 fabIcon = new Layer superLayer: fab, html: '<i class="material-icons" style="font-size: 100px;">chevron_right</i>', height: fab.height,
 width: fab.width, backgroundColor: null, x: 16, y: 15
 
-scoreHeadingStyle = superLayer: false, y: Screen.height / 5, backgroundColor: null, maxX: 0, opacity: 0, html: "SF", height: 400,
+scoreHeadingStyle = superLayer: false, y: Screen.height / 5, backgroundColor: null, maxX: 0, opacity: 0, height: 400,
 width: Screen.width, style: "font" : "200 300px/normal 'Titillium Web', sans-serif", "text-align" : "center"
 scoreHeading = new Layer scoreHeadingStyle
+scoreHeading.html = "SF"
 
-subHeadingStyle = y: scoreHeading.maxY, x: Screen.width, backgroundColor: null, opacity: 0,
-html: "SPACEIN<span style='font-weight:700'>FRAMERS</span>", height: 100, width: Screen.width,
+subHeadingStyle = y: scoreHeading.maxY, x: Screen.width, backgroundColor: null, opacity: 0, height: 100, width: Screen.width,
 style: "font" : "200 1.1em/normal 'Titillium Web', sans-serif", "text-align" : "center", "letter-spacing" : "20px"
 subHeading = new Layer subHeadingStyle
+subHeading.html = "SPACE IN <span style='font-weight:700'>FRAMERS</span>"
 	
 chartBgStyle = superLayer: contentBlock, width: contentBlock.width - 200, midX: contentBlock.midX, y: 100, height: 500, backgroundColor: null
 chartBg = new Layer chartBgStyle
@@ -112,28 +115,31 @@ ui = do ->
 			bar.superLayer.props = barBgOptions ?= barBgDefaultOptions
 			text.props = textOptions ?= textDefaultOptions for text in bar.siblingLayers
 	
-	styleHeading = (color, icon) -> """<span style= 'border-radius: 50%; height: 300px; width: 300px; border: 5px solid #{color}; 
-	display: inline-block; line-height: 3.4'><i class="material-icons" style="font-size: 120px;">#{icon}</i></span>"""
+	styleHeading = (color, icon) -> """<span style='border-radius: 50%; text-align: center; height: 300px; width: 300px; border: 5px solid #{color}; 
+	display: inline-block; margin-left: -100px; line-height: 220px'><i class="material-icons" style="font-size: 120px;">#{icon}</i></span>"""
 	
 	# Display the results after the current level is completed
-	endState = ->
+	endState = (timeHeading, levelHeading) ->
 		styleState(
 			{ y: Screen.height - 150 }, { superLayer: dialog, width: dialog.width - 200, maxY: dialog.height - 50 }
 			{ superLayer: dialog, width: dialog.width, y: 125, style: "line-height" : "3", "font-size" : "100px" }
 			{ borderWidth: 0, backgroundColor: null, width: chartBg.width }, { style: "color" : "white" }, { x: 0 })
 		
 		animateBgCircles()
-		layer.states.switch "slideIn" for layer in [scroll, scoreHeading, subHeading]
-		scoreHeading.html = if currentLevel > 0 then styleHeading("#78D17B", "done") else styleHeading("#D05050", "clear")
-		subHeading.html = "&#8250; SLIDE TO CONTINUE"
+		layer.states.switch "slideIn" for layer in [scroll, timeHeading, levelHeading]
+		timeHeading.html = if currentLevel > 0 then styleHeading("#78D17B", "done") else styleHeading("#D05050", "clear")
+		levelHeading.html = "&#8250; SLIDE TO CONTINUE"
+		timeHeading.superLayer = scroll.content.subLayers[0]
+		timeHeading.center()
+		levelHeading.maxY = Screen.height-100
 		
 		# Determine whether the scroll position is large enough to progress on to the next screen
-		scroll.on Events.TouchEnd, ->
-			if @scrollX < -200
-				@.states.switch "default"
+		scroll.on Events.Move, (event) ->
+			if scroll.scrollX < -200
+				scroll.states.switch("default")
 				
 				Utils.delay .5, ->
-					layer.states.switchInstant("default") for layer in [scoreHeading, subHeading] 
+					layer.states.switchInstant("default") for layer in [timeHeading, levelHeading] 
 					subHeading.html = "LEVEL #{mechanics.level[currentLevel]}"
 					openState()
 	
@@ -143,24 +149,33 @@ ui = do ->
 		fab.animate time: .3, properties: midX: Screen.width / 2
 		fabIcon.states.switch "fadeOut", time: .1
 		
+		timerHeading = new Layer scoreHeadingStyle
+		levelHeading = new Layer subHeadingStyle
+		levelHeading.states.add slideIn: {x: 0, opacity: 1}, slideOut: {maxX: 0, opacity: 0}
+		levelHeading.states.animationOptions = curve: "spring(100,15,0)", delay: .1
+		timerHeading.states.add slideIn: {x: 0, opacity: 1}, slideOut: {x: Screen.width, opacity: 0}
+		timerHeading.states.animationOptions = curve: "spring(100,15,0)"
+		
 		Utils.delay .2, ->
+			timerHeading.html = null
+			timerHeading.html = "3"
+			levelHeading.html = "LEVEL <span style='font-weight:700'>#{mechanics.level[currentLevel]}</span>"
 			fab.states.switch "expand", time: .6, curve: "ease"
-			scoreHeading.html = 3
-			subHeading.html = "LEVEL #{mechanics.level[currentLevel]}"
 			
-		Utils.delay .5, ->
-			layer.states.switch "slideIn" for layer in [scoreHeading, subHeading]
+		Utils.delay .8, ->
+			for layer in [timerHeading, levelHeading]
+				layer.states.switch "slideIn"
 
 			timing = Utils.interval 1, ->
-				scoreHeading.html--
+				timerHeading.html = "#{(parseInt(timerHeading.html, 10)-1)}"
 				
 				# Start the game when the counter reaches 0
-				if scoreHeading.html < 1
+				if timerHeading.html < 1
 					shrinkFab = fab.states.switch "shrinkDown", curve: "ease", time: .4
 					shrinkFab.on "end", -> layer.states.switchInstant("default") for layer in [fab, fabIcon]
 					
 					clearInterval(timing)
-					spaceInFramers.startGame(mechanics.speed[currentLevel], mechanics.balls[currentLevel], mechanics.targets[currentLevel],
+					spaceInFramers.startGame(timerHeading, levelHeading, mechanics.speed[currentLevel], mechanics.balls[currentLevel], mechanics.targets[currentLevel],
 					mechanics.limit[currentLevel])
 
 	# Determine whether the score is sufficient in order to progress onto the next level, or restart the game from the beginning
@@ -268,7 +283,7 @@ spaceInFramers = do ->
 	activateBulletBall = _.debounce((-> activeTargets[4].props = 
 		borderRadius: "50%", borderWidth: 10, borderColor: "white", backgroundColor: "#F55F6E", brightness: 100, name: "activeBullet"), 5000, true)
 
-	startGame = (mSpeed, mBalls, mTargets, mLimit) ->
+	startGame = (timerHeading, levelHeading, mSpeed, mBalls, mTargets, mLimit) ->
 		for rowIndex in [0...mTargets]
 			for colIndex in [0...5]
 				target = new Layer width: width, height: height, borderRadius: "50%", backgroundColor: Utils.randomColor(), 
@@ -279,7 +294,7 @@ spaceInFramers = do ->
 				properties: y: rowIndex * (height + gutter) + Screen.height
 				
 				target.on "change:point", ->
-					scoreHeading.html = hits.length
+					timerHeading.html = hits.length
 					totalScore = hits.length + misses.length
 					
 					# Listen to objects for collisions and push targets into array when target is visible on screen
@@ -293,8 +308,8 @@ spaceInFramers = do ->
 					if totalScore >= mLimit - 1
 						ui.sumResults(hits.length, [hits.length, mLimit], [balls.length, mBalls],
 						ui.checkLevel, chartBg.width - 100)
-						layer.states.switch "slideOut" for layer in [scoreHeading, subHeading]
-						Utils.delay .5, -> ui.endState()
+						layer.states.switch "slideOut" for layer in [timerHeading, levelHeading]
+						Utils.delay .5, -> ui.endState(timerHeading, levelHeading)
 						resetGame()
 
 		for i in [0...mBalls]
@@ -330,10 +345,3 @@ spaceInFramers = do ->
 				
 		setActiveBall(balls[0])
 	startGame : startGame, deleteObjects: deleteObjects
-
-# UI styling for desktop only
-if Utils.isDesktop()
-	Framer.DeviceView.Devices["custom"] = "deviceType": "desktop", "screenWidth": 1080, "screenHeight": 1920,
-	"deviceImage" : "https://dl.dropboxusercontent.com/u/81188152/Framer/shadow.png",
-	"deviceImageWidth": 1280, "deviceImageHeight": 2120; Framer.Device.deviceType = "custom";
-	Framer.Device.background.backgroundColor = "#1A1E2A"; Framer.Device.deviceScale = 0.4

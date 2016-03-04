@@ -1,5 +1,8 @@
-# Created by Balraj Chana
-# @circularchaos | https://dribbble.com/circularchaos
+# Made with Framer
+# by Balraj Chana
+# www.framerjs.com
+
+Framer.Device.background.style.background = "#83899E"
 
 # Create all of the layers and set their properties
 bg = new BackgroundLayer backgroundColor: "#242939"
@@ -18,14 +21,15 @@ fab.draggable.enabled = false
 fabIcon = new Layer superLayer: fab, html: '<i class="material-icons" style="font-size: 100px;">chevron_right</i>', height: fab.height,
 width: fab.width, backgroundColor: null, x: 16, y: 15
 
-scoreHeadingStyle = superLayer: false, y: Screen.height / 5, backgroundColor: null, maxX: 0, opacity: 0, html: "SF", height: 400,
+scoreHeadingStyle = superLayer: false, y: Screen.height / 5, backgroundColor: null, maxX: 0, opacity: 0, height: 400,
 width: Screen.width, style: "font" : "200 300px/normal 'Titillium Web', sans-serif", "text-align" : "center"
 scoreHeading = new Layer scoreHeadingStyle
+scoreHeading.html = "SF"
 
-subHeadingStyle = y: scoreHeading.maxY, x: Screen.width, backgroundColor: null, opacity: 0,
-html: "SPACEIN<span style='font-weight:700'>FRAMERS</span>", height: 100, width: Screen.width,
+subHeadingStyle = y: scoreHeading.maxY, x: Screen.width, backgroundColor: null, opacity: 0, height: 100, width: Screen.width,
 style: "font" : "200 1.1em/normal 'Titillium Web', sans-serif", "text-align" : "center", "letter-spacing" : "20px"
 subHeading = new Layer subHeadingStyle
+subHeading.html = "SPACE IN <span style='font-weight:700'>FRAMERS</span>"
 	
 chartBgStyle = superLayer: contentBlock, width: contentBlock.width - 200, midX: contentBlock.midX, y: 100, height: 500, backgroundColor: null
 chartBg = new Layer chartBgStyle
@@ -33,9 +37,7 @@ chartBg = new Layer chartBgStyle
 bars = []
 barHeadings = ["LEVEL", "TARGETS", "BALLS"]
 barColours = ["#F55F6E", "#F89863", "#F9D259"]
-
-levelBarOne = new Layer superLayer: barBg, y: 30, x: 30, height: 20, borderRadius: 100, width: 500, backgroundColor: barColours[0]
-
+	
 for i in [0...3]
 	barBg = new Layer superLayer: chartBg, height: 80, width: Screen.width - 200, y: i * 170 + 50, borderColor: "#CADCE6", 
 	borderRadius: 10, clip: false
@@ -145,12 +147,13 @@ ui = do ->
 		fabIcon.states.switch "fadeOut", time: .1
 		
 		Utils.delay .2, ->
+			scoreHeading.html.querySelector("") = 3
+			subHeading.html.querySelector("") = "LEVEL <span style='font-weight:700'>#{mechanics.level[currentLevel]}</span>"
 			fab.states.switch "expand", time: .6, curve: "ease"
-			scoreHeading.html = 3
-			subHeading.html = "LEVEL #{mechanics.level[currentLevel]}"
 			
-		Utils.delay .5, ->
-			layer.states.switch "slideIn" for layer in [scoreHeading, subHeading]
+		Utils.delay .8, ->
+			for layer in [scoreHeading, subHeading]
+				layer.states.switch "slideIn" 
 
 			timing = Utils.interval 1, ->
 				scoreHeading.html--
@@ -331,10 +334,3 @@ spaceInFramers = do ->
 				
 		setActiveBall(balls[0])
 	startGame : startGame, deleteObjects: deleteObjects
-
-# UI styling for desktop only
-if Utils.isDesktop()
-	Framer.DeviceView.Devices["custom"] = "deviceType": "desktop", "screenWidth": 1080, "screenHeight": 1920,
-	"deviceImage" : "https://dl.dropboxusercontent.com/u/81188152/Framer/shadow.png",
-	"deviceImageWidth": 1280, "deviceImageHeight": 2120; Framer.Device.deviceType = "custom";
-	Framer.Device.background.backgroundColor = "#1A1E2A"; Framer.Device.deviceScale = 0.4
