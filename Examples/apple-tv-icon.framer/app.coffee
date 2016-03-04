@@ -112,4 +112,8 @@ bg.on Events.TouchMove, (event) ->
 	glow.y = Utils.modulate delta.y, [0, settings.midY], [-200, 200]
 	glow.opacity= Utils.modulate delta.x, [0, settingsLayer.midX], [0.3, 1]
 
+Events.wrap(window).addEventListener "resize", (event) ->
+    settingsLayer.center()
+    label.center()
+    label.y += 150
 
