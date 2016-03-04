@@ -81,7 +81,11 @@ Navigation.states.animationOptions = {
 /* on page change hide navigation */
 
 stream.on("change:currentPage", function(event) {
-  if (stream.direction === "down") {
+  if (stream.direction === "down" && stream.currentPage !== stream.content.subLayers[stream.content.subLayers.length - 2]) {
+    if (stream.scrollY + Screen.height >= stream.content.height) {
+      stream.snapToPreviousPage();
+      stream.direction = "up";
+    }
     return Navigation.states["switch"]("hidden");
   } else {
     return Navigation.states["switch"]("default");
@@ -99,7 +103,7 @@ fn = function(post) {
 };
 for (i = j = 0, len = ref.length; j < len; i = ++j) {
   post = ref[i];
+  post.y = i * post.height;
   post.superLayer = stream.content;
-  post.y = i * (post.height - 2);
   fn(post);
 }

@@ -51,15 +51,19 @@ Navigation.states.animationOptions =
 			
 # on page change hide navigation
 stream.on "change:currentPage", (event) ->
-	if stream.direction is "down"
+	if stream.direction is "down" && stream.currentPage != stream.content.subLayers[stream.content.subLayers.length-2]
+		if stream.scrollY+Screen.height >= stream.content.height
+			stream.snapToPreviousPage()
+			stream.direction = "up"
+		
 		Navigation.states.switch("hidden")
 	else
 		Navigation.states.switch("default")
 	
 # put all the posts in the pageComponent
 for post, i in Content.subLayers.reverse()
+	post.y = i*post.height
 	post.superLayer = stream.content
-	post.y = i*(post.height-2)
 	
 	do (post) ->
 		post.on Events.Click, ->
