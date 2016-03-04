@@ -598,7 +598,8 @@ inputFieldsMask = new Layer({
   y: 467,
   width: 270 * 2,
   height: 132 * 2,
-  superLayer: page6
+  superLayer: page6,
+  clip: true
 });
 
 inputFields = new Layer({
@@ -607,7 +608,8 @@ inputFields = new Layer({
   width: 270 * 2,
   height: 132 * 2,
   image: "images/FormFlexBottom.png",
-  superLayer: inputFieldsMask
+  superLayer: inputFieldsMask,
+  clip: true
 });
 
 inputFields.states.add({

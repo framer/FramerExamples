@@ -129,3 +129,9 @@ bg.on(Events.TouchMove, function(event) {
   glow.y = Utils.modulate(delta.y, [0, settings.midY], [-200, 200]);
   return glow.opacity = Utils.modulate(delta.x, [0, settingsLayer.midX], [0.3, 1]);
 });
+
+Events.wrap(window).addEventListener("resize", function(event) {
+  settingsLayer.center();
+  label.center();
+  return label.y += 150;
+});

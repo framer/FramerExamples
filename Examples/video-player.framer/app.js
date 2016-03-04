@@ -77,8 +77,6 @@ progress.fill.borderRadius = 4;
 
 progress.knob.draggable.momentum = false;
 
-progress.knob.visible = false;
-
 wasPlaying = false;
 
 /* Scrubbing interaction */
@@ -137,7 +135,7 @@ time.bringToFront();
 
 progress.bringToFront();
 
-vid.player.on("timeupdate", function() {
+Events.wrap(vid.player).addEventListener("timeupdate", function() {
   progress.knob.midX = progress.pointForValue(this.currentTime);
   time.html = "0:0" + Math.round(this.currentTime);
   if (Math.round(this.currentTime) > 9) {

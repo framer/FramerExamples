@@ -416,14 +416,14 @@ inputFieldsMask = new Layer
 	x: 25*2, y: 467, 
 	width: 270*2, 
 	height: 132*2
-	superLayer: page6
+	superLayer: page6, clip: true
 
 inputFields = new Layer
 	x: 0, y: 0, 
 	width: 270*2, 
 	height: 132*2, 
 	image: "images/FormFlexBottom.png"
-	superLayer: inputFieldsMask
+	superLayer: inputFieldsMask, clip: true
 inputFields.states.add 
 	signup: { y: 0 }
 	signin: { y: -45*2 }

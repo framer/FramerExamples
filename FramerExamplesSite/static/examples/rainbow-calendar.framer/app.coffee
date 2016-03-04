@@ -216,18 +216,12 @@ MakeList = (parentDrumLayer, listName, listItems, params) ->
 
 		listItemLayer.startY = i * listItemHeight + listContainerHeight/2
 
-	listLayer.on Events.DragMove, =>
+	listLayer.on Events.Move, =>
 		if firstTouchAvailable
 			@listContainer.emit("ListStartedMoving", {list: listName, index: @index, value: @val, velocity: 0})
 			firstTouchAvailable = false		
 			
 		updateDrumAppearance()
-		
-	# To simulate iOS momentum scrolling (which causes the drum to keep spinning 
-	# after your finger lifts off it), we trigger an animation the moment you lift
-	# your finger. The intensity of this animation is proportional to the speed when
-	# of the dragging when your finger was lifted.
-	listLayer.on Events.DragEnd, (e, f) =>
 		
 		# Next touch should trigger ListStartedMoving
 		firstTouchAvailable = true

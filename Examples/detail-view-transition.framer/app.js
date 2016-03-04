@@ -3,7 +3,7 @@ by Jay Stakelon
 www.framerjs.com */
 
 /* Data for each of the video cards */
-var applyCSS, backBtn, backImg, bg, container, containerSpacer, currentCard, dataStub, detailContent, detailView, exitDetailView, header, setupCard, toDetailView;
+var applyCSS, backBtn, backImg, bg, currentCard, dataStub, detailContent, detailView, exitDetailView, header, setupCard, toDetailView, wrapper;
 
 dataStub = [
   {
@@ -48,30 +48,18 @@ applyCSS = function(layer) {
 /* Background setup */
 
 bg = new BackgroundLayer({
-  backgroundColor: "#ffffff"
+  backgroundColor: "#fff"
 });
 
 /* Feed container setup */
 
-container = new Layer({
+wrapper = new ScrollComponent({
   x: 0,
   y: 0,
-  width: 640,
-  height: 1136,
-  backgroundColor: null
+  size: Screen.size,
+  backgroundColor: null,
+  scrollHorizontal: false
 });
-
-/* Spacer is needed to maintain consistent feed scroll height */
-
-containerSpacer = new Layer({
-  x: 0,
-  y: 0,
-  width: 640,
-  height: 10 + (630 * dataStub.length),
-  backgroundColor: null
-});
-
-containerSpacer.superLayer = container;
 
 /* Detail view setup */
 
@@ -164,7 +152,7 @@ setupCard = function(dataObj, index) {
   });
   card.containerY = yPos;
   card.titleData = dataObj.shortTitle ? dataObj.shortTitle : dataObj.title;
-  card.superLayer = container;
+  card.superLayer = wrapper.content;
 
   /* Create and add a video layer to the card */
   cardVideo = new VideoLayer({
@@ -211,7 +199,7 @@ Utils.domComplete(function() {
     item = dataStub[index];
     setupCard(item, index);
   }
-  return container.scrollVertical = true;
+  return wrapper.scrollVertical = true;
 });
 
 /* Detail view drag event setup
@@ -221,7 +209,7 @@ detailView.on(Events.DragMove, function() {
   if (this.y > 0) {
 
     /* If it's moving down, start animating back to feed */
-    container.opacity = 0 + (this.y / 500);
+    wrapper.opacity = 0 + (this.y / 500);
     detailContent.visible = false;
     this.scale = 1 - (this.y / 5000);
     backBtn.visible = false;
@@ -303,7 +291,7 @@ toDetailView = function(sender) {
     currentCard = sender;
 
     /* Hide the other cards in the scroller */
-    container.animate({
+    wrapper.animate({
       properties: {
         opacity: 0
       },
@@ -375,7 +363,7 @@ toDetailView = function(sender) {
     /* Then play the background video */
     Utils.delay(.1, function() {
       sender.video.player.play();
-      container.scrollVertical = false;
+      wrapper.scrollVertical = false;
       backBtn.visible = true;
       backBtn.opacity = 0;
       backBtn.animate({
@@ -404,7 +392,7 @@ exitDetailView = function(sender) {
   /* Toggle visibilties of content placeholder and feed */
   var toFeed;
   detailContent.visible = false;
-  container.animate({
+  wrapper.animate({
     properties: {
       opacity: 1
     },
@@ -457,10 +445,10 @@ exitDetailView = function(sender) {
     }
   });
   toFeed.on(Events.AnimationEnd, function() {
-    sender.superLayer = container;
+    sender.superLayer = wrapper.content;
     sender.x = sender.originalFrame.x;
     sender.y = sender.containerY;
-    container.scrollVertical = true;
+    wrapper.scrollVertical = true;
     return detailView.sendToBack();
   });
   toFeed.start();

@@ -9,7 +9,7 @@ sketch = Framer.Importer.load "imported/page-indicators"
 page = new PageComponent
 	width: Screen.width, height: Screen.height
 	y: 128, scrollVertical: false
-	contentInset: {top: 32, left: 32, right: 32}
+	contentInset: {top: 32, right: 32}
 
 # Array that will store our layers
 allIndicators = []	
@@ -19,8 +19,8 @@ amount = 3
 for i in [0...amount]
 	card = new Layer 
 		backgroundColor: "#fff", borderRadius: 8
-		width: page.width - 64, height: 950 
-		x: page.width * i, superLayer: page.content
+		width: page.width-64, height: 950 
+		x: (page.width+32)*(i+1), superLayer: page.content
 				
 	card.style.boxShadow = "0 1px 6px rgba(0,0,0,0.2)"
 	
@@ -41,6 +41,7 @@ for i in [0...amount]
 	allIndicators.push(indicator)
 
 # Set indicator for current page
+page.snapToPage(page.content.subLayers[0])
 current = page.horizontalPageIndex(page.currentPage)
 allIndicators[current].states.switch("active")
 

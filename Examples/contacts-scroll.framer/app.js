@@ -3,7 +3,7 @@ by Benjamin den Boer
 www.framerjs.com */
 
 /* Set-up & Sketch Import */
-var allAvatars, allImages, allLabels, allLetters, allNames, avatar, contacts, i, indicator, j, k, l, label, len, len1, letter, name, nameLayer, nearest, people, ref, ref1, round, scroll, showSections, sketch, slider;
+var activeSlider, allAvatars, allImages, allLabels, allLetters, allNames, avatar, contacts, i, indicator, j, k, l, label, len, len1, letter, name, nameLayer, nearest, people, ref, ref1, round, scroll, showSections, sketch, slider;
 
 sketch = Framer.Importer.load("imported/contacts");
 
@@ -20,7 +20,7 @@ scroll = ScrollComponent.wrap(sketch.content);
 scroll.scrollHorizontal = false;
 
 scroll.contentInset = {
-  bottom: 320
+  bottom: 200
 };
 
 /* Require the module */
@@ -94,7 +94,7 @@ for (i = k = 0, len1 = allNames.length; k < len1; i = ++k) {
   /* Avatar images */
   avatar = new Layer({
     x: -148,
-    y: -100 + 20,
+    y: -40 + 20,
     width: 120,
     height: 120,
     borderRadius: 120,
@@ -122,6 +122,7 @@ for (i = k = 0, len1 = allNames.length; k < len1; i = ++k) {
     nameLayer.y += 48 * 6;
   }
   allAvatars.push(avatar);
+  scroll.updateContent();
 }
 
 /* Match the avatar with the name */
@@ -258,12 +259,22 @@ showSections = function() {
 
 /* Connect scrolling to the slider */
 
-slider.on("change:value", function() {
+activeSlider = false;
 
-  /* Scroll to the correct sections */
+slider.onTapStart(function() {
+  return activeSlider = true;
+});
+
+slider.onTapEnd(function() {
+  return activeSlider = false;
+});
+
+slider.on("change:value", function() {
   var scrollValue;
   scrollValue = Utils.modulate(this.value, [0, 100], [0, scroll.content.height - scroll.height + 320], true);
-  scroll.scrollY = round(scrollValue, nearest);
+  if (activeSlider) {
+    scroll.scrollY = round(scrollValue, nearest);
+  }
   showSections();
 
   /* When sliding all the way to the top */

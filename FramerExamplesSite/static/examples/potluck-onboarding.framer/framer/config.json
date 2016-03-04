@@ -1,7 +1,17 @@
 {
-  "contentScale": 1,
-  "deviceOrientation": 0,
-  "deviceScale": -1,
-  "deviceType": "iphone-5s-spacegray-hand",
-  "updateDelay": 0.29999999999999999
+  "propertyPanelToggleStates" : {
+
+  },
+  "deviceOrientation" : 0,
+  "sharedPrototype" : 0,
+  "contentScale" : 1,
+  "deviceType" : "apple-iphone-5s-space-gray",
+  "selectedHand" : "",
+  "updateDelay" : 0.3,
+  "deviceScale" : "fit",
+  "codeFolds" : [
+
+  ],
+  "orientation" : 0,
+  "fullScreen" : false
 }

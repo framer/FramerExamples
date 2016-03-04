@@ -16,7 +16,6 @@ page = new PageComponent({
   scrollVertical: false,
   contentInset: {
     top: 32,
-    left: 32,
     right: 32
   }
 });
@@ -35,7 +34,7 @@ for (i = j = 0, ref = amount; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j :
     borderRadius: 8,
     width: page.width - 64,
     height: 950,
-    x: page.width * i,
+    x: (page.width + 32) * (i + 1),
     superLayer: page.content
   });
   card.style.boxShadow = "0 1px 6px rgba(0,0,0,0.2)";
@@ -68,6 +67,8 @@ for (i = j = 0, ref = amount; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j :
 }
 
 /* Set indicator for current page */
+
+page.snapToPage(page.content.subLayers[0]);
 
 current = page.horizontalPageIndex(page.currentPage);
 

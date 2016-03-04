@@ -3,7 +3,7 @@ by Pete Lada
 www.framerjs.com */
 
 /* Background */
-var animSpeed, arrow, bg, cancelSearch, cancelStickySearch, closePhoto, codePlaceholder, container, containerMask, defaultAnimCurve, endRefresh, header, initRedeem, initScan, initSearch, initStickySearch, limit, logo, logoDefaultAnim, logoReturningAnim, margin, noAnim, opacity, photoArea, ptr, ptrBorder, qr, qrButton, redeemText, refresh, reset, resetView, searchBar, searchPlaceholder, smallBounce, spin, startRefresh, startY, sticky, store, storeStartY, useCode;
+var animSpeed, arrow, bg, cancelSearch, cancelStickySearch, closePhoto, codePlaceholder, container, defaultAnimCurve, endRefresh, header, initRedeem, initScan, initSearch, initStickySearch, limit, logo, logoDefaultAnim, logoReturningAnim, margin, noAnim, photoArea, ptr, ptrBorder, qr, qrButton, redeemText, refresh, reset, resetView, searchBar, searchPlaceholder, smallBounce, spin, startRefresh, startY, store, storeStartY, useCode;
 
 bg = new BackgroundLayer({
   backgroundColor: "#439FD8"
@@ -62,30 +62,20 @@ closePhoto = new Layer({
   backgroundColor: "transparent"
 });
 
-container = new Layer({
+container = new ScrollComponent({
   x: 0,
   y: 0,
   width: 640,
   height: 1136,
-  backgroundColor: "transparent"
+  backgroundColor: "transparent",
+  scrollHorizontal: false
 });
 
 container.clip = false;
 
-container.scroll = true;
-
 container.states.animationOptions = {
   curve: smallBounce
 };
-
-containerMask = new Layer({
-  x: 0,
-  y: -50,
-  width: 640,
-  height: 1963 + 50,
-  backgroundColor: "rgba(0,0,0,.8)",
-  opacity: 0
-});
 
 header = new Layer({
   x: 0,
@@ -242,13 +232,9 @@ ptr.index = 0;
 
 qrButton.addSubLayer(qr);
 
-container.addSubLayer(store);
+container.content.addSubLayer(store);
 
-container.addSubLayer(header);
-
-container.addSubLayer(containerMask);
-
-container.addSubLayer(reset);
+container.content.addSubLayer(reset);
 
 header.addSubLayer(useCode);
 
@@ -294,29 +280,6 @@ photoArea.states.add({
   scanning: {
     scale: 1,
     opacity: 1
-  }
-});
-
-containerMask.states.add({
-  scanning: {
-    opacity: 1
-  }
-});
-
-header.states.add({
-  searching: {
-    y: -(header.height - margin - searchBar.height - margin)
-  },
-  redeeming: {
-    height: header.height - useCode.height - margin
-  },
-  stickySearch: {
-    y: 0,
-    height: margin + searchBar.height + margin
-  },
-  stickyReturn: {
-    y: 0,
-    height: 413
   }
 });
 
@@ -437,6 +400,23 @@ cancelSearch.states.animationOptions = {
   time: animSpeed
 };
 
+header.states.add({
+  searching: {
+    y: -(header.height - margin - searchBar.height - margin)
+  },
+  redeeming: {
+    height: header.height - useCode.height - margin
+  },
+  stickySearch: {
+    y: 0,
+    height: margin + searchBar.height + margin
+  },
+  stickyReturn: {
+    y: 0,
+    height: 413
+  }
+});
+
 /* State functions */
 
 resetView = function() {
@@ -451,7 +431,6 @@ resetView = function() {
   searchBar.states["switch"]("default");
   useCode.states["switch"]("default");
   container.states["switch"]("default");
-  containerMask.states["switch"]("default");
   photoArea.states["switch"]("default");
   codePlaceholder.states["switch"]("default");
   Utils.delay(0.5, function() {
@@ -494,7 +473,11 @@ initRedeem = function() {
 initScan = function() {
   container.states["switch"]("scanning");
   reset.states["switch"]("scanning");
-  containerMask.states["switch"]("scanning");
+  container.animate({
+    properties: {
+      y: photoArea.height
+    }
+  });
   bg.backgroundColor = "black";
   return photoArea.states["switch"]("scanning");
 };
@@ -521,6 +504,12 @@ searchPlaceholder.on(Events.Click, function() {
 });
 
 qrButton.on(Events.Click, function() {
+  container.scrollVertical = false;
+  header.animate({
+    properties: {
+      y: photoArea.height
+    }
+  });
   return initScan();
 });
 
@@ -575,24 +564,6 @@ reset.on(Events.AnimationEnd, function(event, layer) {
   }
 });
 
-header.on(Events.StateWillSwitch, function(oldState, newState) {
-  if (newState === "stickyReturn") {
-    return header.states.animationOptions = noAnim;
-  } else if (newState === "stickySearch") {
-    return header.states.animationOptions = noAnim;
-  } else {
-    return header.states.animationOptions = Framer.Defaults.Animation;
-  }
-});
-
-searchBar.on(Events.StateWillSwitch, function(oldState, newState) {
-  if (newState === "sticky" || sticky) {
-    return searchBar.states.animationOptions = noAnim;
-  } else {
-    return searchBar.states.animationOptions = Framer.Defaults.Animation;
-  }
-});
-
 /* Pull to refresh */
 
 spin = function() {
@@ -615,24 +586,32 @@ startY = 0;
 
 storeStartY = store.y;
 
-store.draggable.enabled = true;
+limit = header.height - 20 - searchBar.height - 20;
 
-store.draggable.speedX = 0;
-
-store.on(Events.DragStart, function(event) {
+container.on(Events.Move, function(event) {
+  var x, y;
   bg.backgroundColor = "#F6FBFE";
-  return startY = event.pageY;
-});
-
-store.on(Events.DragMove, function(event) {
-  var deltaY;
-  deltaY = startY - event.pageY;
-  store.y = storeStartY - deltaY;
-  ptr.y = store.y - ptr.height;
-  if (deltaY > 0) {
-    header.y = -deltaY;
+  ptr.maxY = store.y - container.scrollY;
+  x = Utils.modulate(container.scrollY, [0, limit - 100], [1, 0], true);
+  y = Utils.modulate(container.scrollY, [0, limit], [1, 0], true);
+  logo.opacity = x;
+  useCode.opacity = y;
+  if (container.scrollY <= 20 && header.y < 0) {
+    header.animate({
+      properties: {
+        y: 0
+      },
+      time: 0.05
+    });
+  } else if (container.scrollY > header.height - 20 && header.y !== -header.height + (searchBar.height + 55)) {
+    header.animate({
+      properties: {
+        y: -header.height + (searchBar.height + 55),
+        time: 0.05
+      }
+    });
   }
-  if (deltaY < -100) {
+  if (container.scrollY < -60) {
     return arrow.animate({
       properties: {
         rotation: 180
@@ -651,15 +630,19 @@ store.on(Events.DragMove, function(event) {
   }
 });
 
-store.on(Events.DragEnd, function(event) {
-  var deltaY;
-  deltaY = startY - event.pageY;
-  if (deltaY < -100) {
-    return startRefresh();
-  } else {
-    store.states["switch"]("default");
-    ptr.states["switch"]("default");
-    return header.states["switch"]("default");
+container.on(Events.ScrollEnd, function(event) {
+  spin();
+  if (container.scrollY > 0) {
+    store.animate({
+      properties: {
+        y: reset.y
+      }
+    });
+    return ptr.animate({
+      properties: {
+        maxY: reset.y
+      }
+    });
   }
 });
 
@@ -701,28 +684,3 @@ endRefresh = function() {
     return arrow.rotation = 0;
   });
 };
-
-/* Scroll events */
-
-sticky = false;
-
-opacity = 1;
-
-limit = header.height - 20 - searchBar.height - 20;
-
-container.on(Events.Scroll, function() {
-  var x, y;
-  x = Utils.modulate(container.scrollY, [0, limit - 100], [1, 0], true);
-  y = Utils.modulate(container.scrollY, [0, limit], [1, 0], true);
-  logo.opacity = x;
-  useCode.opacity = y;
-  if (container.scrollY > limit) {
-    if (!sticky) {
-      initStickySearch();
-      return sticky = true;
-    }
-  } else {
-    cancelStickySearch();
-    return sticky = false;
-  }
-});

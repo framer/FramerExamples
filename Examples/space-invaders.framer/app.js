@@ -1,10 +1,12 @@
 /* Made with Framer
 by Balraj Chana
 www.framerjs.com */
-
-/* Create all of the layers and set their properties */
 var bar, barBg, barColours, barHeading, barHeadings, bars, bg, chartBg, chartBgStyle, contentBlock, dialog, fab, fabIcon, i, j, scoreHeading, scoreHeadingStyle, scroll, spaceInFramers, subHeading, subHeadingStyle, ui,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+Framer.Device.background.style.background = "#83899E";
+
+/* Create all of the layers and set their properties */
 
 bg = new BackgroundLayer({
   backgroundColor: "#242939"
@@ -29,7 +31,8 @@ dialog = new Layer({
   shadowColor: "rgba(0,0,0,.5)",
   shadowSpread: 0,
   shadowBlur: 200,
-  x: 50
+  x: 50,
+  clip: true
 });
 
 contentBlock = new Layer({
@@ -73,7 +76,6 @@ scoreHeadingStyle = {
   backgroundColor: null,
   maxX: 0,
   opacity: 0,
-  html: "SF",
   height: 400,
   width: Screen.width,
   style: {
@@ -84,12 +86,13 @@ scoreHeadingStyle = {
 
 scoreHeading = new Layer(scoreHeadingStyle);
 
+scoreHeading.html = "SF";
+
 subHeadingStyle = {
   y: scoreHeading.maxY,
   x: Screen.width,
   backgroundColor: null,
   opacity: 0,
-  html: "SPACEIN<span style='font-weight:700'>FRAMERS</span>",
   height: 100,
   width: Screen.width,
   style: {
@@ -100,6 +103,8 @@ subHeadingStyle = {
 };
 
 subHeading = new Layer(subHeadingStyle);
+
+subHeading.html = "SPACE IN <span style='font-weight:700'>FRAMERS</span>";
 
 chartBgStyle = {
   superLayer: contentBlock,
@@ -370,11 +375,11 @@ ui = (function() {
     return results;
   };
   styleHeading = function(color, icon) {
-    return "<span style= 'border-radius: 50%; height: 300px; width: 300px; border: 5px solid " + color + "; \ndisplay: inline-block; line-height: 3.4'><i class=\"material-icons\" style=\"font-size: 120px;\">" + icon + "</i></span>";
+    return "<span style='border-radius: 50%; text-align: center; height: 300px; width: 300px; border: 5px solid " + color + "; \ndisplay: inline-block; margin-left: -100px; line-height: 220px'><i class=\"material-icons\" style=\"font-size: 120px;\">" + icon + "</i></span>";
   };
 
   /* Display the results after the current level is completed */
-  endState = function() {
+  endState = function(timeHeading, levelHeading) {
     var k, layer, len, ref;
     styleState({
       y: Screen.height - 150
@@ -402,21 +407,24 @@ ui = (function() {
       x: 0
     });
     animateBgCircles();
-    ref = [scroll, scoreHeading, subHeading];
+    ref = [scroll, timeHeading, levelHeading];
     for (k = 0, len = ref.length; k < len; k++) {
       layer = ref[k];
       layer.states["switch"]("slideIn");
     }
-    scoreHeading.html = currentLevel > 0 ? styleHeading("#78D17B", "done") : styleHeading("#D05050", "clear");
-    subHeading.html = "&#8250; SLIDE TO CONTINUE";
+    timeHeading.html = currentLevel > 0 ? styleHeading("#78D17B", "done") : styleHeading("#D05050", "clear");
+    levelHeading.html = "&#8250; SLIDE TO CONTINUE";
+    timeHeading.superLayer = scroll.content.subLayers[0];
+    timeHeading.center();
+    levelHeading.maxY = Screen.height - 100;
 
     /* Determine whether the scroll position is large enough to progress on to the next screen */
-    return scroll.on(Events.TouchEnd, function() {
-      if (this.scrollX < -200) {
-        this.states["switch"]("default");
+    return scroll.on(Events.Move, function(event) {
+      if (scroll.scrollX < -200) {
+        scroll.states["switch"]("default");
         return Utils.delay(.5, function() {
           var l, len1, ref1;
-          ref1 = [scoreHeading, subHeading];
+          ref1 = [timeHeading, levelHeading];
           for (l = 0, len1 = ref1.length; l < len1; l++) {
             layer = ref1[l];
             layer.states.switchInstant("default");
@@ -430,6 +438,7 @@ ui = (function() {
 
   /* Chain animate the UI elements before the game starts */
   startCountDown = function() {
+    var levelHeading, timerHeading;
     fab.animate({
       time: .3,
       curve: "bezier-curve",
@@ -446,27 +455,57 @@ ui = (function() {
     fabIcon.states["switch"]("fadeOut", {
       time: .1
     });
+    timerHeading = new Layer(scoreHeadingStyle);
+    levelHeading = new Layer(subHeadingStyle);
+    levelHeading.states.add({
+      slideIn: {
+        x: 0,
+        opacity: 1
+      },
+      slideOut: {
+        maxX: 0,
+        opacity: 0
+      }
+    });
+    levelHeading.states.animationOptions = {
+      curve: "spring(100,15,0)",
+      delay: .1
+    };
+    timerHeading.states.add({
+      slideIn: {
+        x: 0,
+        opacity: 1
+      },
+      slideOut: {
+        x: Screen.width,
+        opacity: 0
+      }
+    });
+    timerHeading.states.animationOptions = {
+      curve: "spring(100,15,0)"
+    };
     Utils.delay(.2, function() {
-      fab.states["switch"]("expand", {
+      timerHeading.html = null;
+      timerHeading.html = "3";
+      levelHeading.html = "LEVEL <span style='font-weight:700'>" + mechanics.level[currentLevel] + "</span>";
+      return fab.states["switch"]("expand", {
         time: .6,
         curve: "ease"
       });
-      scoreHeading.html = 3;
-      return subHeading.html = "LEVEL " + mechanics.level[currentLevel];
     });
-    return Utils.delay(.5, function() {
+    return Utils.delay(.8, function() {
       var k, layer, len, ref, timing;
-      ref = [scoreHeading, subHeading];
+      ref = [timerHeading, levelHeading];
       for (k = 0, len = ref.length; k < len; k++) {
         layer = ref[k];
         layer.states["switch"]("slideIn");
       }
       return timing = Utils.interval(1, function() {
         var shrinkFab;
-        scoreHeading.html--;
+        timerHeading.html = "" + (parseInt(timerHeading.html, 10) - 1);
 
         /* Start the game when the counter reaches 0 */
-        if (scoreHeading.html < 1) {
+        if (timerHeading.html < 1) {
           shrinkFab = fab.states["switch"]("shrinkDown", {
             curve: "ease",
             time: .4
@@ -482,7 +521,7 @@ ui = (function() {
             return results;
           });
           clearInterval(timing);
-          return spaceInFramers.startGame(mechanics.speed[currentLevel], mechanics.balls[currentLevel], mechanics.targets[currentLevel], mechanics.limit[currentLevel]);
+          return spaceInFramers.startGame(timerHeading, levelHeading, mechanics.speed[currentLevel], mechanics.balls[currentLevel], mechanics.targets[currentLevel], mechanics.limit[currentLevel]);
         }
       });
     });
@@ -726,7 +765,7 @@ spaceInFramers = (function() {
       name: "activeBullet"
     };
   }), 5000, true);
-  startGame = function(mSpeed, mBalls, mTargets, mLimit) {
+  startGame = function(timerHeading, levelHeading, mSpeed, mBalls, mTargets, mLimit) {
     var ball, colIndex, k, l, m, ref, ref1, rowIndex, target;
     for (rowIndex = k = 0, ref = mTargets; 0 <= ref ? k < ref : k > ref; rowIndex = 0 <= ref ? ++k : --k) {
       for (colIndex = l = 0; l < 5; colIndex = ++l) {
@@ -751,7 +790,7 @@ spaceInFramers = (function() {
         });
         target.on("change:point", function() {
           var ball, bullet, layer, len, len1, len2, m, n, o, ref1, totalScore;
-          scoreHeading.html = hits.length;
+          timerHeading.html = hits.length;
           totalScore = hits.length + misses.length;
 
           /* Listen to objects for collisions and push targets into array when target is visible on screen */
@@ -778,13 +817,13 @@ spaceInFramers = (function() {
           /* End the game if the target score has been reached, pass the score to be displayed and reset the game */
           if (totalScore >= mLimit - 1) {
             ui.sumResults(hits.length, [hits.length, mLimit], [balls.length, mBalls], ui.checkLevel, chartBg.width - 100);
-            ref1 = [scoreHeading, subHeading];
+            ref1 = [timerHeading, levelHeading];
             for (o = 0, len2 = ref1.length; o < len2; o++) {
               layer = ref1[o];
               layer.states["switch"]("slideOut");
             }
             Utils.delay(.5, function() {
-              return ui.endState();
+              return ui.endState(timerHeading, levelHeading);
             });
             return resetGame();
           }
@@ -876,19 +915,3 @@ spaceInFramers = (function() {
     deleteObjects: deleteObjects
   };
 })();
-
-/* UI styling for desktop only */
-
-if (Utils.isDesktop()) {
-  Framer.DeviceView.Devices["custom"] = {
-    "deviceType": "desktop",
-    "screenWidth": 1080,
-    "screenHeight": 1920,
-    "deviceImage": "https://dl.dropboxusercontent.com/u/81188152/Framer/shadow.png",
-    "deviceImageWidth": 1280,
-    "deviceImageHeight": 2120
-  };
-  Framer.Device.deviceType = "custom";
-  Framer.Device.background.backgroundColor = "#1A1E2A";
-  Framer.Device.deviceScale = 0.4;
-}

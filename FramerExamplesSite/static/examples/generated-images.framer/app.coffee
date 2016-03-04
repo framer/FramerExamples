@@ -2,16 +2,14 @@
 # by Jorn van Dijk
 # www.framerjs.com
 
-dribble = JSON.parse Utils.domLoadDataSync "http://jsonp.jit.su/?url=http://api.dribbble.com/shots/popular"
+# Set up origin values
+originValuesX = [1, 2, 3]
+originValuesY = [1, 2]
 
 # Set up the grid
 WIDTH =  220
 HEIGHT = 220
 PADDING = 40
-
-# Set up origin values
-originValuesX = [1, 2, 3]
-originValuesY = [1, 2]
 
 # Draw a layer to center the grid
 wrapLayer = new Layer
@@ -27,8 +25,7 @@ n = 0
 # rowNumber holds the amount of values stored in originValuesX (0, 1, 2, etc.)
 for rowNumber in [0..originValuesX.length-1]
 	for colNumber in [0..originValuesY.length-1]
-		
-		n = n + 1
+		n++
 		
 		# Create the boxLayer and duplicate them
 		boxLayer = new Layer
@@ -37,7 +34,7 @@ for rowNumber in [0..originValuesX.length-1]
 			x: (rowNumber) * WIDTH
 			y: (colNumber) * HEIGHT
 		
-		boxLayer.image = dribble.shots[n]["image_url"]
+		boxLayer.image = "http://unsplash.it/#{boxLayer.width}/?image=" + Utils.round Utils.randomNumber(400, 900)
 		
 		# Make boxLayer a subLayer of wrapLayer 
 		boxLayer.superLayer = wrapLayer
@@ -67,11 +64,11 @@ for rowNumber in [0..originValuesX.length-1]
 		# DRAG EVENTS --------------------------------------------
 		
 		# Drag start - come to front
-		boxLayer.on Events.DragStart, (event, boxLayer) ->
+		boxLayer.on Events.DragStart, (event, draggable, boxLayer) ->
 			boxLayer.bringToFront()
 
 		# Drag move
-		boxLayer.on Events.DragMove, (event, boxLayer) ->
+		boxLayer.on Events.DragMove, (event, draggable, boxLayer) ->
 					
 			distanceX = boxLayer.originalX - boxLayer.x
 			distanceY = boxLayer.originalY - boxLayer.y
@@ -83,7 +80,7 @@ for rowNumber in [0..originValuesX.length-1]
 			boxLayer.opacity = Utils.mapRange(distance, 0, 100, 1, 0.5)
 		
 		# Drag end - switch to the original state
-		boxLayer.on Events.DragEnd, (event, boxLayer) ->
+		boxLayer.on Events.DragEnd, (event, draggable, boxLayer) ->
 			boxLayer.states.switch("original")
 			
 		# Make the layer draggable

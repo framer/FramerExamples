@@ -12,7 +12,8 @@ sketch = Framer.Importer.load("imported/profile");
 headerMask = new Layer({
   width: Screen.width,
   height: 800,
-  backgroundColor: "transparent"
+  backgroundColor: "transparent",
+  clip: true
 });
 
 /* Mask for the avatar */
@@ -25,7 +26,8 @@ mask = new Layer({
   y: sketch.header.height - 100,
   superLayer: headerMask,
   scale: 0.2,
-  originY: 0
+  originY: 0,
+  clip: true
 });
 
 /* Create avatar */
@@ -34,8 +36,7 @@ avatar = new Layer({
   image: "images/avatar.png",
   width: mask.width,
   height: mask.height,
-  superLayer: mask,
-  force2d: true
+  superLayer: mask
 });
 
 /* Hierarchy and placement */

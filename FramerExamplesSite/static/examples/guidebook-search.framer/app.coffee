@@ -33,13 +33,10 @@ photoArea = new Layer x:0, y:0, width:640, height:640, image:"images/photo-area.
 	
 closePhoto = new Layer x: 560, y: 40, width: 50, height: 50, backgroundColor: "transparent"
 
-container = new Layer x: 0, y:0, width: 640, height: 1136, backgroundColor: "transparent"
+container = new ScrollComponent x: 0, y:0, width: 640, height: 1136, backgroundColor: "transparent", scrollHorizontal: false
 
 container.clip = false
-container.scroll = true
 container.states.animationOptions = curve: smallBounce
-	
-containerMask = new Layer x: 0, y: -50, width: 640, height: 1963 + 50, backgroundColor: "rgba(0,0,0,.8)", opacity:0 
 
 header = new Layer x: 0, y: 0, width: 640, height: 413, backgroundColor: "#439FD8"
 
@@ -80,10 +77,8 @@ ptr.index = 0
 
 qrButton.addSubLayer qr
 
-container.addSubLayer store
-container.addSubLayer header
-container.addSubLayer containerMask
-container.addSubLayer reset
+container.content.addSubLayer store
+container.content.addSubLayer reset
 
 header.addSubLayer useCode
 header.addSubLayer redeemText
@@ -114,22 +109,6 @@ photoArea.states.add
 	scanning:
 		scale: 1
 		opacity: 1
-		
-containerMask.states.add
-	scanning:
-		opacity: 1
-	
-header.states.add
-	searching: 
-		y: -(header.height - margin - searchBar.height - margin)
-	redeeming:
-		height: header.height  - useCode.height - margin
-	stickySearch:
-		y: 0
-		height: margin + searchBar.height + margin
-	stickyReturn:
-		y: 0
-		height: 413
 		
 searchBar.states.add
 	searching:
@@ -219,6 +198,18 @@ cancelSearch.states.animationOptions =
 	curve: "ease"
 	time: animSpeed
 
+header.states.add
+	searching: 
+		y: -(header.height - margin - searchBar.height - margin)
+	redeeming:
+		height: header.height  - useCode.height - margin
+	stickySearch:
+		y: 0
+		height: margin + searchBar.height + margin
+	stickyReturn:
+		y: 0
+		height: 413
+
 # State functions
 resetView = ->
 	searchPlaceholder.states.switch "default"
@@ -232,7 +223,6 @@ resetView = ->
 	searchBar.states.switch "default"
 	useCode.states.switch "default"
 	container.states.switch "default"
-	containerMask.states.switch "default"
 	photoArea.states.switch "default"
 	codePlaceholder.states.switch "default"
 	Utils.delay 0.5, ->
@@ -270,7 +260,9 @@ initRedeem = ->
 initScan = ->
 	container.states.switch "scanning"
 	reset.states.switch "scanning"
-	containerMask.states.switch "scanning"
+	container.animate
+	  properties:
+	    y: photoArea.height
 	bg.backgroundColor = "black"
 	photoArea.states.switch "scanning"
 	
@@ -287,12 +279,15 @@ cancelStickySearch = ->
 	searchBar.states.switch "stickyReturn"
 	searchBar.states.switch "default"
 	
-	
 # Events
 searchPlaceholder.on Events.Click, ->
 	initSearch()
 	
 qrButton.on Events.Click, ->
+	container.scrollVertical = false
+	header.animate
+	  properties: 
+	    y: photoArea.height
 	initScan()
 	
 qr.on Events.Click, ->
@@ -332,20 +327,6 @@ reset.on Events.AnimationEnd, (event, layer) ->
 		layer.visible = false
 	else 
 		layer.visible = true
-		
-header.on Events.StateWillSwitch, (oldState, newState) ->
-	if newState ==  "stickyReturn"
-		header.states.animationOptions = noAnim
-	else if newState == "stickySearch"
-		header.states.animationOptions = noAnim
-	else
-		header.states.animationOptions = Framer.Defaults.Animation
-		
-searchBar.on Events.StateWillSwitch, (oldState, newState) ->
-	if newState is "sticky" or sticky		
-		searchBar.states.animationOptions = noAnim
-	else
-		searchBar.states.animationOptions = Framer.Defaults.Animation
 
 # Pull to refresh
 spin = ->
@@ -361,22 +342,29 @@ spin()
 
 startY = 0
 storeStartY = store.y
-store.draggable.enabled = true
-store.draggable.speedX = 0
 
-store.on Events.DragStart, (event) ->
-	bg.backgroundColor = "#F6FBFE"
-	startY = event.pageY
-
-store.on Events.DragMove, (event) ->
-  deltaY = startY - event.pageY
-  store.y = storeStartY - deltaY
-  ptr.y = store.y - ptr.height
+limit = header.height - 20 - searchBar.height - 20
+container.on Events.Move, (event) ->
+  bg.backgroundColor = "#F6FBFE"
+  ptr.maxY = store.y-container.scrollY
   
-  if deltaY > 0 
-  	header.y = -deltaY
+  x = Utils.modulate(container.scrollY, [0, limit-100], [1, 0], true)
+  y = Utils.modulate(container.scrollY, [0, limit], [1, 0], true)
+  logo.opacity = x
+  useCode.opacity = y
   
-  if deltaY < -100
+  if container.scrollY <= 20 && header.y < 0
+	  	header.animate
+	  	  properties:
+	  	    y: 0
+	  	  time: 0.05
+  else if container.scrollY > header.height-20 && header.y != -header.height+(searchBar.height+55)
+	  	header.animate
+	  	  properties:
+	  	    y: -header.height+(searchBar.height+55)
+	  	    time: 0.05
+  
+  if container.scrollY < -60
   	arrow.animate
   		properties:
   			rotation: 180
@@ -388,16 +376,17 @@ store.on Events.DragMove, (event) ->
   			rotation: 0
   		time: .12
   		curve: "ease"
-  		
-store.on Events.DragEnd, (event) ->
-	deltaY = startY - event.pageY
-	if deltaY < -100
-		startRefresh()
-	else
-		store.states.switch "default"
-		ptr.states.switch "default"
-		header.states.switch "default"
-		
+
+container.on Events.ScrollEnd, (event) ->
+  spin()
+  if container.scrollY > 0
+	  store.animate
+	  	properties:
+	  	  y: reset.y
+	  ptr.animate
+	  	properties:
+	  	  maxY: reset.y
+	
 startRefresh = ->
 	store.states.switch "refreshing"		
 	ptr.states.switch "refreshing"
@@ -429,21 +418,4 @@ endRefresh = ->
 		
 	Utils.delay .2, ->
 		bg.backgroundColor = "#439FD8"
-		arrow.rotation = 0
-		
-# Scroll events
-sticky = false
-opacity = 1
-limit = header.height - 20 - searchBar.height - 20
-container.on Events.Scroll, ->
-	x = Utils.modulate(container.scrollY, [0, limit-100], [1, 0], true)
-	y = Utils.modulate(container.scrollY, [0, limit], [1, 0], true)
-	logo.opacity = x
-	useCode.opacity = y
-	if container.scrollY > limit
-		if !sticky
-			initStickySearch()
-			sticky = true
-	else
-		cancelStickySearch()
-		sticky = false
+		arrow.rotation = 0	

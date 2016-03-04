@@ -1,9 +1,13 @@
 /* Made with Framer
 by Jorn van Dijk
 www.framerjs.com */
-var HEIGHT, PADDING, WIDTH, boxLayer, colNumber, dribble, i, j, n, originValuesX, originValuesY, ref, ref1, rowNumber, wrapLayer;
 
-dribble = JSON.parse(Utils.domLoadDataSync("http://jsonp.jit.su/?url=http://api.dribbble.com/shots/popular"));
+/* Set up origin values */
+var HEIGHT, PADDING, WIDTH, boxLayer, colNumber, i, j, n, originValuesX, originValuesY, ref, ref1, rowNumber, wrapLayer;
+
+originValuesX = [1, 2, 3];
+
+originValuesY = [1, 2];
 
 /* Set up the grid */
 
@@ -12,12 +16,6 @@ WIDTH = 220;
 HEIGHT = 220;
 
 PADDING = 40;
-
-/* Set up origin values */
-
-originValuesX = [1, 2, 3];
-
-originValuesY = [1, 2];
 
 /* Draw a layer to center the grid */
 
@@ -40,7 +38,7 @@ n = 0;
 
 for (rowNumber = i = 0, ref = originValuesX.length - 1; 0 <= ref ? i <= ref : i >= ref; rowNumber = 0 <= ref ? ++i : --i) {
   for (colNumber = j = 0, ref1 = originValuesY.length - 1; 0 <= ref1 ? j <= ref1 : j >= ref1; colNumber = 0 <= ref1 ? ++j : --j) {
-    n = n + 1;
+    n++;
 
     /* Create the boxLayer and duplicate them */
     boxLayer = new Layer({
@@ -49,7 +47,7 @@ for (rowNumber = i = 0, ref = originValuesX.length - 1; 0 <= ref ? i <= ref : i 
       x: rowNumber * WIDTH,
       y: colNumber * HEIGHT
     });
-    boxLayer.image = dribble.shots[n]["image_url"];
+    boxLayer.image = ("http://unsplash.it/" + boxLayer.width + "/?image=") + Utils.round(Utils.randomNumber(400, 900));
 
     /* Make boxLayer a subLayer of wrapLayer */
     boxLayer.superLayer = wrapLayer;
@@ -82,12 +80,12 @@ for (rowNumber = i = 0, ref = originValuesX.length - 1; 0 <= ref ? i <= ref : i 
     /* DRAG EVENTS -------------------------------------------- */
 
     /* Drag start - come to front */
-    boxLayer.on(Events.DragStart, function(event, boxLayer) {
+    boxLayer.on(Events.DragStart, function(event, draggable, boxLayer) {
       return boxLayer.bringToFront();
     });
 
     /* Drag move */
-    boxLayer.on(Events.DragMove, function(event, boxLayer) {
+    boxLayer.on(Events.DragMove, function(event, draggable, boxLayer) {
       var distance, distanceX, distanceY;
       distanceX = boxLayer.originalX - boxLayer.x;
       distanceY = boxLayer.originalY - boxLayer.y;
@@ -98,7 +96,7 @@ for (rowNumber = i = 0, ref = originValuesX.length - 1; 0 <= ref ? i <= ref : i 
     });
 
     /* Drag end - switch to the original state */
-    boxLayer.on(Events.DragEnd, function(event, boxLayer) {
+    boxLayer.on(Events.DragEnd, function(event, draggable, boxLayer) {
       return boxLayer.states["switch"]("original");
     });
 
