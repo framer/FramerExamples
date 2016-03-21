@@ -80,12 +80,12 @@ for (rowNumber = i = 0, ref = originValuesX.length - 1; 0 <= ref ? i <= ref : i 
     /* DRAG EVENTS -------------------------------------------- */
 
     /* Drag start - come to front */
-    boxLayer.on(Events.DragStart, function(event, draggable, boxLayer) {
+    boxLayer.on(Events.DragStart, function(event, boxLayer) {
       return boxLayer.bringToFront();
     });
 
     /* Drag move */
-    boxLayer.on(Events.DragMove, function(event, draggable, boxLayer) {
+    boxLayer.on(Events.DragMove, function(event, boxLayer) {
       var distance, distanceX, distanceY;
       distanceX = boxLayer.originalX - boxLayer.x;
       distanceY = boxLayer.originalY - boxLayer.y;
@@ -96,7 +96,7 @@ for (rowNumber = i = 0, ref = originValuesX.length - 1; 0 <= ref ? i <= ref : i 
     });
 
     /* Drag end - switch to the original state */
-    boxLayer.on(Events.DragEnd, function(event, draggable, boxLayer) {
+    boxLayer.on(Events.DragEnd, function(event, boxLayer) {
       return boxLayer.states["switch"]("original");
     });
 
