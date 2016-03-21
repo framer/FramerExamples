@@ -26,29 +26,29 @@ n = 0
 for rowNumber in [0..originValuesX.length-1]
 	for colNumber in [0..originValuesY.length-1]
 		n++
-		
+
 		# Create the boxLayer and duplicate them
 		boxLayer = new Layer
 			width:  WIDTH - PADDING
 			height: HEIGHT - PADDING
 			x: (rowNumber) * WIDTH
 			y: (colNumber) * HEIGHT
-		
+
 		boxLayer.image = "http://unsplash.it/#{boxLayer.width}/?image=" + Utils.round Utils.randomNumber(400, 900)
-		
-		# Make boxLayer a subLayer of wrapLayer 
+
+		# Make boxLayer a subLayer of wrapLayer
 		boxLayer.superLayer = wrapLayer
-		
+
 		# Style the box
 		boxLayer.style =
 			border: "4px solid white"
 			borderRadius: "100%"
 			boxShadow: "0px 3px 14px 0px rgba(0,0,0,0.2)"
-		
+
 		# Set animationOptions
 		boxLayer.states.animationOptions =
 			curve: "spring(300,10,10)"
-	
+
 		# Add a state that holds the layers original values
 		boxLayer.states.add "original",
 			x: boxLayer.x
@@ -56,33 +56,33 @@ for rowNumber in [0..originValuesX.length-1]
 			scale: 1
 			blur: 0
 			opacity: 1
-	
+
 		# Store the original X&Y positions
 		boxLayer.originalX = boxLayer.x
-		boxLayer.originalY = boxLayer.y	
+		boxLayer.originalY = boxLayer.y
 
 		# DRAG EVENTS --------------------------------------------
-		
+
 		# Drag start - come to front
-		boxLayer.on Events.DragStart, (event, draggable, boxLayer) ->
+		boxLayer.on Events.DragStart, (event, boxLayer) ->
 			boxLayer.bringToFront()
 
 		# Drag move
-		boxLayer.on Events.DragMove, (event, draggable, boxLayer) ->
-					
+		boxLayer.on Events.DragMove, (event, boxLayer) ->
+
 			distanceX = boxLayer.originalX - boxLayer.x
 			distanceY = boxLayer.originalY - boxLayer.y
-			
+
 			distance = Math.abs(distanceX) + Math.abs(distanceY)
-			
+
 			boxLayer.scale = Utils.mapRange(distance, 0, 100, 1, 0.5)
 			boxLayer.blur = Utils.mapRange(distance, 0, 100, 0, 10)
 			boxLayer.opacity = Utils.mapRange(distance, 0, 100, 1, 0.5)
-		
+
 		# Drag end - switch to the original state
-		boxLayer.on Events.DragEnd, (event, draggable, boxLayer) ->
+		boxLayer.on Events.DragEnd, (event, boxLayer) ->
 			boxLayer.states.switch("original")
-			
+
 		# Make the layer draggable
 		boxLayer.draggable.enabled = true
 		boxLayer.draggable.speedX = 0.2
