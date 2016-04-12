@@ -7,12 +7,14 @@ Framer.Defaults.backgroundColor = null
 # 装载手表图片文件
 # Define watch
 watch = new Layer width: 480, height: 824, image: "images/watch.png", scale: 0.8
-watch.center()
+watch.x = Align.center
+watch.y = Align.center
 
 # 设置屏幕蒙板
 # Set screen mask
 mask = new Layer width: 300, height: 360, backgroundColor: "transparent", superLayer: watch, clip: true
-mask.center()
+mask.x = Align.center
+mask.y = Align.center
 
 # 装载界面源文件
 # Import interface elements
@@ -61,13 +63,14 @@ follow_button.style.boxShadow = "inset 0 0 0 2px rgba(0,0,0,.1)"
 follow_button.opacity = 0
 follow_button.visible = false
 
-message_button.centerX()
-follow_button.centerX()
+message_button.x = Align.center
+follow_button.x = Align.center
 
 window.onresize = -> 
-	watch.center()
-	message_button.centerX()
-	follow_button.centerX()
+	watch.x = Align.center
+	watch.y = Align.center
+	message_button.x = Align.center
+	follow_button.x = Align.center
 
 # 设置UI初始状态
 # Set the initial state UI

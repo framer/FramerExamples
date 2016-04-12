@@ -15,7 +15,9 @@ watch = new Layer({
   scale: 0.8
 });
 
-watch.center();
+watch.x = Align.center;
+
+watch.y = Align.center;
 
 /* 设置屏幕蒙板
 Set screen mask */
@@ -28,7 +30,9 @@ mask = new Layer({
   clip: true
 });
 
-mask.center();
+mask.x = Align.center;
+
+mask.y = Align.center;
 
 /* 装载界面源文件
 Import interface elements */
@@ -111,14 +115,15 @@ follow_button.opacity = 0;
 
 follow_button.visible = false;
 
-message_button.centerX();
+message_button.x = Align.center;
 
-follow_button.centerX();
+follow_button.x = Align.center;
 
 window.onresize = function() {
-  watch.center();
-  message_button.centerX();
-  return follow_button.centerX();
+  watch.x = Align.center;
+  watch.y = Align.center;
+  message_button.x = Align.center;
+  return follow_button.x = Align.center;
 };
 
 /* 设置UI初始状态

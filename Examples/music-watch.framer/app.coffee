@@ -25,8 +25,8 @@ select = new Layer
 	scale: 0.8
 	opacity: 0
 	
-select.center()
-select.y += 12	
+select.x = Align.center 
+select.y = Align.center(12)
 
 select.superLayer = sketch.screen 
 select.placeBehind(audio.controls)

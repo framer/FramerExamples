@@ -3,8 +3,7 @@
 # www.framerjs.com
 
 # Components
-bg = new BackgroundLayer
-	backgroundColor: "#CCC8C8"
+bg = new BackgroundLayer backgroundColor: "#CCC8C8"
 	
 settingsLayer = new Layer
 	width: 690
@@ -77,14 +76,14 @@ glow.style =
 	"background": "radial-gradient( rgba(255,255,255,1) 0%, rgba(255,255,255,0) 60%)"
 	
 # Position settingsLayer
-settingsLayer.center()
+settingsLayer.x = Align.center
+settingsLayer.y = Align.center
 settingsLayer.perspective = 100
 
 # Position Label
 label.html = "Settings" 
-label.center()
-label.y += 150
-label.x -= 5
+label.x = Align.center(5)
+label.y = Align.center(150)
 
 # Place small cog behind the larger one
 gearBottomLayer.placeBehind(gearTopLayer)
@@ -113,7 +112,8 @@ bg.on Events.TouchMove, (event) ->
 	glow.opacity= Utils.modulate delta.x, [0, settingsLayer.midX], [0.3, 1]
 
 Events.wrap(window).addEventListener "resize", (event) ->
-    settingsLayer.center()
-    label.center()
-    label.y += 150
+	settingsLayer.x = Align.center
+	settingsLayer.y = Align.center
+	label.x = Align.center
+	label.y = Align.center(150)
 

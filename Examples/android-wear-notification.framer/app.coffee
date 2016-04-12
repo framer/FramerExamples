@@ -1,15 +1,16 @@
 # Made with Framer
 # by Jorn van Dijk
 # www.framerjs.com
-
-bg = new BackgroundLayer backgroundColor: "#313D4D"
+Framer.Device.screen.backgroundColor = "#313D4D"
 
 # Set up mask layer
 mask = new Layer width:390, height:410, backgroundColor:"null", clip: true
-mask.center()
+mask.x = Align.center
+mask.y = Align.center
 
 window.onresize = ->
-	mask.center()
+	mask.x = Align.center
+	mask.y = Align.center
 	
 mask.shadowY = 3
 mask.shadowBlur = 15
@@ -55,8 +56,7 @@ Sketch.LegDown.states.switchInstant "rotate"
 # Click Event
 a = true
 
-bg.on Events.Click, ->
-	
+mask.on Events.Click, ->
 	if a is true
 		timeA = 0
 		timeB = 0.3

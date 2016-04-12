@@ -1,13 +1,16 @@
-bg = new BackgroundLayer backgroundColor: "#C8C9C1", perspective: 1000
+Framer.Device.screen.backgroundColor = "#C8C9C1"
 
 # Card
 card = new Layer
 	width:480, height:720, y:640, scale:.5, z:100, 
-	image:"images/BearCardL@2x.png", superLayer: bg
+	image:"images/BearCardL@2x.png"
 
 card.draggable.enabled = true
-card.center()
-window.onresize = -> card.center()
+card.x = Align.center
+card.y = Align.center
+window.onresize = -> 
+	card.x = Align.center
+	card.y = Align.center
 
 # Shadow
 card.style = borderRadius: "24px"

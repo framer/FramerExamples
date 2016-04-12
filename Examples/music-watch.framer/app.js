@@ -32,9 +32,9 @@ select = new Layer({
   opacity: 0
 });
 
-select.center();
+select.x = Align.center;
 
-select.y += 12;
+select.y = Align.center(12);
 
 select.superLayer = sketch.screen;
 

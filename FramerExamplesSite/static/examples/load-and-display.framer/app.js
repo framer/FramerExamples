@@ -13,12 +13,15 @@ bg = Framer.Importer.load("imported/Progress Prototype");
 
 bg.Screen.superLayer = canvas;
 
-bg.Screen.center();
+bg.Screen.x = Align.center;
+
+bg.Screen.y = Align.center;
 
 bg.Screen.pixelAlign();
 
 window.onresize = function() {
-  bg.Screen.center();
+  bg.Screen.x = Align.center;
+  bg.Screen.y = Align.center;
   return bg.Screen.pixelAlign();
 };
 
@@ -44,7 +47,9 @@ mask = new Layer({
   opacity: 0
 });
 
-mask.center();
+mask.x = Align.center;
+
+mask.y = Align.center;
 
 mask.y = mask.y + 100;
 
@@ -57,7 +62,9 @@ spinner = new VideoLayer({
   superLayer: mask
 });
 
-spinner.center();
+spinner.x = Align.center;
+
+spinner.y = Align.center;
 
 /* 1s delay for the video to load (for web) */
 

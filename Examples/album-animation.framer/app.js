@@ -1,11 +1,9 @@
 /* Made with Framer
 by Jorn van Dijk
 www.framerjs.com */
-var albums, bg, colors, count, i, j, layerGroup;
+var albums, colors, count, i, j, layerGroup;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#673EBA"
-});
+Framer.Device.screen.backgroundColor = "#673EBA";
 
 layerGroup = Framer.Importer.load("imported/AlbumAnimation");
 
@@ -17,10 +15,13 @@ layerGroup.View.shadowColor = "rgba(0, 0, 0, 0.6)";
 
 layerGroup.View.clip = true;
 
-layerGroup.View.center();
+layerGroup.View.x = Align.center;
+
+layerGroup.View.y = Align.center;
 
 window.onresize = function() {
-  return layerGroup.View.center();
+  layerGroup.View.x = Align.center;
+  return layerGroup.View.y = Align.center;
 };
 
 Framer.Defaults.Animation = {

@@ -92,7 +92,7 @@ iPhone = new Layer({
   superLayer: page1
 });
 
-iPhone.centerX();
+iPhone.x = Align.center;
 
 IF_lets_you_create = new Layer({
   x: 42 * 2,
@@ -692,7 +692,7 @@ buttonLabel_createAccount = new Layer({
   superLayer: whiteButton
 });
 
-buttonLabel_createAccount.centerX();
+buttonLabel_createAccount.x = Align.center;
 
 buttonLabel_SignIn = new Layer({
   y: 20 * 2,
@@ -703,7 +703,7 @@ buttonLabel_SignIn = new Layer({
   visible: false
 });
 
-buttonLabel_SignIn.centerX();
+buttonLabel_SignIn.x = Align.center;
 
 buttonLabel_resetPassword = new Layer({
   y: 20 * 2,
@@ -714,7 +714,7 @@ buttonLabel_resetPassword = new Layer({
   visible: false
 });
 
-buttonLabel_resetPassword.centerX();
+buttonLabel_resetPassword.x = Align.center;
 
 text_SignIn = new Layer({
   x: 25 * 2,

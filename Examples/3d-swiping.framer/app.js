@@ -7,9 +7,7 @@ pages = [];
 
 colors = ["#866ccc", "#28affa", "#2dd7aa", "#ffc22c", "#7ddd11", "#f95faa"];
 
-new BackgroundLayer({
-  backgroundColor: "black"
-});
+Framer.Device.screen.backgroundColor = "black";
 
 pageComponent = new PageComponent({
   size: Screen.size,

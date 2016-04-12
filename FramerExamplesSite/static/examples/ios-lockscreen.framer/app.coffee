@@ -4,7 +4,7 @@
 
 # Import & Defaults
 sketch = Framer.Importer.load "imported/lockscreen"
-bg = new BackgroundLayer backgroundColor: "black"
+Framer.Device.screen.backgroundColor = backgroundColor: "black"
 Framer.Defaults.Animation = curve: "spring(50,30,0)"
 
 # Rename

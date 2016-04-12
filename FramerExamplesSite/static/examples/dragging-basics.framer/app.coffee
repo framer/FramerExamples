@@ -3,8 +3,7 @@
 # www.framerjs.com
 
 # Set background
-bg = new BackgroundLayer
-	backgroundColor: "#28affa"
+Framer.Device.screen.backgroundColor = "#28affa"
 
 # Constraints layer
 constraints = new Layer 
@@ -21,9 +20,10 @@ layerA = new Layer
 	borderRadius: 4
 
 # Center layers
-constraints.center()
-layerA.centerX(-75)
-layerA.centerY()
+constraints.x = Align.center
+constraints.y = Align.center
+layerA.x = Align.center(-75)
+layerA.y = Align.center
 
 # Enable dragging, set constraints
 layerA.draggable.enabled = true

@@ -33,7 +33,7 @@ showIncrements = (layer) ->
 			backgroundColor: "rgba(0,0,0,0.2)"
 			
 		dots.placeBehind(layer.fill)
-		dots.centerY()
+		dots.y = Align.center
 		
 # Store them in an array to add default properties 
 allSliders = [sizeSlider, weightSlider, spacingSlider]

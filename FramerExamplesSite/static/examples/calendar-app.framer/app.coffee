@@ -4,7 +4,7 @@
 
 document.body.style.cursor = "auto"
 Framer.Device.background.image = "images/bg.png"
-bg = new BackgroundLayer backgroundColor: "#EEEDEF"
+Framer.Device.screen.backgroundColor =  "#EEEDEF"
 
 uiScale = .5
 
@@ -30,8 +30,7 @@ imageActionButton = new Layer
 	height:231
 	image:"images/Action Button.png"
 	scale: uiScale
-imageActionButton.centerY()
-imageActionButton.y -= -395
+imageActionButton.y = Align.center(395)
 	
 materialPaperLeft = new Layer
 	x: 0

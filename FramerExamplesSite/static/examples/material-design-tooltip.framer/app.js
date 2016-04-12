@@ -1,13 +1,11 @@
 /* Made with Framer
 by Benjamin den Boer
 www.framerjs.com */
-var button, buttonMorph, canvas, print, printer;
+var button, buttonMorph, print, printer;
 
-canvas = new BackgroundLayer({
-  backgroundColor: "#fff"
+Framer.Device.screen.backgroundColor = "#fff";
 
-  /* Transparent Layer */
-});
+/* Transparent Layer */
 
 button = new Layer({
   width: 192,
@@ -25,9 +23,9 @@ button = new Layer({
 
 button.style["-webkit-mask"] = "url(images/button.png)";
 
-button.center();
+button.x = Align.center;
 
-button.y = button.y + 20;
+button.y = Align.center(20);
 
 buttonMorph = new Layer({
   width: 100,
@@ -40,9 +38,9 @@ buttonMorph = new Layer({
 
 buttonMorph.superLayer = button;
 
-buttonMorph.center();
+buttonMorph.x = Align.center;
 
-buttonMorph.y = -60;
+buttonMorph.y = Align.center(-60);
 
 print = new Layer({
   image: "images/print.png",
@@ -53,7 +51,9 @@ print = new Layer({
 
 print.superLayer = button;
 
-print.center();
+print.x = Align.center;
+
+print.y = Align.center;
 
 printer = new Layer({
   image: "images/printer.png",
@@ -61,9 +61,9 @@ printer = new Layer({
   height: 82
 });
 
-printer.center();
+printer.x = Align.center;
 
-printer.y = printer.y - 100;
+printer.y = Align.center(-100);
 
 buttonMorph.animate({
   properties: {

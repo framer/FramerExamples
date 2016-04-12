@@ -3,9 +3,9 @@
 
   },
   "deviceOrientation" : 0,
-  "sharedPrototype" : 0,
+  "sharedPrototype" : 1,
   "contentScale" : 1,
-  "deviceType" : "apple-iphone-6s-plus-silver",
+  "deviceType" : "apple-iphone-6s-plus-gold",
   "selectedHand" : "",
   "updateDelay" : 0.3,
   "deviceScale" : "fit",

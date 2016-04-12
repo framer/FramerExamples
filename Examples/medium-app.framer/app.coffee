@@ -6,8 +6,7 @@
 sketch = Framer.Importer.load "imported/medium"
 
 amountOfPages = 3
-bg = new BackgroundLayer
-	backgroundColor: "white"
+Framer.Device.screen.backgroundColor = "white"
 
 # The page indicator is the black line at the bottom of the navigation bar
 pageIndicator = new Layer

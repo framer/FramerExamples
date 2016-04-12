@@ -55,7 +55,8 @@ noresults = () ->
 	alertlayer = new Layer x:0, y:0, width:540, height:400,scale:0,backgroundColor:'#fff'
 	container.addSubLayer(alertbg)
 	container.addSubLayer(alertlayer)
-	alertlayer.center()
+	alertlayer.x = Align.center 
+	alertlayer.y = Align.center
 	
 	alertlayer.animate
 		properties:
@@ -109,9 +110,9 @@ cancelicn = new Layer x:570, y:0, width:44, height:44, image:"images/btncancel.p
 buttonhome.addSubLayer(searchicn)	
 buttonhome.addSubLayer(overflowicn)
 buttonhome.addSubLayer(cancelicn)
-cancelicn.centerY()
-searchicn.centerY()	
-overflowicn.centerY()
+cancelicn.y = Align.center
+searchicn.y = Align.center	
+overflowicn.y = Align.center
 
 # Search Box
 buttonhome.addSubLayer(searchfield)
@@ -285,10 +286,9 @@ locationwindow = (place) ->
 		color:'#7D7D7D'
 		fontFamily:'Roboto'
 		fontSize:'28px'
-		lineHeight:'1.2'
-
-	locationlayer.addSubLayer(locationtitle)	
+		lineHeight:'1.2'	
 	locationlayer.addSubLayer(locationrating)
+	locationlayer.addSubLayer(locationtitle)
 	locationlayer.addSubLayer(locationratingbg)
 	locationlayer.addSubLayer(locationratingstar)
 	locationlayer.addSubLayer(starmask)
@@ -300,7 +300,8 @@ locationwindow = (place) ->
 	driveicn = new Layer 
 		x:0, y:0, width:44, height:44, image:"images/car.png"
 	fabbtn.addSubLayer(driveicn)
-	driveicn.center()
+	driveicn.y = Align.center
+	driveicn.x = Align.center
 
 	locationlayer.y = 1136
 	locationlayer.animate

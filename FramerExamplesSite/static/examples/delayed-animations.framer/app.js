@@ -3,7 +3,7 @@ by Koen Bok
 www.framerjs.com */
 var ballCurve, cols, container, i, margin, results, rows, size, startDelta;
 
-Screen.backgroundColor = "#7DDD11";
+Framer.Device.screen.backgroundColor = "#7DDD11";
 
 container = new Layer({
   backgroundColor: "transparent",
@@ -12,10 +12,13 @@ container = new Layer({
   clip: false
 });
 
-container.center();
+container.x = Align.center;
+
+container.y = Align.center;
 
 window.onresize = function() {
-  return container.center();
+  container.x = Align.center;
+  return container.y = Align.center;
 };
 
 /* Variables */

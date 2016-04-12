@@ -1,20 +1,18 @@
 # Made with Framer
 # by Benjamin den Boer
 # www.framerjs.com
-
-bg = new BackgroundLayer 
-	backgroundColor: "#917BDF"
+Framer.Device.screen.backgroundColor = "#917BDF"
 
 # Create Layers
-layerA = new Layer width:80, height:80, 
+layerA = new Layer width:150, height:150, 
 backgroundColor: "#fff", borderRadius:4
-layerA.center()
-layerA.x -= 50
+layerA.x = Align.center(-90)
+layerA.y = Align.center
 
-layerB = new Layer width:80, height:80, 
+layerB = new Layer width:150, height:150, 
 backgroundColor: "#fff", borderRadius: 4
-layerB.center()
-layerB.x += 50
+layerB.x = Align.center(90)
+layerB.y = Align.center
 
 # Define animation of layerA
 layerA.animate 

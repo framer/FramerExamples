@@ -3,13 +3,11 @@ by Pete Lada
 www.framerjs.com */
 
 /* Background */
-var animSpeed, arrow, bg, cancelSearch, cancelStickySearch, closePhoto, codePlaceholder, container, defaultAnimCurve, endRefresh, header, initRedeem, initScan, initSearch, initStickySearch, limit, logo, logoDefaultAnim, logoReturningAnim, margin, noAnim, photoArea, ptr, ptrBorder, qr, qrButton, redeemText, refresh, reset, resetView, searchBar, searchPlaceholder, smallBounce, spin, startRefresh, startY, store, storeStartY, useCode;
+var animSpeed, arrow, cancelSearch, cancelStickySearch, closePhoto, codePlaceholder, container, defaultAnimCurve, endRefresh, header, initRedeem, initScan, initSearch, initStickySearch, limit, logo, logoDefaultAnim, logoReturningAnim, margin, noAnim, photoArea, ptr, ptrBorder, qr, qrButton, redeemText, refresh, reset, resetView, searchBar, searchPlaceholder, smallBounce, spin, startRefresh, startY, store, storeStartY, useCode;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#439FD8"
+Framer.Device.screen.backgroundColor = "#439FD8";
 
-  /* Defaults and variables */
-});
+/* Defaults and variables */
 
 animSpeed = .25;
 
@@ -165,7 +163,7 @@ useCode = new Layer({
   image: "images/use-code.png"
 });
 
-useCode.centerX();
+useCode.x = Align.center;
 
 qrButton = new Layer({
   x: searchBar.width - 200,
@@ -224,9 +222,13 @@ ptr.addSubLayer(ptrBorder);
 
 ptr.addSubLayer(refresh);
 
-arrow.center();
+arrow.x = Align.center;
 
-refresh.center();
+arrow.y = Align.center;
+
+refresh.x = Align.center;
+
+refresh.y = Align.center;
 
 ptr.index = 0;
 
@@ -248,19 +250,19 @@ searchBar.addSubLayer(searchPlaceholder);
 
 searchBar.addSubLayer(codePlaceholder);
 
-codePlaceholder.centerY();
+codePlaceholder.y = Align.center;
 
 searchBar.addSubLayer(qrButton);
 
-qr.centerY();
+qr.y = Align.center;
 
 searchBar.addSubLayer(cancelSearch);
 
 /* Center redeem and logo within parent */
 
-redeemText.centerX();
+redeemText.x = Align.center;
 
-logo.centerX();
+logo.x = Align.center;
 
 /* States for various items */
 

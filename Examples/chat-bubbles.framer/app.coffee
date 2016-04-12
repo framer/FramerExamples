@@ -9,7 +9,7 @@ msgCount = 0
 msgHeight = 150
 
 # Layer Setup
-backdrop = new BackgroundLayer backgroundColor: "#fff"
+Framer.Device.screen.backgroundColor = "#fff"
 
 statusBar = new Layer 
 	x:14, y:10, width:616, height:26, image:"images/statusbar.png"

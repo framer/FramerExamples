@@ -5,9 +5,7 @@ www.framerjs.com */
 /* Set-up */
 var Layers, allowed, bg, container, currentIndex, currentLayer, height, i, j, k, layer, layerAtIndex, len, margin, midIndex, newBG, nextLayer, nextLayerThree, nextLayerTwo, originLayer, prevLayer, prevLayerThree, prevLayerTwo, random, screenWidth, setBackground, switchBackground, switchStates, updateIndex, url, width;
 
-bg = new BackgroundLayer({
-  backgroundColor: "transparent"
-});
+Framer.Device.screen.backgroundColor = "transparent";
 
 document.body.style.cursor = "auto";
 
@@ -30,11 +28,14 @@ container = new Layer({
   clip: false
 });
 
-container.center();
+container.x = Align.center;
+
+container.y = Align.center;
 
 window.onresize = function() {
   container.width = screenWidth;
-  return container.center();
+  container.x = Align.center;
+  return container.y = Align.center;
 };
 
 /* Layer Array */

@@ -5,7 +5,7 @@
 # Set-up & Sketch Import
 sketch = Framer.Importer.load "imported/contacts"
 Framer.Device.background.backgroundColor = "#F3F9FF"
-new BackgroundLayer backgroundColor: "#fff"
+Framer.Device.screen.backgroundColor = "#fff"
 	
 # Create ScrollComponent
 scroll = ScrollComponent.wrap(sketch.content)

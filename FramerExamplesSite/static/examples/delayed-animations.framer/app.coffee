@@ -2,7 +2,7 @@
 # by Koen Bok
 # www.framerjs.com
 
-Screen.backgroundColor = "#7DDD11"
+Framer.Device.screen.backgroundColor = "#7DDD11"
 
 container = new Layer 
 	backgroundColor: "transparent"
@@ -10,8 +10,11 @@ container = new Layer
 	height: 600
 	clip:false
 	
-container.center()
-window.onresize = -> container.center()
+container.x = Align.center
+container.y = Align.center
+window.onresize = ->
+	container.x = Align.center
+	container.y = Align.center
 	
 # Variables
 rows = 4

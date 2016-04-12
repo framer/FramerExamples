@@ -38,8 +38,7 @@ applyCSS = (layer)->
 	container.style.bottom = "6px"
 		
 # Background setup
-bg = new BackgroundLayer
-	backgroundColor: "#fff"
+Framer.Device.screen.backgroundColor = "#fff"
 	
 # Feed container setup
 wrapper = new ScrollComponent

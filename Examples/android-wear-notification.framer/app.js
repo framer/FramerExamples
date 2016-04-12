@@ -1,13 +1,11 @@
 /* Made with Framer
 by Jorn van Dijk
 www.framerjs.com */
-var Sketch, a, bg, mask;
+var Sketch, a, mask;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#313D4D"
+Framer.Device.screen.backgroundColor = "#313D4D";
 
-  /* Set up mask layer */
-});
+/* Set up mask layer */
 
 mask = new Layer({
   width: 390,
@@ -16,10 +14,13 @@ mask = new Layer({
   clip: true
 });
 
-mask.center();
+mask.x = Align.center;
+
+mask.y = Align.center;
 
 window.onresize = function() {
-  return mask.center();
+  mask.x = Align.center;
+  return mask.y = Align.center;
 };
 
 mask.shadowY = 3;
@@ -123,7 +124,7 @@ Sketch.LegDown.states.switchInstant("rotate");
 
 a = true;
 
-bg.on(Events.Click, function() {
+mask.on(Events.Click, function() {
   var timeA, timeB, timeC, timeD;
   if (a === true) {
     timeA = 0;

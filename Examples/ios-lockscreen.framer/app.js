@@ -3,13 +3,13 @@ By Jorn van Dijk
 www.framerjs.com */
 
 /* Import & Defaults */
-var bg, cancel, chrome, handleBottom, handleBottomY, handleTop, handleTopY, home, lock, mask, sketch, swipe, wallpaper, wallpaperBlur;
+var cancel, chrome, handleBottom, handleBottomY, handleTop, handleTopY, home, lock, mask, sketch, swipe, wallpaper, wallpaperBlur;
 
 sketch = Framer.Importer.load("imported/lockscreen");
 
-bg = new BackgroundLayer({
+Framer.Device.screen.backgroundColor = {
   backgroundColor: "black"
-});
+};
 
 Framer.Defaults.Animation = {
   curve: "spring(50,30,0)"

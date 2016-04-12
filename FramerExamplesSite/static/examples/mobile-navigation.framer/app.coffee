@@ -3,8 +3,7 @@
 # @gielcobben
 # www.framerjs.com
 
-bg = new BackgroundLayer
-	backgroundColor: "#FFF"
+Framer.Device.screen.backgroundColor = "#FFF"
 
 # ScrollComponent
 scroll = new ScrollComponent
@@ -41,7 +40,7 @@ logo = new Layer
 	width: 36, 
 	height: 42
 	image: "images/apple.png"
-logo.centerX()
+logo.x = Align.center
 	
 hamburger = new Layer
 	x: 34, 
@@ -112,7 +111,7 @@ for i in [0...7]
 	
 	item.html = titles[i]
 
-	item.centerX()
+	item.x = Align.center
 
 	item.states.add
 		open:

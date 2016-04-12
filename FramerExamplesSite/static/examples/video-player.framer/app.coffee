@@ -4,7 +4,7 @@
 
 # Import
 sketch = Framer.Importer.load "imported/video-player"
-new BackgroundLayer backgroundColor: "#000"
+Framer.Device.screen.backgroundColor = "#000"
 width = Screen.width - 240
 
 # Video wrapper

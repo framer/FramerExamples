@@ -26,10 +26,13 @@ wrapLayer = new Layer({
   clip: false
 });
 
-wrapLayer.center();
+wrapLayer.x = Align.center;
+
+wrapLayer.y = Align.center;
 
 window.onresize = function() {
-  return wrapLayer.center();
+  wrapLayer.x = Align.center;
+  return wrapLayer.y = Align.center;
 };
 
 n = 0;
