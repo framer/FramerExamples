@@ -130,7 +130,8 @@ ui = do ->
 		timeHeading.html = if currentLevel > 0 then styleHeading("#78D17B", "done") else styleHeading("#D05050", "clear")
 		levelHeading.html = "&#8250; SLIDE TO CONTINUE"
 		timeHeading.superLayer = scroll.content.subLayers[0]
-		timeHeading.center()
+		timeHeading.x = Align.center
+		timeHeading.y = Align.center
 		levelHeading.maxY = Screen.height-100
 		
 		# Determine whether the scroll position is large enough to progress on to the next screen

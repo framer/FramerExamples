@@ -5,12 +5,14 @@
 screenWidth = Screen.width
 screenHeight = Screen.height
 
-bg = new BackgroundLayer backgroundColor: "#FBA145"
+Framer.Device.screen.backgroundColor = "#FBA145"
 container = new Layer backgroundColor:"transparent", width: 470, height:100, clip:false
-container.center()
+container.x = Align.center 
+container.y = Align.center
 
 window.onresize = ->
-	container.center()
+	container.x = Align.center 
+	container.y = Align.center
 	
 # Container for our Array
 Layers = []

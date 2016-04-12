@@ -60,7 +60,7 @@ FancyMonthWidget = (params)->
 		height: (rows-1)*params.gutter + rows*params.monthCellHeight
 		backgroundColor: "none"	
 		clip: false
-	@monthWidget.centerX()
+	@monthWidget.x = Align.center
 	@monthWidget.perspective = 100
 	
 	dayIndex = 0

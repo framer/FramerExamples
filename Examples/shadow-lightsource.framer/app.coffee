@@ -6,7 +6,8 @@ bg = new BackgroundLayer
 	backgroundColor: "#4DD0E1"
 
 layerA = new Layer backgroundColor: "#fff", borderRadius: 4
-layerA.center()
+layerA.x = Align.center
+layerA.y = Align.center
 
 bg.on Events.TouchMove, (event) ->
 	delta =

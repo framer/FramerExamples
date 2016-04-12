@@ -3,7 +3,7 @@
 # www.framerjs.com
 
 # Set-up
-bg = new BackgroundLayer backgroundColor: "transparent"
+Framer.Device.screen.backgroundColor = "transparent"
 document.body.style.cursor = "auto"
 width = 150
 height = 200
@@ -13,11 +13,13 @@ currentLayer = nextLayer = prevLayer = prevLayerTwo = prevLayerThree = nextLayer
 
 # Container
 container = new Layer backgroundColor: "transparent", width: screenWidth, height:height, clip:false
-container.center()
+container.x = Align.center 
+container.y = Align.center
 
 window.onresize = -> 
 	container.width = screenWidth
-	container.center()
+	container.x = Align.center 
+	container.y = Align.center
 	
 # Layer Array
 Layers = []

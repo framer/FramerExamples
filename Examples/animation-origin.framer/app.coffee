@@ -1,9 +1,7 @@
 # Made with Framer
 # by Benjamin den Boer
 # www.framerjs.com
-
-bg = new BackgroundLayer 
-	backgroundColor: "#877DD7"
+Framer.Device.screen.backgroundColor = "#877DD7"
 
 # Create Layers
 layerA = new Layer 
@@ -12,7 +10,8 @@ layerA = new Layer
 	backgroundColor: "#fff"
 	borderRadius: 4
 	
-layerA.center()
+layerA.x = Align.center
+layerA.y = Align.center
 layerA.originX = 1
 layerA.originY = 0
 

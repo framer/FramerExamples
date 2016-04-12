@@ -27,7 +27,7 @@ avatar = new Layer
 	
 # Hierarchy and placement
 maskY = mask.y
-mask.centerX()
+mask.x = Align.center
 
 # Defining states and animationOptions
 sketch.content.states.add(hide: { opacity: 0 })

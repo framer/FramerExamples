@@ -17,8 +17,11 @@ wrapLayer = new Layer
 	height: HEIGHT * originValuesY.length - 30
 	backgroundColor:'null'
 	clip:false
-wrapLayer.center()
-window.onresize = -> wrapLayer.center()
+wrapLayer.x = Align.center
+wrapLayer.y = Align.center
+window.onresize = ->
+	wrapLayer.x = Align.center
+	wrapLayer.y = Align.center
 
 n = 0
 

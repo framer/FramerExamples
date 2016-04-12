@@ -7,10 +7,12 @@ canvas = new BackgroundLayer backgroundColor: "#f9f9f9"
 # Sketch Import
 bg = Framer.Importer.load "imported/Progress Prototype"
 bg.Screen.superLayer = canvas
-bg.Screen.center()
+bg.Screen.x = Align.center 
+bg.Screen.y = Align.center
 bg.Screen.pixelAlign()
 window.onresize = ->
-	bg.Screen.center()
+	bg.Screen.x = Align.center 
+	bg.Screen.y = Align.center
 	bg.Screen.pixelAlign()
 	
 # Mask
@@ -22,11 +24,13 @@ mask = new Layer
 	height: 100, width: 100, clip: true
 	superLayer: container
 	backgroundColor: "#fff", rotation: 90, opacity: 0
-mask.center()
+mask.x = Align.center 
+mask.y = Align.center
 mask.y = mask.y + 100
 # Spinner made in After Effects
 spinner = new VideoLayer video: "images/spinner.mp4", width:200, height:200, superLayer: mask
-spinner.center()
+spinner.x = Align.center 
+spinner.y = Align.center
 
 # 1s delay for the video to load (for web)
 Utils.delay 1, ->

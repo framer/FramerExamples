@@ -2,15 +2,19 @@
 # by Jorn van Dijk
 # www.framerjs.com
 
-bg = new BackgroundLayer backgroundColor:"#673EBA"
+Framer.Device.screen.backgroundColor = "#673EBA"
 
 layerGroup = Framer.Importer.load "imported/AlbumAnimation"
 layerGroup.View.shadowY = 3
 layerGroup.View.shadowBlur = 15
 layerGroup.View.shadowColor = "rgba(0, 0, 0, 0.6)"
 layerGroup.View.clip = true
-layerGroup.View.center()
-window.onresize = -> layerGroup.View.center()
+layerGroup.View.x = Align.center
+layerGroup.View.y = Align.center
+
+window.onresize = -> 
+	layerGroup.View.x = Align.center
+	layerGroup.View.y = Align.center
 	
 Framer.Defaults.Animation =
 	curve: "spring"

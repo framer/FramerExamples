@@ -3,7 +3,7 @@
 # www.framerjs.com
 
 # Background
-bg = new BackgroundLayer backgroundColor: "#439FD8"
+Framer.Device.screen.backgroundColor =  "#439FD8"
 
 # Defaults and variables
 animSpeed = .25
@@ -58,7 +58,7 @@ redeemText = new Layer  x:0, y:114, width:362, height:65, image:"images/redeem-t
 cancelSearch = new Layer x:525, y:20, width:40, height:40, image:"images/cancel-search.png", opacity: 0, index: 0
 
 useCode = new Layer x:0, y:searchBar.y-30-43, width:180, height:43, image:"images/use-code.png"
-useCode.centerX()
+useCode.x = Align.center
 
 qrButton = new Layer x: searchBar.width - 200, y: 0, width: 200, height: searchBar.height, backgroundColor: "transparent"
 qr = new Layer x:150, y:0, width:34, height:34, image:"images/qr.png"
@@ -71,8 +71,10 @@ refresh = new Layer x:0, y:0, width:44, height:44, image:"images/refresh.png", o
 ptr.addSubLayer arrow
 ptr.addSubLayer ptrBorder
 ptr.addSubLayer refresh
-arrow.center()
-refresh.center()
+arrow.x = Align.center
+arrow.y = Align.center
+refresh.x = Align.center
+refresh.y = Align.center
 ptr.index = 0
 
 qrButton.addSubLayer qr
@@ -87,14 +89,14 @@ header.addSubLayer searchBar
 		
 searchBar.addSubLayer searchPlaceholder
 searchBar.addSubLayer codePlaceholder
-codePlaceholder.centerY()
+codePlaceholder.y = Align.center
 searchBar.addSubLayer qrButton
-qr.centerY()
+qr.y = Align.center
 searchBar.addSubLayer cancelSearch
 
 # Center redeem and logo within parent
-redeemText.centerX()
-logo.centerX()
+redeemText.x = Align.center
+logo.x = Align.center
 
 # States for various items
 qrButton.states.add

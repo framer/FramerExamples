@@ -2,7 +2,7 @@
 # by Benjamin den Boer
 # www.framerjs.com
 
-canvas = new BackgroundLayer backgroundColor:"#fff"
+Framer.Device.screen.backgroundColor = "#fff"
 
 # Transparent Layer
 button = new Layer width:192, height:96, clip: true, backgroundColor: null
@@ -11,21 +11,22 @@ backgroundColor: "none", borderRadius: "12px"
 # Layer Mask (same dimensions)
 button.style["-webkit-mask"] = "url(images/button.png)"
 
-button.center()
-button.y = button.y + 20
+button.x = Align.center 
+button.y = Align.center(20)
 
 buttonMorph = new Layer width:100, height:100, backgroundColor: "#7E7E7E", borderRadius: "50%", scale:0.5, opacity:0
 buttonMorph.superLayer = button
-buttonMorph.center()
-buttonMorph.y =- 60
+buttonMorph.x = Align.center 
+buttonMorph.y = Align.center(-60)
 
 print = new Layer image: "images/print.png", width:103, height:36, opacity:0
 print.superLayer = button
-print.center()
+print.x = Align.center 
+print.y = Align.center
 
 printer = new Layer image:"images/printer.png", width:90, height:82
-printer.center()
-printer.y = printer.y - 100
+printer.x = Align.center 
+printer.y = Align.center(-100)
 
 buttonMorph.animate 
 	properties:

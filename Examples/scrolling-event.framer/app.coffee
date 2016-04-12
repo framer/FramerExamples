@@ -3,22 +3,23 @@
 # www.framerjs.com
 
 # Set background
-bg = new BackgroundLayer 
-	backgroundColor: "#2DD7AA"
+Framer.Device.screen.backgroundColor = "#2DD7AA"
 
 # Create ScrollComponent
 scroll = new ScrollComponent
 	backgroundColor: "rgba(255,255,255,0.2)"
 	scrollHorizontal: false
-	width: 220
-	height: 220
+	width: 300
+	height: 300
 	borderRadius: 8
 
-scroll.center()
+scroll.x = Align.center
+scroll.y = Align.center
 
 # Add spacing
 scroll.contentInset = 
-	bottom: 10
+	top: 20
+	bottom: 20
 	
 # Create 10 layers
 for i in [0..6]
@@ -26,9 +27,9 @@ for i in [0..6]
 		superLayer: scroll.content
 		backgroundColor: "#fff"
 		borderRadius: 4
-		width: 200
+		width: 260
 		height: 60
-		x: 10
+		x: 20
 		y: 70 * i
 	
 	if i == 0
