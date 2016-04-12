@@ -4,6 +4,7 @@
 
 # Importing
 psd = Framer.Importer.load "imported/Photoshop_Twitter_Original_150817"
+
 Utils.globalLayers(psd)
 
 # Setup
@@ -41,10 +42,8 @@ BirdX.states.switchInstant "Home"
 shadebg.states.switchInstant "Home"
 
 for circle, i in circles
-
 	# Add States
 	circle.states.add
-
 		Home:
 			opacity: 1
 			x: (Screen.width - circle.width) / 2 
@@ -62,10 +61,8 @@ for circle, i in circles
 
 # Interaction
 bgButton.on Events.Click, ->
-
 	# Switch to onboard
 	if isHome	
-
 		tweet.states.switch "Onboard"
 		BirdX.states.switch "Onboard"
 		shadebg.states.switch "Onboard"

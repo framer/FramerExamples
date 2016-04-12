@@ -1,24 +1,26 @@
 # Made with Framer
 # by Benjamin den Boer
 # www.framerjs.com
-
-bg = new BackgroundLayer 
-	backgroundColor: "#877DD7"
+Framer.Device.screen.backgroundColor = "#877DD7"
 
 # Create layers
 layerA = new Layer 
+	height: 150
+	width: 150
 	backgroundColor: "#fff"
 	borderRadius: 4
 
 layerB = new Layer 
+	height: 150
+	width: 150
 	backgroundColor: "#fff"
 	borderRadius: 4
 	
 # Staging
-layerA.center()	
-layerB.center()
-layerA.x += 60
-layerB.x -= 60
+layerA.x = Align.center(90)
+layerA.y = Align.center
+layerB.x = Align.center(-90)
+layerB.y = Align.center
 
 # Store within array
 Layers = [layerA, layerB]

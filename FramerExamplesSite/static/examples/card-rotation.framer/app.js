@@ -1,11 +1,8 @@
-var bg, card, originalX, originalY, springCurve;
+var card, originalX, originalY, springCurve;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#C8C9C1",
-  perspective: 1000
+Framer.Device.screen.backgroundColor = "#C8C9C1";
 
-  /* Card */
-});
+/* Card */
 
 card = new Layer({
   width: 480,
@@ -13,16 +10,18 @@ card = new Layer({
   y: 640,
   scale: .5,
   z: 100,
-  image: "images/BearCardL@2x.png",
-  superLayer: bg
+  image: "images/BearCardL@2x.png"
 });
 
 card.draggable.enabled = true;
 
-card.center();
+card.x = Align.center;
+
+card.y = Align.center;
 
 window.onresize = function() {
-  return card.center();
+  card.x = Align.center;
+  return card.y = Align.center;
 };
 
 /* Shadow */

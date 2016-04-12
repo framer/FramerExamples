@@ -2,11 +2,9 @@
 by Giel Cobben
 @gielcobben
 www.framerjs.com */
-var bag, bg, closed, curve, hamburger, i, item, j, k, line, logo, nav, scroll, scrollLayer, titles;
+var bag, closed, curve, hamburger, i, item, j, k, line, logo, nav, scroll, scrollLayer, titles;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#FFF"
-});
+Framer.Device.screen.backgroundColor = "#FFF";
 
 /* ScrollComponent */
 
@@ -51,7 +49,7 @@ logo = new Layer({
   image: "images/apple.png"
 });
 
-logo.centerX();
+logo.x = Align.center;
 
 hamburger = new Layer({
   x: 34,
@@ -135,7 +133,7 @@ for (i = k = 0; k < 7; i = ++k) {
     "font-weight": "200"
   };
   item.html = titles[i];
-  item.centerX();
+  item.x = Align.center;
   item.states.add({
     open: {
       y: item.y + 100,

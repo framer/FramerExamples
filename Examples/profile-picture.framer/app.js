@@ -43,7 +43,7 @@ avatar = new Layer({
 
 maskY = mask.y;
 
-mask.centerX();
+mask.x = Align.center;
 
 /* Defining states and animationOptions */
 

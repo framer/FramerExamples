@@ -1,11 +1,9 @@
 /* Made with Framer
 by Benjamin den Boer
 www.framerjs.com */
-var bg, layerA;
+var layerA;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#877DD7"
-});
+Framer.Device.screen.backgroundColor = "#877DD7";
 
 /* Create Layers */
 
@@ -16,7 +14,9 @@ layerA = new Layer({
   borderRadius: 4
 });
 
-layerA.center();
+layerA.x = Align.center;
+
+layerA.y = Align.center;
 
 layerA.originX = 1;
 

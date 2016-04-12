@@ -3,7 +3,7 @@ by Jay Stakelon
 www.framerjs.com */
 
 /* Data for each of the video cards */
-var applyCSS, backBtn, backImg, bg, currentCard, dataStub, detailContent, detailView, exitDetailView, header, setupCard, toDetailView, wrapper;
+var applyCSS, backBtn, backImg, currentCard, dataStub, detailContent, detailView, exitDetailView, header, setupCard, toDetailView, wrapper;
 
 dataStub = [
   {
@@ -47,9 +47,7 @@ applyCSS = function(layer) {
 
 /* Background setup */
 
-bg = new BackgroundLayer({
-  backgroundColor: "#fff"
-});
+Framer.Device.screen.backgroundColor = "#fff";
 
 /* Feed container setup */
 

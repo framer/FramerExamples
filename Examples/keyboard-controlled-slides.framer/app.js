@@ -1,15 +1,13 @@
 /* Made with Framer
 by Benjamin den Boer
 www.framerjs.com */
-var Layers, bg, container, currentIndex, currentLayer, getIndexByFrame, i, j, layer, layerAtIndex, nextLayer, nextSlide, prevLayer, prevSlide, screenHeight, screenWidth, updateIndex;
+var Layers, container, currentIndex, currentLayer, getIndexByFrame, i, j, layer, layerAtIndex, nextLayer, nextSlide, prevLayer, prevSlide, screenHeight, screenWidth, updateIndex;
 
 screenWidth = Screen.width;
 
 screenHeight = Screen.height;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#FBA145"
-});
+Framer.Device.screen.backgroundColor = "#FBA145";
 
 container = new Layer({
   backgroundColor: "transparent",
@@ -18,10 +16,13 @@ container = new Layer({
   clip: false
 });
 
-container.center();
+container.x = Align.center;
+
+container.y = Align.center;
 
 window.onresize = function() {
-  return container.center();
+  container.x = Align.center;
+  return container.y = Align.center;
 };
 
 /* Container for our Array */

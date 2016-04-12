@@ -1,35 +1,33 @@
 /* Made with Framer
 by Benjamin den Boer
 www.framerjs.com */
-var bg, layerA, layerB;
+var layerA, layerB;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#917BDF"
-});
+Framer.Device.screen.backgroundColor = "#917BDF";
 
 /* Create Layers */
 
 layerA = new Layer({
-  width: 80,
-  height: 80,
+  width: 150,
+  height: 150,
   backgroundColor: "#fff",
   borderRadius: 4
 });
 
-layerA.center();
+layerA.x = Align.center(-90);
 
-layerA.x -= 50;
+layerA.y = Align.center;
 
 layerB = new Layer({
-  width: 80,
-  height: 80,
+  width: 150,
+  height: 150,
   backgroundColor: "#fff",
   borderRadius: 4
 });
 
-layerB.center();
+layerB.x = Align.center(90);
 
-layerB.x += 50;
+layerB.y = Align.center;
 
 /* Define animation of layerA */
 

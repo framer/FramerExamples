@@ -3,9 +3,7 @@ by Benjamin den Boer
 www.framerjs.com */
 var layerA;
 
-new BackgroundLayer({
-  backgroundColor: "#28affa"
-});
+Framer.Device.screen.backgroundColor = "#28affa";
 
 layerA = new Layer({
   width: 150,
@@ -16,10 +14,13 @@ layerA = new Layer({
   /* Centering */
 });
 
-layerA.center();
+layerA.x = Align.center;
+
+layerA.y = Align.center;
 
 window.onresize = function() {
-  return layerA.center();
+  layerA.x = Align.center;
+  return layerA.y = Align.center;
 };
 
 /* Enable dragging with momentum */

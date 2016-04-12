@@ -1,15 +1,16 @@
 # Made with Framer
 # by Benjamin den Boer
 # www.framerjs.com
-
-new BackgroundLayer 
-	backgroundColor: "#28affa"
+Framer.Device.screen.backgroundColor = "#28affa"
 	
 layerA = new Layer width:150, height:150, backgroundColor:"#fff", borderRadius:100
 
 # Centering
-layerA.center()
-window.onresize = -> layerA.center()
+layerA.x = Align.center
+layerA.y = Align.center
+window.onresize = ->
+	layerA.x = Align.center
+	layerA.y = Align.center
 
 # Enable dragging with momentum
 layerA.draggable.enabled = true

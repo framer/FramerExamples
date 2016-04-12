@@ -52,7 +52,7 @@ showIncrements = function(layer) {
       backgroundColor: "rgba(0,0,0,0.2)"
     });
     dots.placeBehind(layer.fill);
-    results.push(dots.centerY());
+    results.push(dots.y = Align.center);
   }
   return results;
 };

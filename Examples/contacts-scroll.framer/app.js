@@ -9,11 +9,9 @@ sketch = Framer.Importer.load("imported/contacts");
 
 Framer.Device.background.backgroundColor = "#F3F9FF";
 
-new BackgroundLayer({
-  backgroundColor: "#fff"
+Framer.Device.screen.backgroundColor = "#fff";
 
-  /* Create ScrollComponent */
-});
+/* Create ScrollComponent */
 
 scroll = ScrollComponent.wrap(sketch.content);
 

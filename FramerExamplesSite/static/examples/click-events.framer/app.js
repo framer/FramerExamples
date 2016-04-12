@@ -1,33 +1,35 @@
 /* Made with Framer
 by Koen Bok
 www.framerjs.com */
-var bg, layerA, layerB;
+var layerA, layerB;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#2DD7AA"
-});
+Framer.Device.screen.backgroundColor = "#2DD7AA";
 
 /* Create Layers */
 
 layerA = new Layer({
+  height: 150,
+  width: 150,
   backgroundColor: "#fff",
   borderRadius: 4
 });
 
 layerB = new Layer({
+  height: 150,
+  width: 150,
   backgroundColor: "#fff",
   borderRadius: 4
 });
 
 /* Staging */
 
-layerA.center();
+layerA.y = Align.center;
 
-layerB.center();
+layerA.x = Align.center(-90);
 
-layerA.x -= 60;
+layerB.y = Align.center;
 
-layerB.x += 60;
+layerB.x = Align.center(90);
 
 /* Click Event */
 

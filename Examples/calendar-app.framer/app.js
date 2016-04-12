@@ -1,15 +1,13 @@
 /* Made with Framer
 by Kai Daniels
 www.framerjs.com */
-var bg, calendarCenterLines, calendarCenterLines1, calendarCenterLines2, calendarCenterLines3, calendarCenterLines4, calendarCenterLines5, calendarCenterLines6, calendarCenterLinesAlt, calendarCenterLinesAlt1, calendarCenterLinesAlt2, calendarCenterLinesAlt3, calendarCenterLinesAlt4, calendarCenterLinesAlt5, calendarCenterLinesAlt6, calendarCenterLinesAlt7, calendarLeft, calendarLines1, calendarLines2, calendarLines3, calendarLines4, calendarLines5, calendarLines6, calendarRight, calendarTimes, calendarTimesLine, conceptReview, conceptText, dropOffCar, dropText1, garbageOut, garbageText, iconsRight, imageActionButton, juneLeft, materialPaperCenter, materialPaperLeft, materialPaperRight, nineA, threeLight, threeRegular, timeIndicator, timeIndicatorCircle, tueLayer, tuesdayLayer, tuesdayTextLayer, twoP, uiScale;
+var calendarCenterLines, calendarCenterLines1, calendarCenterLines2, calendarCenterLines3, calendarCenterLines4, calendarCenterLines5, calendarCenterLines6, calendarCenterLinesAlt, calendarCenterLinesAlt1, calendarCenterLinesAlt2, calendarCenterLinesAlt3, calendarCenterLinesAlt4, calendarCenterLinesAlt5, calendarCenterLinesAlt6, calendarCenterLinesAlt7, calendarLeft, calendarLines1, calendarLines2, calendarLines3, calendarLines4, calendarLines5, calendarLines6, calendarRight, calendarTimes, calendarTimesLine, conceptReview, conceptText, dropOffCar, dropText1, garbageOut, garbageText, iconsRight, imageActionButton, juneLeft, materialPaperCenter, materialPaperLeft, materialPaperRight, nineA, threeLight, threeRegular, timeIndicator, timeIndicatorCircle, tueLayer, tuesdayLayer, tuesdayTextLayer, twoP, uiScale;
 
 document.body.style.cursor = "auto";
 
 Framer.Device.background.image = "images/bg.png";
 
-bg = new BackgroundLayer({
-  backgroundColor: "#EEEDEF"
-});
+Framer.Device.screen.backgroundColor = "#EEEDEF";
 
 uiScale = .5;
 
@@ -39,9 +37,7 @@ imageActionButton = new Layer({
   scale: uiScale
 });
 
-imageActionButton.centerY();
-
-imageActionButton.y -= -395;
+imageActionButton.y = Align.center(395);
 
 materialPaperLeft = new Layer({
   x: 0,

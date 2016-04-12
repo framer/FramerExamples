@@ -7,9 +7,7 @@ var progress, showPause, showPlay, sketch, time, vid, vidBackground, vidWrapper,
 
 sketch = Framer.Importer.load("imported/video-player");
 
-new BackgroundLayer({
-  backgroundColor: "#000"
-});
+Framer.Device.screen.backgroundColor = "#000";
 
 width = Screen.width - 240;
 

@@ -105,7 +105,8 @@ noresults = function() {
   });
   container.addSubLayer(alertbg);
   container.addSubLayer(alertlayer);
-  alertlayer.center();
+  alertlayer.x = Align.center;
+  alertlayer.y = Align.center;
   alertlayer.animate({
     properties: {
       scale: 1
@@ -255,11 +256,11 @@ buttonhome.addSubLayer(overflowicn);
 
 buttonhome.addSubLayer(cancelicn);
 
-cancelicn.centerY();
+cancelicn.y = Align.center;
 
-searchicn.centerY();
+searchicn.y = Align.center;
 
-overflowicn.centerY();
+overflowicn.y = Align.center;
 
 /* Search Box */
 
@@ -507,8 +508,8 @@ locationwindow = function(place) {
     fontSize: '28px',
     lineHeight: '1.2'
   };
-  locationlayer.addSubLayer(locationtitle);
   locationlayer.addSubLayer(locationrating);
+  locationlayer.addSubLayer(locationtitle);
   locationlayer.addSubLayer(locationratingbg);
   locationlayer.addSubLayer(locationratingstar);
   locationlayer.addSubLayer(starmask);
@@ -536,7 +537,8 @@ locationwindow = function(place) {
     image: "images/car.png"
   });
   fabbtn.addSubLayer(driveicn);
-  driveicn.center();
+  driveicn.y = Align.center;
+  driveicn.x = Align.center;
   locationlayer.y = 1136;
   locationlayer.animate({
     properties: {

@@ -3,11 +3,9 @@ by Benjamin den Boer
 www.framerjs.com */
 
 /* Set background */
-var bg, constraints, layerA;
+var constraints, layerA;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#28affa"
-});
+Framer.Device.screen.backgroundColor = "#28affa";
 
 /* Constraints layer */
 
@@ -29,11 +27,13 @@ layerA = new Layer({
 
 /* Center layers */
 
-constraints.center();
+constraints.x = Align.center;
 
-layerA.centerX(-75);
+constraints.y = Align.center;
 
-layerA.centerY();
+layerA.x = Align.center(-75);
+
+layerA.y = Align.center;
 
 /* Enable dragging, set constraints */
 

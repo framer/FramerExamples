@@ -3,7 +3,7 @@ by Ed Chao
 www.framerjs.com */
 
 /* Variables */
-var backdrop, convoWrapper, inputElement, keyboard, msgCount, msgHeight, screenHeight, screenWidth, statusBar, textInputLayer;
+var convoWrapper, inputElement, keyboard, msgCount, msgHeight, screenHeight, screenWidth, statusBar, textInputLayer;
 
 screenWidth = 640;
 
@@ -15,9 +15,7 @@ msgHeight = 150;
 
 /* Layer Setup */
 
-backdrop = new BackgroundLayer({
-  backgroundColor: "#fff"
-});
+Framer.Device.screen.backgroundColor = "#fff";
 
 statusBar = new Layer({
   x: 14,

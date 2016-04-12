@@ -3,7 +3,7 @@ by Benjamin den Boer & Koen Bok
 www.framerjs.com */
 
 /* Variables */
-var Layers, bg, canvas, getFrameByIndex, getIndexByFrame, i, j, layer, layerAtIndex, listHeight, listWidth, yDistance;
+var Layers, canvas, getFrameByIndex, getIndexByFrame, i, j, layer, layerAtIndex, listHeight, listWidth, yDistance;
 
 listWidth = 320;
 
@@ -11,9 +11,7 @@ listHeight = 90;
 
 yDistance = listHeight + 10;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#eee"
-});
+Framer.Device.screen.backgroundColor = "#eee";
 
 canvas = new Layer({
   width: listWidth,
@@ -22,10 +20,13 @@ canvas = new Layer({
   clip: false
 });
 
-canvas.center();
+canvas.x = Align.center;
+
+canvas.y = Align.center;
 
 window.onresize = function() {
-  return canvas.center();
+  canvas.x = Align.center;
+  return canvas.y = Align.center;
 };
 
 /* Container for our Array */

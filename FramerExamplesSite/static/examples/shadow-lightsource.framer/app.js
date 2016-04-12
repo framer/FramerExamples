@@ -12,7 +12,9 @@ layerA = new Layer({
   borderRadius: 4
 });
 
-layerA.center();
+layerA.x = Align.center;
+
+layerA.y = Align.center;
 
 bg.on(Events.TouchMove, function(event) {
   var alpha, delta, dist;

@@ -1,7 +1,3 @@
-/* Made with Framer
-by Benjamin den Boer
-www.framerjs.com */
-
 /* Set background */
 var bg, i, j, layer, page;
 
@@ -13,24 +9,24 @@ bg = new BackgroundLayer({
 
 page = new PageComponent({
   width: 300,
-  height: 150,
+  height: 200,
+  x: Align.center,
+  y: Align.center,
   scrollVertical: false,
   borderRadius: 6
 });
 
-page.center();
-
 /* Create layers in a for-loop */
 
-for (i = j = 0; j < 8; i = ++j) {
+for (i = j = 0; j < 3; i = ++j) {
   layer = new Layer({
     superLayer: page.content,
-    width: 150,
-    height: 150,
+    width: 200,
+    height: 200,
+    x: 210 * i,
     backgroundColor: "#fff",
     borderRadius: 6,
-    opacity: 0.3,
-    x: 160 * i
+    opacity: 0.3
   });
 }
 

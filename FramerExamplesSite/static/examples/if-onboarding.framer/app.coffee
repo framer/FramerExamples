@@ -61,7 +61,7 @@ iPhone = new Layer
 	width:150*2, height:300*2
 	image:"images/phone.png"
 	superLayer: page1
-iPhone.centerX()
+iPhone.x = Align.center
 
 IF_lets_you_create = new Layer
 	x:42*2, y:402*2, 
@@ -473,21 +473,21 @@ buttonLabel_createAccount = new Layer
 	y: 20*2, width: 151*2, height: 18*2,
 	image: "images/Create Account.png"
 	superLayer: whiteButton
-buttonLabel_createAccount.centerX()
+buttonLabel_createAccount.x = Align.center
 
 buttonLabel_SignIn = new Layer
 	y: 20*2, width: 65*2, height: 22*2, 
 	image: "images/Sign in.png"
 	superLayer: whiteButton
 	visible: false
-buttonLabel_SignIn.centerX()
+buttonLabel_SignIn.x = Align.center
 
 buttonLabel_resetPassword = new Layer
 	y: 20*2, width: 152*2, height: 23*2, 
 	image: "images/Reset password.png"
 	superLayer: whiteButton
 	visible: false
-buttonLabel_resetPassword.centerX()
+buttonLabel_resetPassword.x = Align.center
 
 
 text_SignIn = new Layer

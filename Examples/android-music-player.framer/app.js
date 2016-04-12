@@ -3,11 +3,9 @@ by Min-Sang Choi
 www.framerjs.com */
 
 /* Basic Setup */
-var animate, appbar, bg, btn_play, btnplaceholder, button, content, frame, goback, materialanimation, metadata, navbar, playcontrol, playerLayers, playercontainer, statusbar, stopall, timer;
+var animate, appbar, btn_play, btnplaceholder, button, content, frame, goback, materialanimation, metadata, navbar, playcontrol, playerLayers, playercontainer, statusbar, stopall, timer;
 
-bg = new BackgroundLayer({
-  backgroundColor: "#eee"
-});
+Framer.Device.screen.backgroundColor = "#eee";
 
 playerLayers = Framer.Importer.load("imported/player");
 
@@ -51,10 +49,13 @@ frame = new Layer({
 
 frame.addSubLayer(playerLayers.View);
 
-frame.center();
+frame.x = Align.center;
+
+frame.y = Align.center;
 
 window.onresize = function() {
-  return frame.center();
+  frame.x = Align.center;
+  return frame.y = Align.center;
 };
 
 frame.shadowY = 1;

@@ -91,7 +91,9 @@ glow.style = {
 
 /* Position settingsLayer */
 
-settingsLayer.center();
+settingsLayer.x = Align.center;
+
+settingsLayer.y = Align.center;
 
 settingsLayer.perspective = 100;
 
@@ -99,11 +101,9 @@ settingsLayer.perspective = 100;
 
 label.html = "Settings";
 
-label.center();
+label.x = Align.center(5);
 
-label.y += 150;
-
-label.x -= 5;
+label.y = Align.center(150);
 
 /* Place small cog behind the larger one */
 
@@ -131,7 +131,8 @@ bg.on(Events.TouchMove, function(event) {
 });
 
 Events.wrap(window).addEventListener("resize", function(event) {
-  settingsLayer.center();
-  label.center();
-  return label.y += 150;
+  settingsLayer.x = Align.center;
+  settingsLayer.y = Align.center;
+  label.x = Align.center;
+  return label.y = Align.center(150);
 });

@@ -1,19 +1,14 @@
-/* Made with Framer
-by Benjamin den Boer
-www.framerjs.com */
+var layerA, layerB;
 
-/* Set background */
-var bg, layerA, layerB;
-
-bg = new BackgroundLayer({
-  backgroundColor: "#877DD7"
-});
+Framer.Device.screen.backgroundColor = "#877DD7";
 
 /* Create Layers */
 
 layerA = new Layer({
   width: 150,
   height: 150,
+  x: Align.center(-90),
+  y: Align.center,
   backgroundColor: "#fff",
   borderRadius: 6
 });
@@ -21,35 +16,34 @@ layerA = new Layer({
 layerB = new Layer({
   width: 150,
   height: 150,
+  x: Align.center(90),
+  y: Align.center,
   backgroundColor: "#fff",
-  borderRadius: 150
+  borderRadius: 75
 });
 
-layerA.center();
+/* Add states */
 
-layerB.center();
+layerA.states.add({
+  rotated: {
+    rotationX: 180
+  }
+});
 
-layerA.x -= 90;
-
-layerB.x += 90;
-
-/* Easing Animation Curve */
-
-layerA.animate({
-  properties: {
+layerB.states.add({
+  rotated: {
+    borderRadius: 6,
     rotation: 90
-  },
-  curve: "ease"
+  }
 });
 
-/* Spring Curve Animation with Delay
-Tension, Friction, Velocity (Bounciness, Weight, Wind-Up) */
+/* Every two seconds switch between states */
 
-layerB.animate({
-  properties: {
-    rotation: 90,
-    borderRadius: 6
-  },
-  curve: "spring(200,30,0)",
-  delay: 1
+Utils.interval(2, function() {
+  layerA.states.next();
+
+  /* Delay the animation for layerB */
+  return Utils.delay(1, function() {
+    return layerB.states.next();
+  });
 });

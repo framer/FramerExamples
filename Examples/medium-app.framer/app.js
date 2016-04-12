@@ -3,15 +3,13 @@ by Jonas Treub
 www.framerjs.com */
 
 /* Import */
-var amountOfPages, bg, i, pageComponent, pageIndex, pageIndicator, ref, scrollComponent, sketch, tabItem, tabItems;
+var amountOfPages, i, pageComponent, pageIndex, pageIndicator, ref, scrollComponent, sketch, tabItem, tabItems;
 
 sketch = Framer.Importer.load("imported/medium");
 
 amountOfPages = 3;
 
-bg = new BackgroundLayer({
-  backgroundColor: "white"
-});
+Framer.Device.screen.backgroundColor = "white";
 
 /* The page indicator is the black line at the bottom of the navigation bar */
 
