@@ -4,7 +4,7 @@ by Benjamin den Boer
 www.framerjs.com */
 
 /* Sketch Import */
-var checkIfHome, checkTime, currentIndex, home, i, indicator, indicatorWrapper, j, sketch, startTime, switchIndicators, time;
+var allIndicators, checkIfHome, checkTime, home, i, indicator, j, sketch, startTime, switchIndicators, time;
 
 sketch = Framer.Importer.load("imported/glances");
 
@@ -29,9 +29,9 @@ home.addPage(sketch.battery, "bottom");
 
 /* Add weather and calendar glances */
 
-home.addPage(sketch.weather, "right");
+home.addPage(sketch.weather);
 
-home.addPage(sketch.calendar, "right");
+home.addPage(sketch.calendar);
 
 sketch.weather.y = Screen.height;
 
@@ -109,13 +109,11 @@ startTime = function() {
   });
 };
 
-startTime();
+time.html = "12:20";
 
-indicatorWrapper = new Layer({
-  y: Screen.height - 14,
-  backgroundColor: null,
-  superLayer: sketch.battery
-});
+/* Store indicators here */
+
+allIndicators = [];
 
 /* Create indictors */
 
@@ -124,54 +122,65 @@ for (i = j = 1; j < 4; i = ++j) {
     backgroundColor: "#fff",
     width: 10,
     height: 10,
-    x: i * (8 + 10),
+    y: Screen.height - 14,
     borderRadius: "50%",
-    opacity: 0.2,
-    superLayer: indicatorWrapper
+    superLayer: sketch.battery
   });
 
   /* States */
   indicator.states.add({
     active: {
       opacity: 1
+    },
+    disabled: {
+      opacity: 0.2
     }
   });
   indicator.states.animationOptions = {
     time: 0.5
+
+    /* Store indicators in our array */
   };
+  allIndicators.push(indicator);
 }
 
-currentIndex = null;
+/* Set indicator for current page */
 
 switchIndicators = function() {
-  var indicators, previousIndex;
-  indicators = indicatorWrapper.subLayers;
-  previousIndex = currentIndex;
-  currentIndex = home.horizontalPageIndex(home.currentPage) - 1;
-  indicators[currentIndex].states["switch"]("active");
-  if (previousIndex !== null) {
-    return indicators[previousIndex].states["switch"]("default");
-  }
+  var current;
+  current = home.horizontalPageIndex(home.currentPage);
+  return allIndicators[current - 1].states["switch"]("active");
 };
 
 home.on(Events.Move, function(event) {
 
   /* Set max dragging distance */
+  var k, len, results;
   if (this.y <= -339) {
     this.y = -340;
   }
 
   /* Center indicators */
-  return indicatorWrapper.x = -home.content.x + (Screen.width / 2 - indicatorWrapper.width / 2);
+  results = [];
+  for (i = k = 0, len = allIndicators.length; k < len; i = ++k) {
+    indicator = allIndicators[i];
+    results.push(indicator.x = (18 * (i + 1)) - event.x + 96);
+  }
+  return results;
 });
 
 /* On page changes */
 
 home.on("change:currentPage", function() {
+  var k, len;
   checkIfHome();
-  if (home.currentPage === sketch.home) {
-    return currentIndex = null;
-  } else {
+  sketch.home.x = home.currentPage.x;
+  if (home.currentPage !== sketch.home) {
+    for (k = 0, len = allIndicators.length; k < len; k++) {
+      indicator = allIndicators[k];
+      indicator.states["switch"]("disabled");
+      indicator.x = (18 * (i + 1)) - event.x + 96;
+    }
     return switchIndicators();
   }
 });

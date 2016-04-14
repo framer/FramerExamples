@@ -6,7 +6,8 @@ www.framerjs.com */
 var bg, gearBottomLayer, gearTopLayer, gearbg, glow, label, settings, settingsLayer;
 
 bg = new BackgroundLayer({
-  backgroundColor: "#CCC8C8"
+  backgroundColor: "#CCC8C8",
+  z: -1
 });
 
 settingsLayer = new Layer({

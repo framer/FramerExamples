@@ -19,8 +19,8 @@ home.addPage(sketch.home)
 home.addPage(sketch.battery, "bottom")
 
 # Add weather and calendar glances
-home.addPage(sketch.weather, "right")
-home.addPage(sketch.calendar, "right")
+home.addPage(sketch.weather)
+home.addPage(sketch.calendar)
 
 sketch.weather.y = Screen.height 
 sketch.weather.x = Screen.width
@@ -73,49 +73,51 @@ startTime = ->
 	Utils.delay 0.5, ->
 		startTime()
 
-startTime()
+time.html = "12:20"
 
-indicatorWrapper = new Layer
-	y: Screen.height - 14
-	backgroundColor: null
-	superLayer: sketch.battery
-	
+# Store indicators here
+allIndicators = []
+
 # Create indictors
 for i in [1...4]
-
 	indicator = new Layer 
 		backgroundColor: "#fff"
-		width: 10, height: 10, x: i*(8+10)
-		borderRadius: "50%", opacity: 0.2
-		superLayer: indicatorWrapper
+		width: 10, height: 10
+		y: Screen.height - 14
+		borderRadius: "50%"
+		superLayer: sketch.battery
 			
 	# States
-	indicator.states.add(active: { opacity: 1 })
+	indicator.states.add
+		active:
+			opacity: 1
+		disabled:
+			opacity: 0.2
 	indicator.states.animationOptions = time: 0.5
 	
-currentIndex = null
+	# Store indicators in our array
+	allIndicators.push(indicator)
+
+# Set indicator for current page
 switchIndicators = ->
-	indicators = indicatorWrapper.subLayers
-	previousIndex = currentIndex
-	currentIndex = home.horizontalPageIndex(home.currentPage)-1
-	
-	indicators[currentIndex].states.switch("active")
-	if (previousIndex != null)
-		indicators[previousIndex].states.switch("default")
-		
+	current = home.horizontalPageIndex(home.currentPage)
+	allIndicators[current-1].states.switch("active")
+
 home.on Events.Move, (event) ->
 	# Set max dragging distance
 	if this.y <= -339 then this.y = -340
 	
 	# Center indicators
-	indicatorWrapper.x = -home.content.x+(Screen.width/2-indicatorWrapper.width/2)
+	for indicator, i in allIndicators
+		indicator.x = (18 * (i + 1)) - event.x + 96
 		
 # On page changes
 home.on "change:currentPage", ->
 	checkIfHome()
+	sketch.home.x = home.currentPage.x
 	
-	if home.currentPage is sketch.home
-		currentIndex = null
-	else
+	unless home.currentPage is sketch.home
+		for indicator in allIndicators
+			indicator.states.switch("disabled")
+			indicator.x = (18 * (i + 1)) - event.x + 96
 		switchIndicators()
-	
