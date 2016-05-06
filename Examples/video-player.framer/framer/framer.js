@@ -48,10 +48,6 @@
 	
 	_ = __webpack_require__(1)._;
 	
-	if (window.ontouchstart === void 0) {
-	  window.ontouchstart = null;
-	}
-	
 	Framer = {};
 	
 	Framer._ = _;
@@ -76,19 +72,19 @@
 	
 	Framer.Screen = (__webpack_require__(5)).Screen;
 	
-	Framer.Canvas = (__webpack_require__(38)).Canvas;
+	Framer.Align = (__webpack_require__(38)).Align;
 	
-	Framer.Align = (__webpack_require__(39)).Align;
+	Framer.print = (__webpack_require__(39)).print;
 	
-	Framer.print = (__webpack_require__(40)).print;
+	Framer.ScrollComponent = (__webpack_require__(42)).ScrollComponent;
 	
-	Framer.ScrollComponent = (__webpack_require__(43)).ScrollComponent;
+	Framer.PageComponent = (__webpack_require__(43)).PageComponent;
 	
-	Framer.PageComponent = (__webpack_require__(44)).PageComponent;
+	Framer.SliderComponent = (__webpack_require__(44)).SliderComponent;
 	
-	Framer.SliderComponent = (__webpack_require__(45)).SliderComponent;
+	Framer.DeviceComponent = (__webpack_require__(45)).DeviceComponent;
 	
-	Framer.DeviceComponent = (__webpack_require__(46)).DeviceComponent;
+	Framer.GridComponent = (__webpack_require__(46)).GridComponent;
 	
 	Framer.DeviceView = Framer.DeviceComponent;
 	
@@ -96,7 +92,7 @@
 	  _.extend(window, Framer);
 	}
 	
-	Framer.Context = (__webpack_require__(41)).Context;
+	Framer.Context = (__webpack_require__(40)).Context;
 	
 	Framer.Config = (__webpack_require__(14)).Config;
 	
@@ -147,6 +143,8 @@
 	Framer.DefaultContext.backgroundColor = "white";
 	
 	Framer.CurrentContext = Framer.DefaultContext;
+	
+	window.Canvas = new (__webpack_require__(55)).Canvas;
 	
 	if (Utils.isMobile()) {
 	  Framer.Extras.MobileScrollFix.enable();
@@ -12770,6 +12768,16 @@
 	  return Utils.mapRange(Math.random(), 0, 1, a, b);
 	};
 	
+	Utils.randomImage = function(layer, offset) {
+	  var height, width;
+	  if (offset == null) {
+	    offset = 50;
+	  }
+	  width = Utils.round(layer.width, 0, 100, 100);
+	  height = Utils.round(layer.height, 0, 100, 100);
+	  return "https://unsplash.it/" + width + "/" + height + "?image=" + (layer.id + offset);
+	};
+	
 	Utils.defineEnum = function(names, offset, geometric) {
 	  var Enum, i, j, len, name, o;
 	  if (names == null) {
@@ -13080,13 +13088,32 @@
 	  return Utils.arrayFromArguments(arguments).join("/");
 	};
 	
-	Utils.round = function(value, decimals) {
+	Utils.round = function(value, decimals, increment, min, max) {
 	  var d;
 	  if (decimals == null) {
 	    decimals = 0;
 	  }
+	  if (increment == null) {
+	    increment = null;
+	  }
+	  if (min == null) {
+	    min = null;
+	  }
+	  if (max == null) {
+	    max = null;
+	  }
 	  d = Math.pow(10, decimals);
-	  return Math.round(value * d) / d;
+	  if (increment) {
+	    value = Math.round(value / increment) * increment;
+	  }
+	  value = Math.round(value * d) / d;
+	  if (min && value < min) {
+	    return min;
+	  }
+	  if (max && value > max) {
+	    return max;
+	  }
+	  return value;
 	};
 	
 	Utils.clamp = function(value, a, b) {
@@ -13282,6 +13309,35 @@
 	  return element.src = url;
 	};
 	
+	Utils.point = function(input) {
+	  var k, len, o, ref, result;
+	  if (_.isNumber(input)) {
+	    return Utils.pointZero(input);
+	  }
+	  if (!input) {
+	    return Utils.pointZero();
+	  }
+	  result = Utils.pointZero();
+	  ref = ["x", "y"];
+	  for (o = 0, len = ref.length; o < len; o++) {
+	    k = ref[o];
+	    if (_.isNumber(input[k])) {
+	      result[k] = input[k];
+	    }
+	  }
+	  return result;
+	};
+	
+	Utils.pointZero = function(n) {
+	  if (n == null) {
+	    n = 0;
+	  }
+	  return {
+	    x: n,
+	    y: n
+	  };
+	};
+	
 	Utils.pointDivide = function(point, fraction) {
 	  return point = {
 	    x: point.x / fraction,
@@ -13303,16 +13359,6 @@
 	    x: pointA.x - pointB.x,
 	    y: pointA.y - pointB.y
 	  };
-	};
-	
-	Utils.pointZero = function(args) {
-	  if (args == null) {
-	    args = {};
-	  }
-	  return _.defaults(args, {
-	    x: 0,
-	    y: 0
-	  });
 	};
 	
 	Utils.pointMin = function() {
@@ -13396,14 +13442,33 @@
 	  return Math.atan2(pointB.y - pointA.y, pointB.x - pointA.x) * 180 / Math.PI;
 	};
 	
-	Utils.sizeZero = function(args) {
-	  if (args == null) {
-	    args = {};
+	Utils.size = function(input) {
+	  var k, len, o, ref, result;
+	  if (_.isNumber(input)) {
+	    return Utils.sizeZero(input);
 	  }
-	  return _.defaults(args, {
-	    width: 0,
-	    height: 0
-	  });
+	  if (!input) {
+	    return Utils.sizeZero();
+	  }
+	  result = Utils.sizeZero();
+	  ref = ["width", "height"];
+	  for (o = 0, len = ref.length; o < len; o++) {
+	    k = ref[o];
+	    if (_.isNumber(input[k])) {
+	      result[k] = input[k];
+	    }
+	  }
+	  return result;
+	};
+	
+	Utils.sizeZero = function(n) {
+	  if (n == null) {
+	    n = 0;
+	  }
+	  return {
+	    width: n,
+	    height: n
+	  };
 	};
 	
 	Utils.sizeMin = function() {
@@ -13546,16 +13611,33 @@
 	  return frame.y = frame.height === 0 ? 0 : value - frame.height;
 	};
 	
-	Utils.frameZero = function(args) {
-	  if (args == null) {
-	    args = {};
+	Utils.frame = function(input) {
+	  var k, len, o, ref, result;
+	  if (_.isNumber(input)) {
+	    return Utils.frameZero(input);
 	  }
-	  return _.defaults(args, {
-	    top: 0,
-	    right: 0,
-	    bottom: 0,
-	    left: 0
-	  });
+	  if (!input) {
+	    return Utils.frameZero();
+	  }
+	  result = Utils.frameZero();
+	  ref = ["x", "y", "width", "height"];
+	  for (o = 0, len = ref.length; o < len; o++) {
+	    k = ref[o];
+	    if (_.isNumber(input[k])) {
+	      result[k] = input[k];
+	    }
+	  }
+	  return result;
+	};
+	
+	Utils.frameZero = function(n) {
+	  if (n == null) {
+	    n = 0;
+	  }
+	  return {
+	    x: n,
+	    y: n
+	  };
 	};
 	
 	Utils.frameSize = function(frame) {
@@ -13655,6 +13737,7 @@
 	      left: inset
 	    };
 	  }
+	  frame = Utils.frame(frame);
 	  return frame = {
 	    x: frame.x + inset.left,
 	    y: frame.y + inset.top,
@@ -14158,10 +14241,11 @@
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CounterKey, DefinedPropertiesKey, DefinedPropertiesValuesKey, EventEmitter, Utils, _, capitalizeFirstLetter,
+	var CounterKey, DefinedPropertiesKey, DefinedPropertiesOrderKey, DefinedPropertiesValuesKey, EventEmitter, Utils, _, capitalizeFirstLetter,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty;
+	  hasProp = {}.hasOwnProperty,
+	  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 	
 	_ = __webpack_require__(1)._;
 	
@@ -14175,6 +14259,8 @@
 	
 	DefinedPropertiesValuesKey = "_DefinedPropertiesValuesKey";
 	
+	DefinedPropertiesOrderKey = "_DefinedPropertiesOrderKey";
+	
 	capitalizeFirstLetter = function(string) {
 	  return string.charAt(0).toUpperCase() + string.slice(1);
 	};
@@ -14183,34 +14269,9 @@
 	  extend(BaseClass, superClass);
 	
 	  BaseClass.define = function(propertyName, descriptor) {
-	    var getName, i, j, len, ref, setName;
-	    ref = ["enumerable", "exportable", "importable"];
-	    for (j = 0, len = ref.length; j < len; j++) {
-	      i = ref[j];
-	      if (descriptor.hasOwnProperty(i)) {
-	        if (!_.isBoolean(descriptor[i])) {
-	          throw Error("woops " + propertyName + " " + descriptor[i]);
-	        }
-	      }
-	    }
+	    var getName, setName;
 	    if (this !== BaseClass) {
-	      descriptor.propertyName = propertyName;
-	      if (descriptor.enumerable == null) {
-	        descriptor.enumerable = true;
-	      }
-	      if (descriptor.exportable == null) {
-	        descriptor.exportable = true;
-	      }
-	      if (descriptor.importable == null) {
-	        descriptor.importable = true;
-	      }
-	      descriptor.importable = descriptor.importable && descriptor.set;
-	      if (descriptor.exportable || descriptor.importable) {
-	        if (this[DefinedPropertiesKey] == null) {
-	          this[DefinedPropertiesKey] = {};
-	        }
-	        this[DefinedPropertiesKey][propertyName] = descriptor;
-	      }
+	      this._addDescriptor(propertyName, descriptor);
 	    }
 	    getName = "get" + (capitalizeFirstLetter(propertyName));
 	    this.prototype[getName] = descriptor.get;
@@ -14221,6 +14282,44 @@
 	      descriptor.set = this.prototype[setName];
 	    }
 	    return Object.defineProperty(this.prototype, propertyName, descriptor);
+	  };
+	
+	  BaseClass._addDescriptor = function(propertyName, descriptor) {
+	    var depend, i, len, ref;
+	    descriptor.propertyName = propertyName;
+	    if (descriptor.enumerable == null) {
+	      descriptor.enumerable = true;
+	    }
+	    if (descriptor.exportable == null) {
+	      descriptor.exportable = true;
+	    }
+	    if (descriptor.importable == null) {
+	      descriptor.importable = true;
+	    }
+	    descriptor.importable = descriptor.importable && descriptor.set;
+	    descriptor.exportable = descriptor.exportable && descriptor.set;
+	    if (_.startsWith(propertyName, "_")) {
+	      return;
+	    }
+	    if (descriptor.exportable || descriptor.importable) {
+	      if (this[DefinedPropertiesKey] == null) {
+	        this[DefinedPropertiesKey] = {};
+	      }
+	      this[DefinedPropertiesKey][propertyName] = descriptor;
+	      if (this[DefinedPropertiesOrderKey] == null) {
+	        this[DefinedPropertiesOrderKey] = [];
+	      }
+	      if (descriptor.depends) {
+	        ref = descriptor.depends;
+	        for (i = 0, len = ref.length; i < len; i++) {
+	          depend = ref[i];
+	          if (indexOf.call(this[DefinedPropertiesOrderKey], depend) < 0) {
+	            this[DefinedPropertiesOrderKey].push(depend);
+	          }
+	        }
+	      }
+	      return this[DefinedPropertiesOrderKey].push(propertyName);
+	    }
 	  };
 	
 	  BaseClass.simpleProperty = function(name, fallback, options) {
@@ -14239,12 +14338,12 @@
 	  };
 	
 	  BaseClass.proxyProperty = function(keyPath, options) {
-	    var objectKey;
+	    var descriptor, objectKey;
 	    if (options == null) {
 	      options = {};
 	    }
 	    objectKey = keyPath.split(".")[0];
-	    return _.extend(options, {
+	    return descriptor = _.extend(options, {
 	      get: function() {
 	        if (!_.isObject(this[objectKey])) {
 	          return;
@@ -14256,7 +14355,8 @@
 	          return;
 	        }
 	        return Utils.setValueForKeyPath(this, keyPath, value);
-	      }
+	      },
+	      proxy: true
 	    });
 	  };
 	
@@ -14333,32 +14433,69 @@
 	    BaseClass.__super__.constructor.apply(this, arguments);
 	    this._context = typeof Framer !== "undefined" && Framer !== null ? Framer.CurrentContext : void 0;
 	    this[DefinedPropertiesValuesKey] = {};
+	    this._applyDefaults(options);
 	    if ((base = this.constructor)[CounterKey] == null) {
 	      base[CounterKey] = 0;
 	    }
 	    this.constructor[CounterKey] += 1;
 	    this._id = this.constructor[CounterKey];
-	    this._applyOptionsAndDefaults(options);
 	  }
 	
-	  BaseClass.prototype._applyOptionsAndDefaults = function(options) {
-	    var descriptor, key, ref, results, value;
-	    ref = this._propertyList();
+	  BaseClass.prototype._applyDefaults = function(options) {
+	    var i, k, len, ref, results;
+	    if (!this.constructor[DefinedPropertiesOrderKey]) {
+	      return;
+	    }
+	    if (!options) {
+	      return;
+	    }
+	    ref = this.constructor[DefinedPropertiesOrderKey];
 	    results = [];
-	    for (key in ref) {
-	      descriptor = ref[key];
-	      if (descriptor.set) {
-	        value = Utils.valueOrDefault((descriptor.importable ? options != null ? options[key] : void 0 : void 0), this._getPropertyDefaultValue(key));
-	        if (!(value === null || value === (void 0))) {
-	          results.push(this[key] = value);
-	        } else {
-	          results.push(void 0);
-	        }
-	      } else {
-	        results.push(void 0);
-	      }
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      k = ref[i];
+	      results.push(this._applyDefault(k, options[k]));
 	    }
 	    return results;
+	  };
+	
+	  BaseClass.prototype._applyProxyDefaults = function(options) {
+	    var descriptor, i, k, len, ref, results;
+	    if (!this.constructor[DefinedPropertiesOrderKey]) {
+	      return;
+	    }
+	    if (!options) {
+	      return;
+	    }
+	    ref = this.constructor[DefinedPropertiesOrderKey];
+	    results = [];
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      k = ref[i];
+	      descriptor = this.constructor[DefinedPropertiesKey][k];
+	      if (((descriptor != null ? descriptor.proxy : void 0) != null) !== true) {
+	        continue;
+	      }
+	      results.push(this._applyDefault(k, options[k]));
+	    }
+	    return results;
+	  };
+	
+	  BaseClass.prototype._applyDefault = function(key, optionValue) {
+	    var descriptor, value;
+	    descriptor = this.constructor[DefinedPropertiesKey][key];
+	    if (!descriptor) {
+	      throw Error("Missing dependant descriptor: " + key);
+	    }
+	    if (!descriptor.set) {
+	      return;
+	    }
+	    if (descriptor.importable) {
+	      value = optionValue;
+	    }
+	    value = Utils.valueOrDefault(optionValue, this._getPropertyDefaultValue(key));
+	    if (value === null || value === (void 0)) {
+	      return;
+	    }
+	    return this[key] = value;
 	  };
 	
 	  return BaseClass;
@@ -14758,10 +14895,13 @@
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var BaseClass, ColorModel, ColorType, bound01, convertToPercentage, correctAlpha, cssNames, hslToRgb, inputData, isNumeric, isOnePointZero, isPercentage, libhusl, matchers, numberFromString, pad2, percentToFraction, rgbToHex, rgbToHsl, rgbToRgb, rgbaFromHusl, stringToObject,
+	var BaseClass, ColorModel, ColorType, _, bound01, convertToPercentage, correctAlpha, cssNames, hslToRgb, inputData, isNumeric, isOnePointZero, isPercentage, libhusl, matchers, numberFromString, pad2, percentToFraction, rgbToHex, rgbToHsl, rgbToRgb, rgbaFromHusl, stringToObject,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty;
+	  hasProp = {}.hasOwnProperty,
+	  slice = [].slice;
+	
+	_ = __webpack_require__(1)._;
 	
 	BaseClass = __webpack_require__(6).BaseClass;
 	
@@ -14859,7 +14999,7 @@
 	        a: this._a
 	      };
 	    }
-	    return this._rgb;
+	    return _.clone(this._rgb);
 	  };
 	
 	  Color.prototype.toRgbString = function() {
@@ -14879,7 +15019,7 @@
 	        a: this.a
 	      };
 	    }
-	    return this._hsl;
+	    return _.clone(this._hsl);
 	  };
 	
 	  Color.prototype.toHusl = function() {
@@ -14893,7 +15033,7 @@
 	        l: husl[2]
 	      };
 	    }
-	    return this._husl;
+	    return _.clone(this._husl);
 	  };
 	
 	  Color.prototype.toHslString = function() {
@@ -14998,14 +15138,21 @@
 	    return this.toRgbString();
 	  };
 	
-	  Color.prototype.transparent = function() {
+	  Color.prototype.alpha = function(alpha) {
 	    var result;
+	    if (alpha == null) {
+	      alpha = 1;
+	    }
 	    return result = new Color({
 	      r: this.r,
 	      g: this.g,
 	      b: this.b,
-	      a: 0
+	      a: alpha
 	    });
+	  };
+	
+	  Color.prototype.transparent = function() {
+	    return this.alpha(0);
 	  };
 	
 	  Color.prototype.mix = function(colorB, fraction, limit, model) {
@@ -15013,6 +15160,10 @@
 	      limit = false;
 	    }
 	    return Color.mix(this, colorB, fraction, limit, model);
+	  };
+	
+	  Color.prototype.copy = function() {
+	    return new Color(this);
 	  };
 	
 	  Color.prototype.isEqual = function(colorB) {
@@ -15109,6 +15260,23 @@
 	      return parseInt(Math.random() * 255);
 	    };
 	    return new Color("rgba(" + (c()) + ", " + (c()) + ", " + (c()) + ", " + alpha + ")");
+	  };
+	
+	  Color.grey = function(g, alpha) {
+	    if (g == null) {
+	      g = 0.5;
+	    }
+	    if (alpha == null) {
+	      alpha = 1;
+	    }
+	    g = parseInt(g * 255);
+	    return new Color("rgba(" + g + ", " + g + ", " + g + ", " + alpha + ")");
+	  };
+	
+	  Color.gray = function() {
+	    var args;
+	    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+	    return this.grey.apply(this, args);
 	  };
 	
 	  Color.toColor = function(color) {
@@ -16194,11 +16362,16 @@
 	  extend(Layer, superClass);
 	
 	  function Layer(options) {
+	    var i, len, p, ref;
 	    if (options == null) {
 	      options = {};
 	    }
 	    this.addListener = bind(this.addListener, this);
 	    this.once = bind(this.once, this);
+	    if (this.__constructed) {
+	      throw Error("Layer.constructor " + (this.toInspect()) + " called twice");
+	    }
+	    this.__constructed = true;
 	    this._properties = {};
 	    this._style = {};
 	    this._children = [];
@@ -16207,11 +16380,7 @@
 	    this._cancelClickEventInDragSession = true;
 	    this._cancelClickEventInDragSessionVelocity = 0.1;
 	    this._createElement();
-	    if (options.hasOwnProperty("frame")) {
-	      options = _.extend(options, options.frame);
-	    }
-	    options = Defaults.getDefaults("Layer", options);
-	    Layer.__super__.constructor.call(this, options);
+	    Layer.__super__.constructor.call(this, Defaults.getDefaults("Layer", options));
 	    this._context.addLayer(this);
 	    this._id = this._context.layerCounter;
 	    if (!options.parent && options.hasOwnProperty("superLayer")) {
@@ -16224,14 +16393,12 @@
 	    } else {
 	      this.parent = options.parent;
 	    }
-	    if (options.hasOwnProperty("index")) {
-	      this.index = options.index;
-	    }
-	    if (options.hasOwnProperty("x")) {
-	      this.x = options.x;
-	    }
-	    if (options.hasOwnProperty("y")) {
-	      this.y = options.y;
+	    ref = ["index", "width", "height", "x", "y"];
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      p = ref[i];
+	      if (options.hasOwnProperty(p)) {
+	        this[p] = options[p];
+	      }
 	    }
 	    this._context.emit("layer:create", this);
 	  }
@@ -16282,9 +16449,13 @@
 	
 	  Layer.define("ignoreEvents", layerProperty(Layer, "ignoreEvents", "pointerEvents", true, _.isBoolean));
 	
-	  Layer.define("x", layerProperty(Layer, "x", "webkitTransform", 0, _.isNumber, layerPropertyPointTransformer));
+	  Layer.define("x", layerProperty(Layer, "x", "webkitTransform", 0, _.isNumber, layerPropertyPointTransformer, {
+	    depends: ["width", "height", "parent"]
+	  }));
 	
-	  Layer.define("y", layerProperty(Layer, "y", "webkitTransform", 0, _.isNumber, layerPropertyPointTransformer));
+	  Layer.define("y", layerProperty(Layer, "y", "webkitTransform", 0, _.isNumber, layerPropertyPointTransformer, {
+	    depends: ["width", "height", "parent"]
+	  }));
 	
 	  Layer.define("z", layerProperty(Layer, "z", "webkitTransform", 0, _.isNumber));
 	
@@ -16438,84 +16609,64 @@
 	    }
 	  });
 	
-	  Layer.define("point", {
-	    get: function() {
-	      return _.pick(this, ["x", "y"]);
-	    },
-	    set: function(point) {
-	      var i, k, len, ref, results;
-	      if (!point) {
-	        return;
-	      }
-	      if (_.isNumber(point)) {
-	        point = {
-	          x: point,
-	          y: point
-	        };
-	      }
-	      ref = ["x", "y"];
+	  Layer.prototype._setGeometryValues = function(input, keys) {
+	    var i, j, k, len, len1, results, results1;
+	    if (_.isNumber(input)) {
 	      results = [];
-	      for (i = 0, len = ref.length; i < len; i++) {
-	        k = ref[i];
-	        if (point.hasOwnProperty(k)) {
-	          results.push(this[k] = point[k]);
-	        } else {
-	          results.push(void 0);
-	        }
+	      for (i = 0, len = keys.length; i < len; i++) {
+	        k = keys[i];
+	        results.push(this[k] = input);
 	      }
 	      return results;
+	    } else {
+	      if (!input) {
+	        return;
+	      }
+	      results1 = [];
+	      for (j = 0, len1 = keys.length; j < len1; j++) {
+	        k = keys[j];
+	        if (_.isNumber(input[k])) {
+	          results1.push(this[k] = input[k]);
+	        } else {
+	          results1.push(void 0);
+	        }
+	      }
+	      return results1;
+	    }
+	  };
+	
+	  Layer.define("point", {
+	    importable: true,
+	    exportable: false,
+	    depends: ["width", "height", "size", "parent"],
+	    get: function() {
+	      return Utils.point(this);
+	    },
+	    set: function(input) {
+	      input = layerPropertyPointTransformer(input, this, "point");
+	      return this._setGeometryValues(input, ["x", "y"]);
 	    }
 	  });
 	
 	  Layer.define("size", {
+	    importable: true,
+	    exportable: false,
 	    get: function() {
-	      return _.pick(this, ["width", "height"]);
+	      return Utils.size(this);
 	    },
-	    set: function(size) {
-	      var i, k, len, ref, results;
-	      if (!size) {
-	        return;
-	      }
-	      if (_.isNumber(size)) {
-	        size = {
-	          width: size,
-	          height: size
-	        };
-	      }
-	      ref = ["width", "height"];
-	      results = [];
-	      for (i = 0, len = ref.length; i < len; i++) {
-	        k = ref[i];
-	        if (size.hasOwnProperty(k)) {
-	          results.push(this[k] = size[k]);
-	        } else {
-	          results.push(void 0);
-	        }
-	      }
-	      return results;
+	    set: function(input) {
+	      return this._setGeometryValues(input, ["width", "height"]);
 	    }
 	  });
 	
 	  Layer.define("frame", {
+	    importable: true,
+	    exportable: false,
 	    get: function() {
-	      return _.pick(this, ["x", "y", "width", "height"]);
+	      return Utils.frame(this);
 	    },
-	    set: function(frame) {
-	      var i, k, len, ref, results;
-	      if (!frame) {
-	        return;
-	      }
-	      ref = ["x", "y", "width", "height"];
-	      results = [];
-	      for (i = 0, len = ref.length; i < len; i++) {
-	        k = ref[i];
-	        if (frame.hasOwnProperty(k)) {
-	          results.push(this[k] = frame[k]);
-	        } else {
-	          results.push(void 0);
-	        }
-	      }
-	      return results;
+	    set: function(input) {
+	      return this._setGeometryValues(input, ["x", "y", "width", "height"]);
 	    }
 	  });
 	
@@ -16845,9 +16996,7 @@
 	  };
 	
 	  Layer.prototype.copySingle = function() {
-	    var copy;
-	    copy = new this.constructor(this.props);
-	    return copy;
+	    return new this.constructor(this.props);
 	  };
 	
 	  Layer.define("image", {
@@ -17753,6 +17902,38 @@
 	    return this.on(Events.RotateEnd, cb);
 	  };
 	
+	  Layer.prototype.shouldShowHint = function() {
+	    if (this.ignoreEvents === false) {
+	      return true;
+	    }
+	    return false;
+	  };
+	
+	  Layer.prototype.showHint = function() {
+	    var animation, color, layer;
+	    if (!this.shouldShowHint()) {
+	      return _.invoke(this.children, "showHint");
+	    }
+	    color = new Color(40, 175, 250);
+	    layer = new Layer({
+	      frame: this.canvasFrame,
+	      backgroundColor: new Color(40, 175, 250, 0.4),
+	      borderColor: new Color("white").alpha(.5),
+	      borderRadius: this.borderRadius * Utils.average([this.canvasScaleX(), this.canvasScaleY()]),
+	      borderWidth: 1
+	    });
+	    animation = layer.animate({
+	      properties: {
+	        opacity: 0
+	      },
+	      time: 0.4
+	    });
+	    animation.onAnimationEnd(function() {
+	      return layer.destroy();
+	    });
+	    return _.invoke(this.children, "showHint");
+	  };
+	
 	  Layer.prototype.toInspect = function() {
 	    var round;
 	    round = function(value) {
@@ -18085,6 +18266,17 @@
 	      friction: 10,
 	      tolerance: 1
 	    }
+	  },
+	  GridComponent: {
+	    rows: 3,
+	    columns: 3,
+	    spacing: 0,
+	    backgroundColor: "transparent"
+	  },
+	  ScrollComponent: {
+	    clip: true,
+	    mouseWheelEnabled: false,
+	    backgroundColor: null
 	  }
 	};
 	
@@ -18097,6 +18289,7 @@
 	    if (!Framer.Defaults.hasOwnProperty(className)) {
 	      return {};
 	    }
+	    options = _.clone(options);
 	    defaults = _.clone(Originals[className]);
 	    ref = Framer.Defaults[className];
 	    for (k in ref) {
@@ -19196,39 +19389,37 @@
 	        animatablePropertyKeys.push(k);
 	      } else if (Color.isColorObject(v)) {
 	        animatablePropertyKeys.push(k);
-	      } else if (v === null) {
-	        animatablePropertyKeys.push(k);
 	      }
 	    }
 	    if (animatablePropertyKeys.length === 0) {
 	      instant = true;
 	    }
-	    if (instant === true) {
+	    if (instant) {
 	      this.layer.props = properties;
-	      return this.emit(Events.StateDidSwitch, _.last(this._previousStates), this._currentState, this);
-	    } else {
-	      if (animationOptions == null) {
-	        animationOptions = this.animationOptions;
-	      }
-	      animationOptions.properties = properties;
-	      if ((ref1 = this._animation) != null) {
-	        ref1.stop();
-	      }
-	      this._animation = this.layer.animate(animationOptions);
-	      return this._animation.once("stop", (function(_this) {
-	        return function() {
-	          for (k in properties) {
-	            v = properties[k];
-	            if (!(_.isNumber(v) || Color.isColorObject(v))) {
-	              _this.layer[k] = v;
-	            }
-	          }
-	          if (_.last(_this._previousStates) !== stateName) {
-	            return _this.emit(Events.StateDidSwitch, _.last(_this._previousStates), _this._currentState, _this);
-	          }
-	        };
-	      })(this));
+	      this.emit(Events.StateDidSwitch, _.last(this._previousStates), this._currentState, this);
+	      return;
 	    }
+	    if (animationOptions == null) {
+	      animationOptions = this.animationOptions;
+	    }
+	    animationOptions.properties = properties;
+	    if ((ref1 = this._animation) != null) {
+	      ref1.stop();
+	    }
+	    this._animation = this.layer.animate(animationOptions);
+	    return this._animation.once("stop", (function(_this) {
+	      return function() {
+	        for (k in properties) {
+	          v = properties[k];
+	          if (indexOf.call(animatablePropertyKeys, v) < 0) {
+	            _this.layer[k] = v;
+	          }
+	        }
+	        if (_.last(_this._previousStates) !== stateName) {
+	          return _this.emit(Events.StateDidSwitch, _.last(_this._previousStates), _this._currentState, _this);
+	        }
+	      };
+	    })(this));
 	  };
 	
 	  LayerStates.prototype.switchInstant = function(stateName) {
@@ -19300,13 +19491,48 @@
 	    stateProperties = {};
 	    for (k in properties) {
 	      v = properties[k];
-	      if (_.isString(v) && Color.isColorString(v)) {
+	      if (this._isValidColor(k, v)) {
 	        stateProperties[k] = new Color(v);
-	      } else if (_.isNumber(v) || _.isFunction(v) || _.isBoolean(v) || _.isString(v) || Color.isColorObject(v) || v === null) {
+	        continue;
+	      }
+	      if (this._isValidProperty(k, v)) {
 	        stateProperties[k] = v;
 	      }
 	    }
 	    return stateProperties;
+	  };
+	
+	  LayerStates._isValidColor = function(k, v) {
+	    if (_.endsWith(k.toLowerCase(), "color") && _.isString(v) && Color.isColorString(v)) {
+	      return true;
+	    }
+	    return false;
+	  };
+	
+	  LayerStates._isValidProperty = function(k, v) {
+	    var ref;
+	    if (_.isNumber(v)) {
+	      return true;
+	    }
+	    if (_.isFunction(v)) {
+	      return true;
+	    }
+	    if (_.isBoolean(v)) {
+	      return true;
+	    }
+	    if (_.isString(v)) {
+	      return true;
+	    }
+	    if (Color.isColorObject(v)) {
+	      return true;
+	    }
+	    if (v === null) {
+	      return true;
+	    }
+	    if ((v != null ? (ref = v.constructor) != null ? ref.name : void 0 : void 0) === "Layer") {
+	      return true;
+	    }
+	    return false;
 	  };
 	
 	  return LayerStates;
@@ -20997,111 +21223,12 @@
 
 /***/ },
 /* 38 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var BaseClass, CanvasClass, Events,
-	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-	  hasProp = {}.hasOwnProperty;
-	
-	BaseClass = __webpack_require__(6).BaseClass;
-	
-	Events = __webpack_require__(15).Events;
-	
-	CanvasClass = (function(superClass) {
-	  extend(CanvasClass, superClass);
-	
-	  function CanvasClass() {
-	    this.addListener = bind(this.addListener, this);
-	    return CanvasClass.__super__.constructor.apply(this, arguments);
-	  }
-	
-	  CanvasClass.define("width", {
-	    get: function() {
-	      return window.innerWidth;
-	    }
-	  });
-	
-	  CanvasClass.define("height", {
-	    get: function() {
-	      return window.innerHeight;
-	    }
-	  });
-	
-	  CanvasClass.define("size", {
-	    get: function() {
-	      return {
-	        width: this.width,
-	        height: this.height
-	      };
-	    }
-	  });
-	
-	  CanvasClass.define("frame", {
-	    get: function() {
-	      return {
-	        x: 0,
-	        y: 0,
-	        width: this.width,
-	        height: this.height
-	      };
-	    }
-	  });
-	
-	  CanvasClass.define("backgroundColor", {
-	    importable: false,
-	    exportable: false,
-	    get: function() {
-	      return Framer.Device.background.backgroundColor;
-	    },
-	    set: function(value) {
-	      return Framer.Device.background.backgroundColor = value;
-	    }
-	  });
-	
-	  CanvasClass.define("image", {
-	    importable: false,
-	    exportable: false,
-	    get: function() {
-	      return Framer.Device.background.image;
-	    },
-	    set: function(value) {
-	      return Framer.Device.background.image = value;
-	    }
-	  });
-	
-	  CanvasClass.prototype.addListener = function(eventName, listener) {
-	    if (eventName === "resize") {
-	      Events.wrap(window).addEventListener("resize", (function(_this) {
-	        return function() {
-	          return _this.emit("resize");
-	        };
-	      })(this));
-	    }
-	    return CanvasClass.__super__.addListener.call(this, eventName, listener);
-	  };
-	
-	  CanvasClass.prototype.on = CanvasClass.prototype.addListener;
-	
-	  CanvasClass.prototype.onResize = function(cb) {
-	    return this.on("resize", cb);
-	  };
-	
-	  return CanvasClass;
-	
-	})(BaseClass);
-	
-	exports.Canvas = new CanvasClass;
-
-
-/***/ },
-/* 39 */
 /***/ function(module, exports) {
 
 	var bottom, center, left, right, top, wrapper;
 	
 	center = function(layer, property, offset) {
-	  var borderWidth, parent;
+	  var borderWidth, parent, x, y;
 	  if (offset == null) {
 	    offset = 0;
 	  }
@@ -21113,11 +21240,19 @@
 	  if (borderWidth == null) {
 	    borderWidth = 0;
 	  }
+	  x = (parent.width / 2) - (layer.width / 2) - borderWidth + offset;
+	  y = (parent.height / 2) - (layer.height / 2) - borderWidth + offset;
 	  if (property === "x") {
-	    return (parent.width / 2) - (layer.width / 2) - borderWidth + offset;
+	    return x;
 	  }
 	  if (property === "y") {
-	    return (parent.height / 2) - (layer.height / 2) - borderWidth + offset;
+	    return y;
+	  }
+	  if (property === "point") {
+	    return {
+	      x: x,
+	      y: y
+	    };
 	  }
 	  return 0;
 	};
@@ -21211,7 +21346,7 @@
 
 
 /***/ },
-/* 40 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Context, Utils, printContext, printLayer,
@@ -21219,7 +21354,7 @@
 	
 	Utils = __webpack_require__(4);
 	
-	Context = __webpack_require__(41).Context;
+	Context = __webpack_require__(40).Context;
 	
 	"\nTodo:\n- Better looks\n- Resizable\n- Live in own space on top of all Framer stuff\n";
 	
@@ -21277,7 +21412,7 @@
 
 
 /***/ },
-/* 41 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var BaseClass, Config, DOMEventManager, Defaults, Utils, _,
@@ -21295,7 +21430,7 @@
 	
 	BaseClass = __webpack_require__(6).BaseClass;
 	
-	DOMEventManager = __webpack_require__(42).DOMEventManager;
+	DOMEventManager = __webpack_require__(41).DOMEventManager;
 	
 	
 	/*
@@ -21362,6 +21497,11 @@
 	    return this.emit("reset", this);
 	  };
 	
+	  Context.prototype.destroy = function() {
+	    this.reset();
+	    return this._destroyRootElement();
+	  };
+	
 	  Context.define("layers", {
 	    get: function() {
 	      return _.clone(this._layers);
@@ -21371,6 +21511,14 @@
 	  Context.define("layerCounter", {
 	    get: function() {
 	      return this._layerCounter;
+	    }
+	  });
+	
+	  Context.define("rootLayers", {
+	    get: function() {
+	      return _.filter(this._layers, function(layer) {
+	        return layer.parent === null;
+	      });
 	    }
 	  });
 	
@@ -21390,6 +21538,30 @@
 	    this.resetGestures();
 	    this._layers = [];
 	    return this._layerCounter = 0;
+	  };
+	
+	  Context.prototype.layerForElement = function(element) {
+	    var i, layer, len, ref;
+	    ref = this._layers;
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      layer = ref[i];
+	      if (layer._element === element) {
+	        return layer;
+	      }
+	    }
+	    return null;
+	  };
+	
+	  Context.prototype.layerForId = function(layerId) {
+	    var i, layer, len, ref;
+	    ref = this._layers;
+	    for (i = 0, len = ref.length; i < len; i++) {
+	      layer = ref[i];
+	      if (layer.id === layerId) {
+	        return layer;
+	      }
+	    }
+	    return null;
 	  };
 	
 	  Context.define("animations", {
@@ -21708,7 +21880,7 @@
 
 
 /***/ },
-/* 42 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var DOMEventManagerElement, EventEmitter, EventManagerIdCounter, Utils, _,
@@ -21748,6 +21920,10 @@
 	
 	  DOMEventManagerElement.prototype.removeEventListener = DOMEventManagerElement.prototype.removeListener;
 	
+	  DOMEventManagerElement.prototype.on = DOMEventManagerElement.prototype.addListener;
+	
+	  DOMEventManagerElement.prototype.off = DOMEventManagerElement.prototype.removeListener;
+	
 	  return DOMEventManagerElement;
 	
 	})(EventEmitter);
@@ -21785,10 +21961,10 @@
 
 
 /***/ },
-/* 43 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var EventMappers, Events, Layer, Utils, _, wrapComponent,
+	var Defaults, EventMappers, Events, Layer, Utils, _, wrapComponent,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
 	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
 	  hasProp = {}.hasOwnProperty,
@@ -21802,6 +21978,8 @@
 	Layer = __webpack_require__(13).Layer;
 	
 	Events = __webpack_require__(15).Events;
+	
+	Defaults = __webpack_require__(17).Defaults;
 	
 	"ScrollComponent\n\ncontent <Layer>\ncontentSize <{width:n, height:n}>\ncontentInset <{top:n, right:n, bottom:n, left:n}> TODO\ncontentOffset <{x:n, y:n}> TODO\nscrollFrame <{x:n, y:n, width:n, height:n}>\nscrollPoint <{x:n, y:n}>\nscrollHorizontal <bool>\nscrollVertical <bool>\nspeedX <number>\nspeedY <number>\ndelaysContentTouches <bool> TODO\nloadPreset(<\"ios\"|\"android\">) TODO\nscrollToPoint(<{x:n, y:n}>, animate=true, animationOptions={})\nscrollToLayer(contentLayer, originX=0, originY=0)\nscrollFrameForContentLayer(<x:n, y:n>) <{x:n, y:n, width:n, height:n}> TODO\nclosestContentLayer(<x:n, y:n>) <Layer> TODO\n\nScrollComponent Events\n\n(all of the draggable events)\nScrollStart -> DragStart\nScrollWillMove -> DragWillMove\nScrollDidMove -> DragDidMove\nscroll -> DragMove (html compat)\nScrollEnd -> DragEnd";
 	
@@ -21837,7 +22015,8 @@
 	  extend(ScrollComponent, superClass);
 	
 	  ScrollComponent.define("velocity", ScrollComponent.proxyProperty("content.draggable.velocity", {
-	    importable: false
+	    importable: false,
+	    exportable: false
 	  }));
 	
 	  ScrollComponent.define("scrollHorizontal", ScrollComponent.proxyProperty("content.draggable.horizontal"));
@@ -21849,11 +22028,13 @@
 	  ScrollComponent.define("speedY", ScrollComponent.proxyProperty("content.draggable.speedY"));
 	
 	  ScrollComponent.define("isDragging", ScrollComponent.proxyProperty("content.draggable.isDragging", {
-	    importable: false
+	    importable: false,
+	    exportable: false
 	  }));
 	
 	  ScrollComponent.define("isMoving", ScrollComponent.proxyProperty("content.draggable.isMoving", {
-	    importable: false
+	    importable: false,
+	    exportable: false
 	  }));
 	
 	  ScrollComponent.define("propagateEvents", ScrollComponent.proxyProperty("content.draggable.propagateEvents"));
@@ -21878,19 +22059,10 @@
 	    }
 	    this._onMouseWheel = bind(this._onMouseWheel, this);
 	    this.updateContent = bind(this.updateContent, this);
-	    if (options.clip == null) {
-	      options.clip = true;
-	    }
-	    if (options.mouseWheelEnabled == null) {
-	      options.mouseWheelEnabled = false;
-	    }
-	    if (options.backgroundColor == null) {
-	      options.backgroundColor = null;
-	    }
-	    ScrollComponent.__super__.constructor.call(this, options);
+	    ScrollComponent.__super__.constructor.call(this, Defaults.getDefaults("ScrollComponent", options));
 	    this._contentInset = options.contentInset || Utils.rectZero();
 	    this.setContentLayer(new Layer);
-	    this._applyOptionsAndDefaults(options);
+	    this._applyProxyDefaults(options);
 	    this._enableMouseWheelHandling(options.mouseWheelEnabled);
 	    if (options.hasOwnProperty("wrap")) {
 	      wrapComponent(this, options.wrap);
@@ -21948,6 +22120,7 @@
 	      height: constraintsFrame.height + constraintsFrame.height - this.height + this._contentInset.top + this._contentInset.bottom
 	    };
 	    this.content.draggable.constraints = constraintsFrame;
+	    this.scrollPoint = this.scrollPoint;
 	    if (this.content.children.length) {
 	      if ((ref = this.content.backgroundColor) != null ? ref.isEqual(Framer.Defaults.Layer.backgroundColor) : void 0) {
 	        return this.content.backgroundColor = null;
@@ -22421,7 +22594,7 @@
 
 
 /***/ },
-/* 44 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Events, ScrollComponent,
@@ -22432,7 +22605,7 @@
 	
 	Events = __webpack_require__(15).Events;
 	
-	ScrollComponent = __webpack_require__(43).ScrollComponent;
+	ScrollComponent = __webpack_require__(42).ScrollComponent;
 	
 	"PageComponent\n\noriginX <number>\noriginY <number>\n\nvelocityThreshold <number>\nanimationOptions <animationOptions={}>\ncurrentPage <Layer>\nclosestPage(<originX:n, originY:n>) <Layer>\n\nnextPage(direction=\"\", currentPage)\nsnapToNextPage(direction=\"\", animate, animationOptions={})\n";
 	
@@ -22697,7 +22870,7 @@
 
 
 /***/ },
-/* 45 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Events, Knob, Layer, Utils,
@@ -22796,7 +22969,11 @@
 	    this.on("change:borderRadius", this._setRadius);
 	    this.knob.on("change:size", this._updateKnob);
 	    this.knob.on("change:frame", this._updateFill);
-	    this.knob.on("change:frame", this._updateValue);
+	    this.knob.on(Events.Move, (function(_this) {
+	      return function() {
+	        return _this._updateValue;
+	      };
+	    })(this));
 	    this.sliderOverlay.on(Events.TapStart, this._touchStart);
 	    this.sliderOverlay.on(Events.TapEnd, this._touchEnd);
 	  }
@@ -23007,7 +23184,7 @@
 
 
 /***/ },
-/* 46 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppleWatch38BlackLeatherDevice, AppleWatch38Device, AppleWatch42Device, BaseClass, BuiltInDevices, Defaults, Devices, Events, HTCa9BaseDevice, HTCm8BaseDevice, Layer, MSFTLumia950BaseDevice, Nexus4BaseDevice, Nexus5BaseDevice, Nexus6BaseDevice, Nexus9BaseDevice, SamsungGalaxyNote5BaseDevice, Utils, _, iPadAir2BaseDevice, iPadMini4BaseDevice, iPadProBaseDevice, iPhone5BaseDevice, iPhone5CBaseDevice, iPhone6BaseDevice, iPhone6PlusBaseDevice, newDeviceMinVersion, oldDeviceMaxVersion, old_AppleWatch38Device, old_AppleWatch42Device, old_Nexus5BaseDevice, old_Nexus5BaseDeviceHand, old_Nexus9BaseDevice, old_iPadAirBaseDevice, old_iPadAirBaseDeviceHand, old_iPadMiniBaseDevice, old_iPadMiniBaseDeviceHand, old_iPhone5BaseDevice, old_iPhone5BaseDeviceHand, old_iPhone5CBaseDevice, old_iPhone5CBaseDeviceHand, old_iPhone6BaseDevice, old_iPhone6BaseDeviceHand, old_iPhone6PlusBaseDevice, old_iPhone6PlusBaseDeviceHand,
@@ -23133,7 +23310,7 @@
 	    }
 	    this._context = new Framer.Context({
 	      parent: this.content,
-	      name: "Device"
+	      name: "DeviceScreen"
 	    });
 	    return this._context.perspective = 1200;
 	  };
@@ -24263,6 +24440,173 @@
 
 
 /***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Defaults, Layer, Utils,
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
+	
+	Utils = __webpack_require__(4);
+	
+	Defaults = __webpack_require__(17).Defaults;
+	
+	Layer = __webpack_require__(13).Layer;
+	
+	exports.GridComponent = (function(superClass) {
+	  extend(GridComponent, superClass);
+	
+	  function GridComponent(options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    GridComponent.__super__.constructor.call(this, Defaults.getDefaults("GridComponent", options));
+	  }
+	
+	  GridComponent.define("rows", {
+	    get: function() {
+	      return this._rows;
+	    },
+	    set: function(value) {
+	      this._rows = value;
+	      return this._render();
+	    }
+	  });
+	
+	  GridComponent.define("columns", {
+	    get: function() {
+	      return this._columns;
+	    },
+	    set: function(value) {
+	      this._columns = value;
+	      return this._render();
+	    }
+	  });
+	
+	  GridComponent.define("spacing", {
+	    get: function() {
+	      return this._spacing || {
+	        horizontal: 0,
+	        vertical: 0
+	      };
+	    },
+	    set: function(value) {
+	      if (_.isNumber(value)) {
+	        value = {
+	          horizontal: value,
+	          vertical: value
+	        };
+	      }
+	      this._spacing = value;
+	      return this._render();
+	    }
+	  });
+	
+	  GridComponent.define("renderCell", {
+	    get: function() {
+	      return this._renderCell || this._defaultRenderCell;
+	    },
+	    set: function(f) {
+	      if (f === this._renderCell) {
+	        return;
+	      }
+	      if (!_.isFunction(f)) {
+	        throw Error("GridComponent.renderCell should be a function, not " + (typeof f));
+	      }
+	      this._renderCell = f;
+	      return this.render();
+	    }
+	  });
+	
+	  GridComponent.define("cellWidth", {
+	    get: function() {
+	      return (this.width - (this.spacing.horizontal * (this.columns - 1))) / this.columns;
+	    }
+	  });
+	
+	  GridComponent.define("cellHeight", {
+	    get: function() {
+	      return (this.height - (this.spacing.vertical * (this.rows - 1))) / this.rows;
+	    }
+	  });
+	
+	  GridComponent.define("cells", {
+	    get: function() {
+	      return _.values(this._cells);
+	    }
+	  });
+	
+	  GridComponent.prototype.cellX = function(row) {
+	    return row * (this.cellWidth + this.spacing.horizontal);
+	  };
+	
+	  GridComponent.prototype.cellY = function(column) {
+	    return column * (this.cellHeight + this.spacing.vertical);
+	  };
+	
+	  GridComponent.prototype.cellFrame = function(column, row) {
+	    var frame;
+	    return frame = {
+	      x: this.cellX(column),
+	      y: this.cellY(row),
+	      width: this.cellWidth,
+	      height: this.cellHeight
+	    };
+	  };
+	
+	  GridComponent.prototype.cell = function(column, row) {
+	    return this._cells[column + ":" + row];
+	  };
+	
+	  GridComponent.prototype.render = function() {
+	    return this._render();
+	  };
+	
+	  GridComponent.prototype._render = function() {
+	    var cell, column, frame, i, ref, results, row;
+	    this._reset();
+	    results = [];
+	    for (row = i = ref = this.rows - 1; ref <= 0 ? i <= 0 : i >= 0; row = ref <= 0 ? ++i : --i) {
+	      results.push((function() {
+	        var j, ref1, results1;
+	        results1 = [];
+	        for (column = j = ref1 = this.columns - 1; ref1 <= 0 ? j <= 0 : j >= 0; column = ref1 <= 0 ? ++j : --j) {
+	          frame = {
+	            x: this.cellX(column),
+	            y: this.cellY(row),
+	            width: this.cellWidth,
+	            height: this.cellHeight
+	          };
+	          cell = new Layer({
+	            parent: this,
+	            frame: frame,
+	            name: "Cell " + column + ":" + row
+	          });
+	          this.renderCell(cell, row, column);
+	          results1.push(this._cells[column + ":" + row] = cell);
+	        }
+	        return results1;
+	      }).call(this));
+	    }
+	    return results;
+	  };
+	
+	  GridComponent.prototype._defaultRenderCell = function(cell, column, row) {
+	    cell.backgroundColor = Utils.randomColor();
+	    return Utils.labelLayer(cell, row + ":" + column);
+	  };
+	
+	  GridComponent.prototype._reset = function() {
+	    _.invoke(this.cells, "destroy");
+	    return this._cells = {};
+	  };
+	
+	  return GridComponent;
+	
+	})(Layer);
+
+
+/***/ },
 /* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -24797,6 +25141,12 @@
 	  };
 	
 	  TouchEmulator.prototype.showTouchCursor = function() {
+	    if (!this.point) {
+	      this.point = {
+	        x: event.pageX,
+	        y: event.pageY
+	      };
+	    }
 	    this.touchPointLayer.animateStop();
 	    this.touchPointLayer.midX = this.point.x;
 	    this.touchPointLayer.midY = this.point.y;
@@ -24960,7 +25310,7 @@
 /* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var DOMEventManager, GestureInputDoubleTapTime, GestureInputEdgeSwipeDistance, GestureInputForceTapDesktop, GestureInputForceTapMobile, GestureInputForceTapMobilePollTime, GestureInputLongPressTime, GestureInputMinimumFingerDistance, GestureInputSwipeThreshold, GestureInputVelocityTime, TouchEnd, TouchMove, TouchStart, Utils,
+	var DOMEventManager, GestureInputDoubleTapTime, GestureInputEdgeSwipeDistance, GestureInputForceTapDesktop, GestureInputForceTapMobile, GestureInputForceTapMobilePollTime, GestureInputLongPressTime, GestureInputMinimumFingerDistance, GestureInputSwipeThreshold, GestureInputVelocityTime, Utils,
 	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 	
 	Utils = __webpack_require__(4);
@@ -24983,13 +25333,7 @@
 	
 	GestureInputMinimumFingerDistance = 30;
 	
-	DOMEventManager = __webpack_require__(42).DOMEventManager;
-	
-	TouchStart = ["touchstart", "mousedown"];
-	
-	TouchMove = ["touchmove", "mousemove"];
-	
-	TouchEnd = ["touchend", "mouseup"];
+	DOMEventManager = __webpack_require__(41).DOMEventManager;
 	
 	exports.GestureInputRecognizer = (function() {
 	  function GestureInputRecognizer() {
@@ -25033,12 +25377,11 @@
 	    this.touchend = bind(this.touchend, this);
 	    this.touchmove = bind(this.touchmove, this);
 	    this.touchstart = bind(this.touchstart, this);
+	    this.startTouch = bind(this.startTouch, this);
+	    this.startMouse = bind(this.startMouse, this);
 	    this.em = new DOMEventManager();
-	    TouchStart.map((function(_this) {
-	      return function(e) {
-	        return _this.em.wrap(window).addEventListener(e, _this.touchstart);
-	      };
-	    })(this));
+	    this.em.wrap(window).addEventListener("mousedown", this.startMouse);
+	    this.em.wrap(window).addEventListener("touchstart", this.startTouch);
 	  }
 	
 	  GestureInputRecognizer.prototype.destroy = function() {
@@ -25050,20 +25393,28 @@
 	    return this.session = null;
 	  };
 	
+	  GestureInputRecognizer.prototype.startMouse = function(event) {
+	    if (this.session) {
+	      return;
+	    }
+	    this.em.wrap(window).addEventListener("mousemove", this.touchmove);
+	    this.em.wrap(window).addEventListener("mouseup", this.touchend);
+	    return this.touchstart(event);
+	  };
+	
+	  GestureInputRecognizer.prototype.startTouch = function(event) {
+	    if (this.session) {
+	      return;
+	    }
+	    this.em.wrap(window).addEventListener("touchmove", this.touchmove);
+	    this.em.wrap(window).addEventListener("touchend", this.touchend);
+	    return this.touchstart(event);
+	  };
+	
 	  GestureInputRecognizer.prototype.touchstart = function(event) {
 	    if (this.session) {
 	      return;
 	    }
-	    TouchMove.map((function(_this) {
-	      return function(e) {
-	        return _this.em.wrap(window).addEventListener(e, _this.touchmove);
-	      };
-	    })(this));
-	    TouchEnd.map((function(_this) {
-	      return function(e) {
-	        return _this.em.wrap(window).addEventListener(e, _this.touchend);
-	      };
-	    })(this));
 	    this.em.wrap(window).addEventListener("webkitmouseforcechanged", this._updateMacForce);
 	    this.session = {
 	      startEvent: this._getGestureEvent(event),
@@ -25105,16 +25456,10 @@
 	        }
 	      }
 	    }
-	    TouchMove.map((function(_this) {
-	      return function(e) {
-	        return _this.em.wrap(window).removeEventListener(e, _this.touchmove);
-	      };
-	    })(this));
-	    TouchEnd.map((function(_this) {
-	      return function(e) {
-	        return _this.em.wrap(window).removeEventListener(e, _this.touchend);
-	      };
-	    })(this));
+	    this.em.wrap(window).removeEventListener("mousemove", this.touchmove);
+	    this.em.wrap(window).removeEventListener("mouseup", this.touchend);
+	    this.em.wrap(window).removeEventListener("touchmove", this.touchmove);
+	    this.em.wrap(window).removeEventListener("touchend", this.touchend);
 	    this.em.wrap(window).addEventListener("webkitmouseforcechanged", this._updateMacForce);
 	    event = this._getGestureEvent(event);
 	    ref = this.session.started;
@@ -25168,8 +25513,8 @@
 	  };
 	
 	  GestureInputRecognizer.prototype._updateTouchForce = function() {
-	    var event, ref, ref1;
-	    if (!((ref = this.session) != null ? (ref1 = ref.lastEvent) != null ? ref1.touches.length : void 0 : void 0)) {
+	    var event, ref, ref1, ref2;
+	    if (!((ref = this.session) != null ? (ref1 = ref.lastEvent) != null ? (ref2 = ref1.touches) != null ? ref2.length : void 0 : void 0 : void 0)) {
 	      return;
 	    }
 	    this.session.force = this.session.lastEvent.touches[0].force || 0;
@@ -25644,15 +25989,117 @@
 /* 54 */
 /***/ function(module, exports) {
 
-	exports.date = 1460460211;
+	exports.date = 1462522413;
 	
 	exports.branch = "master";
 	
-	exports.hash = "e32a426";
+	exports.hash = "0e4aac0";
 	
-	exports.build = 1662;
+	exports.build = 1703;
 	
 	exports.version = exports.branch + "/" + exports.hash;
+
+
+/***/ },
+/* 55 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var BaseClass, Canvas, Events,
+	  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+	  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+	  hasProp = {}.hasOwnProperty;
+	
+	BaseClass = __webpack_require__(6).BaseClass;
+	
+	Events = __webpack_require__(15).Events;
+	
+	Canvas = (function(superClass) {
+	  extend(Canvas, superClass);
+	
+	  Canvas.define("width", {
+	    get: function() {
+	      return window.innerWidth;
+	    }
+	  });
+	
+	  Canvas.define("height", {
+	    get: function() {
+	      return window.innerHeight;
+	    }
+	  });
+	
+	  Canvas.define("size", {
+	    get: function() {
+	      return {
+	        width: this.width,
+	        height: this.height
+	      };
+	    }
+	  });
+	
+	  Canvas.define("frame", {
+	    get: function() {
+	      return {
+	        x: 0,
+	        y: 0,
+	        width: this.width,
+	        height: this.height
+	      };
+	    }
+	  });
+	
+	  Canvas.define("backgroundColor", {
+	    importable: false,
+	    exportable: false,
+	    get: function() {
+	      return Framer.Device.background.backgroundColor;
+	    },
+	    set: function(value) {
+	      return Framer.Device.background.backgroundColor = value;
+	    }
+	  });
+	
+	  Canvas.define("image", {
+	    importable: false,
+	    exportable: false,
+	    get: function() {
+	      return Framer.Device.background.image;
+	    },
+	    set: function(value) {
+	      return Framer.Device.background.image = value;
+	    }
+	  });
+	
+	  function Canvas(options) {
+	    if (options == null) {
+	      options = {};
+	    }
+	    this._handleResize = bind(this._handleResize, this);
+	    Canvas.__super__.constructor.call(this, options);
+	    Events.wrap(window).addEventListener("resize", this._handleResize);
+	  }
+	
+	  Canvas.prototype.onResize = function(cb) {
+	    return this.on("resize", cb);
+	  };
+	
+	  Canvas.prototype.toInspect = function() {
+	    return "<" + this.constructor.name + " " + this.width + "x" + this.height + ">";
+	  };
+	
+	  Canvas.prototype._handleResize = function(event) {
+	    this.emit("resize");
+	    this.emit("change:width");
+	    this.emit("change:height");
+	    this.emit("change:size");
+	    return this.emit("change:frame");
+	  };
+	
+	  return Canvas;
+	
+	})(BaseClass);
+	
+	exports.Canvas = Canvas;
 
 
 /***/ }
