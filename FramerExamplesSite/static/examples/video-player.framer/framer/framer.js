@@ -22969,11 +22969,7 @@
 	    this.on("change:borderRadius", this._setRadius);
 	    this.knob.on("change:size", this._updateKnob);
 	    this.knob.on("change:frame", this._updateFill);
-	    this.knob.on(Events.Move, (function(_this) {
-	      return function() {
-	        return _this._updateValue;
-	      };
-	    })(this));
+	    this.knob.on("change:frame", this._updateValue);
 	    this.sliderOverlay.on(Events.TapStart, this._touchStart);
 	    this.sliderOverlay.on(Events.TapEnd, this._touchEnd);
 	  }
@@ -23809,7 +23805,7 @@
 	  deviceImageJP2: true,
 	  screenWidth: 1536,
 	  screenHeight: 2048,
-	  deviceType: "phone",
+	  deviceType: "tablet",
 	  minStudioVersion: newDeviceMinVersion
 	};
 	
@@ -23819,7 +23815,7 @@
 	  deviceImageJP2: true,
 	  screenWidth: 1536,
 	  screenHeight: 2048,
-	  deviceType: "phone",
+	  deviceType: "tablet",
 	  minStudioVersion: newDeviceMinVersion
 	};
 	
@@ -23829,7 +23825,7 @@
 	  deviceImageJP2: true,
 	  screenWidth: 2048,
 	  screenHeight: 2732,
-	  deviceType: "phone",
+	  deviceType: "tablet",
 	  minStudioVersion: newDeviceMinVersion
 	};
 	
@@ -23989,7 +23985,7 @@
 	  deviceImageJP2: true,
 	  screenWidth: 1536,
 	  screenHeight: 2048,
-	  deviceType: "phone",
+	  deviceType: "tablet",
 	  minStudioVersion: newDeviceMinVersion
 	};
 	
@@ -25989,13 +25985,13 @@
 /* 54 */
 /***/ function(module, exports) {
 
-	exports.date = 1462522413;
+	exports.date = 1462633191;
 	
 	exports.branch = "master";
 	
-	exports.hash = "0e4aac0";
+	exports.hash = "8ce9687";
 	
-	exports.build = 1703;
+	exports.build = 1705;
 	
 	exports.version = exports.branch + "/" + exports.hash;
 
