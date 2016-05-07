@@ -58,8 +58,12 @@ progress.knob.on Events.DragEnd, ->
 	if wasPlaying then showPause()
 	return wasPlaying = false
 	
-progress.on "change:value", ->
-	vid.player.currentTime = Utils.round(this.value, 1)
+progress.on Events.SliderValueChange, ->
+	newTime = Utils.round(this.value, 1)
+	currentTime = Utils.round(vid.player.currentTime, 1)
+	# Only update if needed, to prevent ‘timeupdate’ events from 
+	# slightly changing the time, causing playback to stutter
+	vid.player.currentTime = newTime unless newTime == currentTime
 	
 time = new Layer
 	superLayer: vidWrapper
